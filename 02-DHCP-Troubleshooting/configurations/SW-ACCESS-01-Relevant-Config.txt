@@ -1,0 +1,29 @@
+! SW-ACCESS-01 relevant verified configuration
+! VLANs and port assignments were healthy during incident NET-002
+!
+vlan 10
+ name FINANCE
+!
+vlan 20
+ name HUMAN_RESOURCES
+!
+vlan 50
+ name SERVERS
+!
+interface range FastEthernet0/1 - 2
+ switchport mode access
+ switchport access vlan 10
+!
+interface range FastEthernet0/3 - 4
+ switchport mode access
+ switchport access vlan 20
+!
+interface range FastEthernet0/10 - 11
+ switchport mode access
+ switchport access vlan 50
+!
+interface GigabitEthernet0/1
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,50
+!
+

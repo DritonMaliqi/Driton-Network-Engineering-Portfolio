@@ -1,0 +1,20 @@
+DHCP SERVER: SRV-DHCP
+SERVER ADDRESS: 192.168.50.20/24
+DEFAULT GATEWAY: 192.168.50.1
+DNS SERVER: 192.168.50.10
+SERVICE STATUS: ON
+
+POOL: FINANCE
+Default Gateway : 192.168.10.1
+DNS Server      : 192.168.50.10
+Start Address   : 192.168.10.20
+Subnet Mask     : 255.255.255.0
+Maximum Users   : 50
+
+POOL: HR
+Default Gateway : 192.168.20.1
+DNS Server      : 192.168.50.10
+Start Address   : 192.168.20.20
+Subnet Mask     : 255.255.255.0
+Maximum Users   : 50
+

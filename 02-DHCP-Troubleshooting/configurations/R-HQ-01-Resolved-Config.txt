@@ -1,0 +1,27 @@
+! R-HQ-01 relevant resolved configuration
+! Incident: NET-002
+!
+interface GigabitEthernet0/0
+ description TRUNK-TO-SW-ACCESS-01
+ no ip address
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/0.10
+ description GATEWAY-VLAN10-FINANCE
+ encapsulation dot1Q 10
+ ip address 192.168.10.1 255.255.255.0
+ ip helper-address 192.168.50.20
+!
+interface GigabitEthernet0/0.20
+ description GATEWAY-VLAN20-HR
+ encapsulation dot1Q 20
+ ip address 192.168.20.1 255.255.255.0
+ ip helper-address 192.168.50.20
+!
+interface GigabitEthernet0/0.50
+ description GATEWAY-VLAN50-SERVERS
+ encapsulation dot1Q 50
+ ip address 192.168.50.1 255.255.255.0
+!
+

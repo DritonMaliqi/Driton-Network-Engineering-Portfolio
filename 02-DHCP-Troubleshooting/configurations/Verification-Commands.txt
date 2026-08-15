@@ -1,0 +1,52 @@
+DHCP TROUBLESHOOTING VERIFICATION CHECKLIST
+Incident: NET-002
+
+ENDPOINT CHECKS
+---------------
+ipconfig /all
+ping 192.168.20.1
+ping 192.168.50.10
+nslookup server.company.local
+
+EXPECTED HR CLIENT VALUES
+-------------------------
+IPv4 subnet     : 192.168.20.0/24
+Default gateway : 192.168.20.1
+DHCP server     : 192.168.50.20
+DNS server      : 192.168.50.10
+
+SWITCH CHECKS
+-------------
+show ip interface brief
+show vlan brief
+show interfaces fastethernet0/3 switchport
+show interfaces fastethernet0/4 switchport
+show interfaces trunk
+
+EXPECTED SWITCH STATE
+---------------------
+Fa0/3 and Fa0/4 : up/up, access VLAN 20
+Gig0/1          : trunking
+Allowed VLANs   : 10,20,50
+VLAN 20         : active and forwarding
+
+ROUTER CHECKS
+-------------
+show ip interface brief
+show running-config
+show ip interface GigabitEthernet0/0.20
+
+EXPECTED ROUTER STATE
+---------------------
+Gig0/0.20       : 192.168.20.1, up/up
+Encapsulation   : dot1Q 20
+DHCP relay      : ip helper-address 192.168.50.20
+
+FINAL RESULTS
+-------------
+PC-HR-01 lease  : 192.168.20.20/24
+PC-HR-02 lease  : 192.168.20.21/24
+Gateway ping    : Passed
+Server ping     : Passed after initial ARP resolution
+DNS lookup      : server.company.local -> 192.168.50.10
+

@@ -24,7 +24,7 @@ My objective is to demonstrate a structured engineering approach:
 | Project | Technologies | Status |
 |---|---|---|
 | [01 – VLAN Troubleshooting](./01-VLAN-Troubleshooting/) | VLAN, DHCP, IPv4, Cisco IOS, DNS | Completed |
-| 02 – DHCP Troubleshooting | DHCP pools, relay, VLANs | Planned |
+| [02 – DHCP Troubleshooting](./02-DHCP-Troubleshooting/) | DHCP pools, relay, VLANs | Completed |
 | 03 – Trunk Troubleshooting | 802.1Q, allowed VLANs, native VLAN | Planned |
 | 04 – OSPF Troubleshooting | Neighbors, areas, routing tables | Planned |
 | 05 – ACL and NAT Troubleshooting | ACL, PAT, Internet access | Planned |
