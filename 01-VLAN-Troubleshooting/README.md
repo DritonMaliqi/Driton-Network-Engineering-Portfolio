@@ -31,7 +31,7 @@ PC-FIN-02 → SW-ACCESS-01 → R-HQ-01 → Company Server
 | Component | Expected value |
 |---|---|
 | Workstation | PC-FIN-02 |
-| IPv4 address | 192.168.10.22/24 |
+| IPv4 address | 192.168.10.20/24 |
 | Default gateway | 192.168.10.1 |
 | DHCP server | 192.168.50.20 |
 | DNS server | 192.168.50.10 |
@@ -41,7 +41,7 @@ PC-FIN-02 → SW-ACCESS-01 → R-HQ-01 → Company Server
 
 ## Reported Incident
 
-PC-FIN-02 could not access the company server or the Internet. Another Finance workstation connected to the same switch was operating normally.
+PC-FIN-02 could not access the company server or the Internet. The server infrastructure and router-to-switch trunk remained operational.
 
 ## Troubleshooting Process
 
@@ -53,7 +53,7 @@ Command:
 
 The workstation had a valid DHCP configuration:
 
-    IPv4 Address    : 192.168.10.22
+    IPv4 Address    : 192.168.10.20
     Subnet Mask     : 255.255.255.0
     Default Gateway : 192.168.10.1
     DHCP Server     : 192.168.50.20
@@ -90,7 +90,7 @@ Commands:
 Relevant output:
 
     VLAN 1   default   active   Fa0/2
-    VLAN 10  FINANCE   active   Fa0/1
+    VLAN 10  FINANCE   active
     Access Mode VLAN: 1 (default)
 
 ## Root Cause
@@ -173,3 +173,4 @@ Client configuration → Gateway → Physical port → VLAN membership → Corre
 ## Original Packet Tracer Topology
 
 [View the original Packet Tracer topology](./topology/VLAN-Troubleshooting-Raw.png)
+

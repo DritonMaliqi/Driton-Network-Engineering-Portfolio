@@ -2,7 +2,7 @@
 
 Welcome to my hands-on Network Engineering portfolio.
 
-This repository documents practical CCNA and CCNP-level networking labs, realistic troubleshooting incidents, Cisco IOS configurations, verification results, and network automation projects.
+This repository documents practical CCNA labs and a growing roadmap toward CCNP-level troubleshooting, Cisco IOS configurations, verification results, and network automation projects.
 
 My objective is to demonstrate a structured engineering approach:
 
@@ -93,3 +93,4 @@ Each completed project can include:
 **Driton Maliqi**  
 Network Engineering – CCNA Track  
 Focused on practical networking, troubleshooting, security, and automation.
+

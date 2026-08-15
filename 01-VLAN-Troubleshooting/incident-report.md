@@ -20,11 +20,11 @@ PC-FIN-02 had a valid DHCP configuration but could not reach its default gateway
 
 ## Business Impact
 
-One Finance department workstation was unable to access internal and external network resources. Other Finance users remained operational.
+The simulated incident affected PC-FIN-02 and prevented access to internal and external network resources.
 
 ## Evidence Collected
 
-- PC-FIN-02 received IPv4 address 192.168.10.22/24.
+- PC-FIN-02 received IPv4 address 192.168.10.20/24.
 - The configured default gateway was 192.168.10.1.
 - The configured DNS server was 192.168.50.10.
 - Ping to 192.168.10.1 failed with 100% packet loss.
@@ -74,3 +74,4 @@ Rollback was not required.
 ## Closure Summary
 
 The incident was caused by an incorrect access VLAN assignment. FastEthernet0/2 was moved from VLAN 1 to VLAN 10. Gateway, server, and DNS connectivity were successfully verified. Service was restored and the incident was closed.
+
