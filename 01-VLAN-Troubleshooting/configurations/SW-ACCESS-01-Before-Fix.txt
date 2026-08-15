@@ -1,0 +1,38 @@
+﻿! SW-ACCESS-01
+! Broken configuration captured before the fix
+! Root cause: PC-FIN-02 access port assigned to VLAN 1
+
+hostname SW-ACCESS-01
+no ip domain-lookup
+
+vlan 10
+ name FINANCE
+
+vlan 50
+ name SERVERS
+
+interface FastEthernet0/2
+ description PC-FIN-02
+ switchport mode access
+ switchport access vlan 1
+ spanning-tree portfast
+
+interface FastEthernet0/10
+ description SRV-DNS-WEB
+ switchport mode access
+ switchport access vlan 50
+ spanning-tree portfast
+
+interface FastEthernet0/11
+ description SRV-DHCP
+ switchport mode access
+ switchport access vlan 50
+ spanning-tree portfast
+
+interface GigabitEthernet0/1
+ description TRUNK-TO-R-HQ-01
+ switchport mode trunk
+ switchport trunk allowed vlan 10,50
+ no shutdown
+
+end

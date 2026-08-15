@@ -1,0 +1,30 @@
+﻿VLAN TROUBLESHOOTING – VERIFICATION COMMANDS
+
+CLIENT
+ipconfig /all
+ping 192.168.10.1
+ping 192.168.50.10
+ping 192.168.50.20
+nslookup server.company.local
+
+SWITCH
+show ip interface brief
+show vlan brief
+show interfaces trunk
+show interfaces fastethernet0/2 switchport
+show mac address-table
+
+ROUTER
+show ip interface brief
+show ip route
+show running-config interface gigabitethernet0/0.10
+show running-config interface gigabitethernet0/0.50
+
+EXPECTED FINAL RESULTS
+- PC-FIN-02 receives 192.168.10.20/24 through DHCP.
+- Default gateway is 192.168.10.1.
+- DNS server is 192.168.50.10.
+- DHCP server is 192.168.50.20.
+- FastEthernet0/2 is assigned to VLAN 10.
+- GigabitEthernet0/1 is trunking VLANs 10 and 50.
+- Gateway, server, DHCP, and DNS tests succeed.

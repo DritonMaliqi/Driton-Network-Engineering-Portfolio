@@ -1,5 +1,7 @@
 ﻿# VLAN Troubleshooting – Finance Department
 
+![Professional network topology](./topology/VLAN-Troubleshooting-Professional.png)
+
 ## Project Overview
 
 This project documents a realistic enterprise troubleshooting incident in which a Finance department workstation could not reach its default gateway, internal server, or the Internet.
@@ -113,6 +115,10 @@ SW-ACCESS-01 interface FastEthernet0/2 was assigned to VLAN 1 instead of VLAN 10
 | DNS resolution | Passed |
 | Company server access | Passed |
 
+## Incident Resolution Visual
+
+![Incident before and after](./evidence/04-Incident-Before-After.png)
+
 ## Troubleshooting Method
 
 Client configuration → Gateway → Physical port → VLAN membership → Correction → End-to-end verification
@@ -125,3 +131,45 @@ Client configuration → Gateway → Physical port → VLAN membership → Corre
 - Minimal corrective configuration
 - End-to-end verification
 - Professional incident documentation
+
+## Technical Evidence
+
+### Before Fix – Connectivity Failure
+
+![Before fix ping failure](./evidence/01-Before-Fix-Ping-Failure.png)
+
+### Before Fix – VLAN Membership
+
+![Before fix VLAN evidence](./evidence/02-Before-Fix-VLAN-Evidence.png)
+
+### Before Fix – Switchport Configuration
+
+![Before fix switchport evidence](./evidence/03-Before-Fix-Switchport.png)
+
+### After Fix – VLAN 10 Assignment
+
+![After fix VLAN assignment](./evidence/05-After-Fix-VLAN10.png)
+
+### After Fix – Connectivity Verification
+
+![After fix ping verification](./evidence/06-After-Fix-Verification-Ping.png)
+
+### After Fix – DNS Verification
+
+![After fix DNS verification](./evidence/07-After-Fix-Verification-DNS.png)
+
+## Downloadable Packet Tracer Labs
+
+- [Broken troubleshooting scenario](./lab/VLAN-Troubleshooting-Broken.pkt)
+- [Resolved and verified scenario](./lab/VLAN-Troubleshooting-Resolved.pkt)
+
+## Device Configurations
+
+- [R-HQ-01 relevant configuration](./configurations/R-HQ-01-Relevant-Config.txt)
+- [SW-ACCESS-01 before the fix](./configurations/SW-ACCESS-01-Before-Fix.txt)
+- [SW-ACCESS-01 resolved configuration](./configurations/SW-ACCESS-01-Resolved-Config.txt)
+- [Verification command checklist](./configurations/Verification-Commands.txt)
+
+## Original Packet Tracer Topology
+
+[View the original Packet Tracer topology](./topology/VLAN-Troubleshooting-Raw.png)
