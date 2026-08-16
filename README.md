@@ -27,7 +27,7 @@ My objective is to demonstrate a structured engineering approach:
 | [02 – DHCP Troubleshooting](./02-DHCP-Troubleshooting/) | DHCP pools, relay, VLANs | Completed |
 | [03 – Trunk Troubleshooting](./03-Trunk-Troubleshooting) | 802.1Q, allowed VLANs, inter-switch trunk | Completed |
 | [04 - OSPF Troubleshooting](./04-OSPF-Troubleshooting) | OSPF neighbors, area mismatch, routing tables | Completed |
-| 05 – ACL and NAT Troubleshooting | ACL, PAT, Internet access | Planned |
+| [05 – ACL and NAT Troubleshooting](./05-ACL-NAT-Troubleshooting/) | ACL, PAT, OSPF default route, Internet access | Completed |
 | 06 – GRE VPN and OSPF | GRE tunnel, OSPF, site connectivity | Planned |
 | 07 – FortiGate Troubleshooting | Policies, routing, NAT, VPN | Planned |
 | 08 – Network Automation | Python, PowerShell, backups, validation | Planned |
