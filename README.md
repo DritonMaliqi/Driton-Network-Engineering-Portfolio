@@ -1,4 +1,4 @@
-﻿# Driton Maliqi – Network Engineering Portfolio
+# Driton Maliqi – Network Engineering Portfolio
 
 Welcome to my hands-on Network Engineering portfolio.
 
@@ -26,6 +26,7 @@ My objective is to demonstrate a structured engineering approach:
 | [01 – VLAN Troubleshooting](./01-VLAN-Troubleshooting/) | VLAN, DHCP, IPv4, Cisco IOS, DNS | Completed |
 | [02 – DHCP Troubleshooting](./02-DHCP-Troubleshooting/) | DHCP pools, relay, VLANs | Completed |
 | [03 – Trunk Troubleshooting](./03-Trunk-Troubleshooting) | 802.1Q, allowed VLANs, inter-switch trunk | Completed |
+| [04 - OSPF Troubleshooting](./04-OSPF-Troubleshooting) | OSPF neighbors, area mismatch, routing tables | Completed |
 | 04 – OSPF Troubleshooting | Neighbors, areas, routing tables | Planned |
 | 05 – ACL and NAT Troubleshooting | ACL, PAT, Internet access | Planned |
 | 06 – GRE VPN and OSPF | GRE tunnel, OSPF, site connectivity | Planned |

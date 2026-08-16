@@ -1,0 +1,38 @@
+hostname R-HQ-01
+!
+interface GigabitEthernet0/0
+ description TRUNK-TO-SW-ACCESS-01
+ no ip address
+!
+interface GigabitEthernet0/0.10
+ description GATEWAY-VLAN10-FINANCE
+ encapsulation dot1Q 10
+ ip address 192.168.10.1 255.255.255.0
+ ip helper-address 192.168.50.20
+!
+interface GigabitEthernet0/0.20
+ description GATEWAY-VLAN20-HR
+ encapsulation dot1Q 20
+ ip address 192.168.20.1 255.255.255.0
+ ip helper-address 192.168.50.20
+!
+interface GigabitEthernet0/0.50
+ description GATEWAY-VLAN50-SERVERS
+ encapsulation dot1Q 50
+ ip address 192.168.50.1 255.255.255.0
+!
+interface GigabitEthernet0/1
+ description WAN-TO-R-BRANCH-01
+ ip address 10.0.12.1 255.255.255.252
+ no shutdown
+!
+router ospf 100
+ router-id 1.1.1.1
+ network 10.0.12.0 0.0.0.3 area 0
+ network 192.168.10.0 0.0.0.255 area 0
+ network 192.168.20.0 0.0.0.255 area 0
+ network 192.168.50.0 0.0.0.255 area 0
+ passive-interface GigabitEthernet0/0.10
+ passive-interface GigabitEthernet0/0.20
+ passive-interface GigabitEthernet0/0.50
+

@@ -1,0 +1,41 @@
+PROJECT 04 - OSPF TROUBLESHOOTING VERIFICATION
+
+ENDPOINT TESTS
+--------------
+PC-BR-01> ipconfig /all
+PC-BR-01> ping 192.168.30.1
+PC-BR-01> ping 192.168.50.10
+PC-BR-01> nslookup server.company.local
+PC-FIN-01> ping 192.168.30.10
+
+WAN TEST
+--------
+R-BRANCH-01# ping 10.0.12.1
+
+OSPF DIAGNOSIS
+--------------
+R-BRANCH-01# show ip ospf neighbor
+R-BRANCH-01# show ip route ospf
+R-BRANCH-01# show ip protocols
+R-HQ-01# show ip protocols
+
+EXPECTED HEALTHY OSPF STATE
+---------------------------
+Neighbor 1.1.1.1: FULL
+
+O 192.168.10.0 [110/2] via 10.0.12.1, GigabitEthernet0/0
+O 192.168.20.0 [110/2] via 10.0.12.1, GigabitEthernet0/0
+O 192.168.50.0 [110/2] via 10.0.12.1, GigabitEthernet0/0
+
+R-HQ-01 expected route:
+O 192.168.30.0 [110/2] via 10.0.12.2, GigabitEthernet0/1
+
+CORRECTIVE CHANGE
+-----------------
+R-BRANCH-01# configure terminal
+R-BRANCH-01(config)# router ospf 100
+R-BRANCH-01(config-router)# no network 10.0.12.0 0.0.0.3 area 1
+R-BRANCH-01(config-router)# network 10.0.12.0 0.0.0.3 area 0
+R-BRANCH-01(config-router)# end
+R-BRANCH-01# copy running-config startup-config
+
