@@ -1,0 +1,23 @@
+! SW-ACCESS-01 - Relevant configuration before correction
+!
+hostname SW-ACCESS-01
+!
+vlan 10
+ name FINANCE
+vlan 20
+ name HUMAN_RESOURCES
+vlan 50
+ name SERVERS
+!
+interface GigabitEthernet0/1
+ description TRUNK-TO-R-HQ-01
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,50
+!
+interface GigabitEthernet0/2
+ description TRUNK-TO-SW-ACCESS-02
+ switchport mode trunk
+ switchport trunk allowed vlan 10,50
+!
+! Root cause: VLAN 20 was missing from GigabitEthernet0/2.
+

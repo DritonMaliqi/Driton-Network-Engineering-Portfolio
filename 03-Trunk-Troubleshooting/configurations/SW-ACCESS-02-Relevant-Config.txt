@@ -1,0 +1,29 @@
+! SW-ACCESS-02 - Relevant configuration
+!
+hostname SW-ACCESS-02
+!
+vlan 10
+ name FINANCE
+vlan 20
+ name HUMAN_RESOURCES
+vlan 50
+ name SERVERS
+!
+interface FastEthernet0/1
+ description PC-FIN-03
+ switchport mode access
+ switchport access vlan 10
+ spanning-tree portfast
+!
+interface FastEthernet0/3
+ description PC-HR-03
+ switchport mode access
+ switchport access vlan 20
+ spanning-tree portfast
+!
+interface GigabitEthernet0/1
+ description TRUNK-TO-SW-ACCESS-01
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,50
+!
+
