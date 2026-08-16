@@ -1,6 +1,6 @@
-# Trunk Troubleshooting - Missing VLAN 20
+﻿# Trunk Troubleshooting - Missing VLAN 20
 
-![Trunk Troubleshooting topology](./topology/Trunk-Troubleshooting-Topology-Raw.png)
+![Trunk Troubleshooting topology](./topology/Trunk-Troubleshooting-Professional.png)
 
 ## Project Overview
 
@@ -163,4 +163,5 @@ An operational trunk does not prove that every required VLAN can cross it. Alway
 |-- incident-report.md
 `-- README.md
 ```
+
 
