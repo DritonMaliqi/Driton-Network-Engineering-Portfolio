@@ -1,0 +1,27 @@
+! Endpoint verification
+ipconfig
+ping 192.168.30.1
+ping 192.168.50.10
+ping 198.51.100.10
+! Web Browser: http://198.51.100.10
+
+! Branch routing verification
+show ip route ospf
+show ip route
+
+! HQ outside-path verification
+ping 203.0.113.1
+ping 198.51.100.10
+show ip route static
+
+! NAT and ACL verification
+show ip nat translations
+show ip nat statistics
+show access-lists NAT_INSIDE
+show ip interface brief
+
+! Expected final evidence
+! - O*E2 default route exists on R-BRANCH-01
+! - 192.168.30.10 creates a PAT translation through 203.0.113.2
+! - ICMP and HTTP to 198.51.100.10 succeed
+

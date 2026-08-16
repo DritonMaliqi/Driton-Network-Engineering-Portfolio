@@ -1,0 +1,8 @@
+! Broken state - Branch subnet is absent
+ip access-list standard NAT_INSIDE
+ permit 192.168.10.0 0.0.0.255
+ permit 192.168.20.0 0.0.0.255
+ permit 192.168.50.0 0.0.0.255
+!
+! Result: 192.168.30.0/24 is routed but not translated.
+

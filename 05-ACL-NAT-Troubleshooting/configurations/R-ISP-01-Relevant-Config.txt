@@ -1,0 +1,14 @@
+! R-ISP-01 - Project 05 relevant configuration
+!
+hostname R-ISP-01
+!
+interface GigabitEthernet0/0
+ description WAN-TO-R-HQ-01
+ ip address 203.0.113.1 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description LAN-TO-SRV-PUBLIC-WEB
+ ip address 198.51.100.1 255.255.255.0
+ no shutdown
+!
