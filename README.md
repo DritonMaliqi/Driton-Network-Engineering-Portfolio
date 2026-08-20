@@ -23,15 +23,15 @@ My objective is to demonstrate a structured engineering approach:
 
 | Project | Technologies | Status |
 |---|---|---|
-| [01 â€“ VLAN Troubleshooting](./01-VLAN-Troubleshooting/) | VLAN, DHCP, IPv4, Cisco IOS, DNS | Completed |
-| [02 â€“ DHCP Troubleshooting](./02-DHCP-Troubleshooting/) | DHCP pools, relay, VLANs | Completed |
-| [03 â€“ Trunk Troubleshooting](./03-Trunk-Troubleshooting) | 802.1Q, allowed VLANs, inter-switch trunk | Completed |
+| [01 - VLAN Troubleshooting](./01-VLAN-Troubleshooting/) | VLAN, DHCP, IPv4, Cisco IOS, DNS | Completed |
+| [02 - DHCP Troubleshooting](./02-DHCP-Troubleshooting/) | DHCP pools, relay, VLANs | Completed |
+| [03 - Trunk Troubleshooting](./03-Trunk-Troubleshooting) | 802.1Q, allowed VLANs, inter-switch trunk | Completed |
 | [04 - OSPF Troubleshooting](./04-OSPF-Troubleshooting) | OSPF neighbors, area mismatch, routing tables | Completed |
-| [05 â€“ ACL and NAT Troubleshooting](./05-ACL-NAT-Troubleshooting/) | ACL, PAT, OSPF default route, Internet access | Completed |
-| 06 â€“ GRE VPN and OSPF | GRE tunnel, OSPF, site connectivity | Planned |
-| 07 â€“ FortiGate Troubleshooting | Policies, routing, NAT, VPN | Planned |
-| 08 â€“ Network Automation | Python, PowerShell, backups, validation | Planned |
-| [09 – AI-Assisted Network Troubleshooting Platform](./09-AI-Network-Troubleshooting-Platform/) | PowerShell, Cisco IOS, Rule Engine, Ollama AI, Windows GUI | In Progress |
+| [05 - ACL and NAT Troubleshooting](./05-ACL-NAT-Troubleshooting/) | ACL, PAT, OSPF default route, Internet access | Completed |
+| 06 - GRE VPN and OSPF | GRE tunnel, OSPF, site connectivity | Planned |
+| 07 - FortiGate Troubleshooting | Policies, routing, NAT, VPN | Planned |
+| 08 - Network Automation | Python, PowerShell, backups, validation | Planned |
+| [09 - AI-Assisted Network Troubleshooting Platform](./09-AI-Network-Troubleshooting-Platform/) | PowerShell, Cisco IOS, Rule Engine, Ollama AI, Windows GUI | In Progress |
 
 ## Technical Skills
 
