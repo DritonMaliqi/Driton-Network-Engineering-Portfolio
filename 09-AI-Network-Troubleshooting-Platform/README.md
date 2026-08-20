@@ -1,5 +1,8 @@
 ﻿# 09 - AI-Assisted Network Troubleshooting Platform
 
+![AI-Assisted Network Troubleshooting Platform](./topology/AI-Network-Troubleshooting-Platform.png)
+
+
 A practical Network Engineering and NOC troubleshooting platform built with PowerShell, deterministic rule-based diagnostics, evidence correlation, root-cause analysis, incident management, Windows GUI and optional local Ollama AI integration.
 
 **Status:** In Progress

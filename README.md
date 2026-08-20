@@ -31,7 +31,7 @@ My objective is to demonstrate a structured engineering approach:
 | 06 - GRE VPN and OSPF | GRE tunnel, OSPF, site connectivity | Planned |
 | 07 - FortiGate Troubleshooting | Policies, routing, NAT, VPN | Planned |
 | 08 - Network Automation | Python, PowerShell, backups, validation | Planned |
-| [09 - AI-Assisted Network Troubleshooting Platform](./09-AI-Network-Troubleshooting-Platform/) | PowerShell, Cisco IOS, Rule Engine, Ollama AI, Windows GUI | In Progress |
+| [09 - AI-Assisted Network Troubleshooting Platform](./09-AI-Network-Troubleshooting-Platform/) | PowerShell, Cisco IOS, Rule Engine, Ollama AI, Windows GUI | Completed |
 
 ## Technical Skills
 
