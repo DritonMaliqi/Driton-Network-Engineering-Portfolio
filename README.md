@@ -1,4 +1,4 @@
-# Driton Maliqi – Network Engineering Portfolio
+﻿# Driton Maliqi â€“ Network Engineering Portfolio
 
 Welcome to my hands-on Network Engineering portfolio.
 
@@ -6,11 +6,11 @@ This repository documents practical CCNA labs and a growing roadmap toward CCNP-
 
 My objective is to demonstrate a structured engineering approach:
 
-**Identify the symptom → isolate the fault → collect evidence → apply the smallest corrective change → verify service restoration → document the incident.**
+**Identify the symptom â†’ isolate the fault â†’ collect evidence â†’ apply the smallest corrective change â†’ verify service restoration â†’ document the incident.**
 
 ## Professional Focus
 
-- Network Engineering – CCNA Track
+- Network Engineering â€“ CCNA Track
 - Routing and Switching
 - Network Troubleshooting
 - Network Security Fundamentals
@@ -23,14 +23,15 @@ My objective is to demonstrate a structured engineering approach:
 
 | Project | Technologies | Status |
 |---|---|---|
-| [01 – VLAN Troubleshooting](./01-VLAN-Troubleshooting/) | VLAN, DHCP, IPv4, Cisco IOS, DNS | Completed |
-| [02 – DHCP Troubleshooting](./02-DHCP-Troubleshooting/) | DHCP pools, relay, VLANs | Completed |
-| [03 – Trunk Troubleshooting](./03-Trunk-Troubleshooting) | 802.1Q, allowed VLANs, inter-switch trunk | Completed |
+| [01 â€“ VLAN Troubleshooting](./01-VLAN-Troubleshooting/) | VLAN, DHCP, IPv4, Cisco IOS, DNS | Completed |
+| [02 â€“ DHCP Troubleshooting](./02-DHCP-Troubleshooting/) | DHCP pools, relay, VLANs | Completed |
+| [03 â€“ Trunk Troubleshooting](./03-Trunk-Troubleshooting) | 802.1Q, allowed VLANs, inter-switch trunk | Completed |
 | [04 - OSPF Troubleshooting](./04-OSPF-Troubleshooting) | OSPF neighbors, area mismatch, routing tables | Completed |
-| [05 – ACL and NAT Troubleshooting](./05-ACL-NAT-Troubleshooting/) | ACL, PAT, OSPF default route, Internet access | Completed |
-| 06 – GRE VPN and OSPF | GRE tunnel, OSPF, site connectivity | Planned |
-| 07 – FortiGate Troubleshooting | Policies, routing, NAT, VPN | Planned |
-| 08 – Network Automation | Python, PowerShell, backups, validation | Planned |
+| [05 â€“ ACL and NAT Troubleshooting](./05-ACL-NAT-Troubleshooting/) | ACL, PAT, OSPF default route, Internet access | Completed |
+| 06 â€“ GRE VPN and OSPF | GRE tunnel, OSPF, site connectivity | Planned |
+| 07 â€“ FortiGate Troubleshooting | Policies, routing, NAT, VPN | Planned |
+| 08 â€“ Network Automation | Python, PowerShell, backups, validation | Planned |
+| [09 – AI-Assisted Network Troubleshooting Platform](./09-AI-Network-Troubleshooting-Platform/) | PowerShell, Cisco IOS, Rule Engine, Ollama AI, Windows GUI | In Progress |
 
 ## Technical Skills
 
@@ -91,6 +92,6 @@ Each completed project can include:
 ## Author
 
 **Driton Maliqi**  
-Network Engineering – CCNA Track  
+Network Engineering â€“ CCNA Track  
 Focused on practical networking, troubleshooting, security, and automation.
 

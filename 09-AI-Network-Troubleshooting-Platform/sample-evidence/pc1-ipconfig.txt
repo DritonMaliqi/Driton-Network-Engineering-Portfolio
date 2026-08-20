@@ -1,0 +1,5 @@
+PC1
+
+IPv4 Address: 169.254.20.15
+Subnet Mask: 255.255.0.0
+Default Gateway:
