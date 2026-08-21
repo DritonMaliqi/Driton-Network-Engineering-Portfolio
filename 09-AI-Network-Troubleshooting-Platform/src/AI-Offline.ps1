@@ -6,476 +6,70 @@
     [string]$Engine = "Fast"
 )
 
+$ErrorActionPreference = "Stop"
+
+$RuleFolder = Join-Path $PSScriptRoot "rules"
+
+if (-not (Test-Path $RuleFolder)) {
+    Write-Output "ENGINE ERROR: Rules folder nuk u gjet: $RuleFolder"
+    exit 1
+}
+
+Get-ChildItem $RuleFolder -Filter "*.ps1" |
+    Sort-Object Name |
+    ForEach-Object {
+        . $_.FullName
+    }
+
 function Get-EvidenceType {
     param([string]$Content)
 
     if (
         $Content -match '(?i)Windows IP Configuration' -or
         $Content -match '(?i)IPv4 Address' -or
-        $Content -match '(?i)Default Gateway.*:'
+        $Content -match '(?i)Default Gateway'
     ) {
         return "WINDOWS_IPCONFIG"
-    }
-
-    if ($Content -match '(?i)VLAN Name\s+Status\s+Ports|show vlan brief') {
-        return "VLAN"
     }
 
     if ($Content -match '(?i)Vlans allowed on trunk|show interfaces trunk') {
         return "TRUNK"
     }
 
-    if ($Content -match '(?i)Neighbor ID\s+Pri\s+State|show ip ospf neighbor') {
-        return "OSPF_NEIGHBOR"
+    if ($Content -match '(?i)VLAN Name\s+Status\s+Ports|show vlan brief') {
+        return "VLAN"
+    }
+
+    if ($Content -match '(?i)OSPF|show ip ospf') {
+        return "OSPF"
+    }
+
+    if ($Content -match '(?i)EIGRP|show ip eigrp') {
+        return "EIGRP"
+    }
+
+    if ($Content -match '(?i)\bBGP\b|show ip bgp') {
+        return "BGP"
+    }
+
+    if ($Content -match '(?i)access-list|show access-lists|access-group') {
+        return "ACL"
+    }
+
+    if ($Content -match '(?i)\bNAT\b|show ip nat') {
+        return "NAT"
     }
 
     if ($Content -match '(?i)Gateway of last resort|show ip route') {
         return "ROUTING"
     }
 
-    if ($Content -match '(?i)Interface\s+IP-Address\s+OK\?|show ip interface brief') {
-        return "INTERFACES"
+    if ($Content -match '(?i)IPv6|show ipv6') {
+        return "IPV6"
     }
 
-    if ($Content -match '(?i)Current configuration|Building configuration|show running-config') {
-        return "RUNNING_CONFIG"
-    }
-
-    if ($Content -match '(?i)show interfaces\s+\S+|line protocol is|Last input|Last clearing') {
-        return "INTERFACE_DETAIL"
-    }
-
-    if ($Content -match '(?i)Extended IP access list|Standard IP access list|show access-lists') {
-        return "ACL"
-    }
-
-    if ($Content -match '(?i)Inside global|show ip nat translations') {
-        return "NAT"
-    }
-
-    if ($Content -match '(?i)Syslog|%LINK-|%LINEPROTO-|show logging') {
-        return "LOGGING"
-    }
-
-    return "UNKNOWN"
+    return "TEXT"
 }
-
-function Add-Finding {
-    param(
-        [string]$Category,
-        [string]$Severity,
-        [string]$Role,
-        [string]$Validation,
-        [string]$Problem,
-        [string]$Evidence,
-        [string]$Fix,
-        [string]$Verify,
-        [string]$NextCommand,
-        [int]$Confidence,
-        [int]$Priority,
-        [string]$Interface = ""
-    )
-
-    [PSCustomObject]@{
-        Category    = $Category
-        Severity    = $Severity
-        Role        = $Role
-        Validation  = $Validation
-        Problem     = $Problem
-        Evidence    = $Evidence
-        Fix         = $Fix
-        Verify      = $Verify
-        NextCommand = $NextCommand
-        Confidence  = $Confidence
-        Priority    = $Priority
-        Interface   = $Interface
-    }
-}
-
-function Get-AdminDownInterfaces {
-    param([string]$Text)
-
-    $result = @()
-
-    foreach ($line in ($Text -split "`r?`n")) {
-
-        if (
-            $line -match '(?i)^\s*((?:GigabitEthernet|FastEthernet|Ethernet|Serial|Gi|Fa|Se)[A-Za-z0-9\/\.\-]+)\s+.*administratively down'
-        ) {
-            $result += $matches[1]
-        }
-    }
-
-    return $result
-}
-
-function Get-UpUpInterfaces {
-    param([string]$Text)
-
-    $result = @()
-
-    foreach ($line in ($Text -split "`r?`n")) {
-
-        if (
-            $line -match '(?i)^\s*((?:GigabitEthernet|FastEthernet|Ethernet|Serial|Gi|Fa|Se)[A-Za-z0-9\/\.\-]+)\s+.*\s+up\s+up\s*$'
-        ) {
-            $result += $matches[1]
-        }
-    }
-
-    return $result
-}
-
-function Invoke-RuleEngine {
-        # =========================================================
-    # VLAN ACCESS PORT MISMATCH - TEXT / PROMPT DETECTION
-    # =========================================================
-
-    $hostVlanMatch = [regex]::Match(
-        $Text,
-        '(?i)(?:PC\d*|hosti?|klienti?)\s+.*?\bVLAN\s+(\d+)'
-    )
-
-    $portVlanMatch = [regex]::Match(
-        $Text,
-        '(?i)(?:porta|porti|port|interface)\s+((?:Fa|Gi|FastEthernet|GigabitEthernet)[0-9\/\.]+)\s+.*?\bVLAN\s+(\d+)'
-    )
-
-    if (
-        $hostVlanMatch.Success -and
-        $portVlanMatch.Success
-    ) {
-
-        $hostVlan = $hostVlanMatch.Groups[1].Value
-        $interfaceName = $portVlanMatch.Groups[1].Value
-        $portVlan = $portVlanMatch.Groups[2].Value
-
-        if ($hostVlan -ne $portVlan) {
-
-            $findings += Add-Finding `
-                -Category "VLAN" `
-                -Severity "HIGH" `
-                -Role "ROOT_CAUSE" `
-                -Validation "CONFIRMED" `
-                -Problem "Access Port VLAN Mismatch." `
-                -Evidence "Hosti eshte ne VLAN $hostVlan, por $interfaceName eshte ne VLAN $portVlan." `
-                -Fix "Konfiguro $interfaceName si access port ne VLAN $hostVlan." `
-                -Verify "show vlan brief; show interfaces $interfaceName switchport" `
-                -NextCommand "show interfaces $interfaceName switchport" `
-                -Confidence 98 `
-                -Priority 20 `
-                -Interface $interfaceName
-        }
-    }
-
-    # =========================================================
-    # APIPA
-    # =========================================================
-
-    if ($Text -match '(?i)\b169\.254\.\d+\.\d+\b|APIPA') {
-
-        $validation = if ($types -contains "WINDOWS_IPCONFIG") {
-            "CONFIRMED"
-        } else {
-            "PROBABLE"
-        }
-
-        $findings += Add-Finding `
-            -Category "DHCP" `
-            -Severity "HIGH" `
-            -Role "SYMPTOM" `
-            -Validation $validation `
-            -Problem "Klienti nuk ka marre DHCP lease." `
-            -Evidence "U identifikua APIPA 169.254.x.x." `
-            -Fix "Kontrollo Layer 1/2, pastaj DHCP pool dhe relay." `
-            -Verify "ipconfig /renew; show ip dhcp binding" `
-            -NextCommand "show ip dhcp binding" `
-            -Confidence 95 `
-            -Priority 40
-    }
-
-    # =========================================================
-    # DEFAULT GATEWAY
-    # =========================================================
-
-    if (
-        $Text -match '(?im)^\s*Default Gateway\s*:\s*$' -or
-        $Text -match '(?i)default gateway.*mungon|nuk ka default gateway'
-    ) {
-
-        $findings += Add-Finding `
-            -Category "IP" `
-            -Severity "HIGH" `
-            -Role "SYMPTOM" `
-            -Validation "CONFIRMED" `
-            -Problem "Default Gateway mungon." `
-            -Evidence "Windows IP configuration tregon gateway bosh." `
-            -Fix "Konfirmo fillimisht DHCP/IP addressing para konfigurimit manual." `
-            -Verify "ipconfig /all; ping gateway" `
-            -NextCommand "ipconfig /all" `
-            -Confidence 95 `
-            -Priority 40
-    }
-
-    # =========================================================
-    # DEFAULT ROUTE
-    # =========================================================
-
-    if ($Text -match '(?i)Gateway of last resort is not set') {
-
-        $findings += Add-Finding `
-            -Category "ROUTING" `
-            -Severity "HIGH" `
-            -Role "SECONDARY_ISSUE" `
-            -Validation "CONFIRMED" `
-            -Problem "Default route mungon." `
-            -Evidence "Routing table tregon Gateway of last resort is not set." `
-            -Fix "Konfiguro default route vetem nese topologjia e kerkon." `
-            -Verify "show ip route; ping next-hop; traceroute" `
-            -NextCommand "show ip route" `
-            -Confidence 97 `
-            -Priority 30
-    }
-
-    return $findings
-}
-
-function Invoke-ContradictionEngine {
-    param(
-        [string]$Text
-    )
-
-    $contradictions = @()
-
-    $upInterfaces = @(Get-UpUpInterfaces -Text $Text)
-
-    foreach ($ifName in $upInterfaces) {
-
-        $escaped = [regex]::Escape($ifName)
-
-        if (
-            $Text -match "(?is)interface\s+$escaped\b.*?\bshutdown\b"
-        ) {
-
-            $contradictions += [PSCustomObject]@{
-                Type       = "INTERFACE_STATE"
-                Interface  = $ifName
-                Description = "Interface $ifName raportohet up/up, por running-config permban shutdown."
-                Explanation = "Evidence mund te jete mbledhur ne kohe te ndryshme, ose interface mund te jete ndryshuar pas capture-it."
-            }
-        }
-    }
-
-    return $contradictions
-}
-
-function Get-KnownEvidence {
-    param([array]$Files)
-
-    return @(
-        $Files.Type |
-        Where-Object { $_ -ne "UNKNOWN" } |
-        Sort-Object -Unique
-    )
-}
-
-function Get-SmartMissingEvidence {
-    param(
-        [array]$Known,
-        [array]$Findings,
-        [array]$Contradictions
-    )
-
-    $missing = @()
-
-    # Contradiction-specific evidence
-    foreach ($c in $Contradictions) {
-
-        if ($c.Type -eq "INTERFACE_STATE") {
-
-            if ($Known -notcontains "INTERFACE_DETAIL") {
-                $missing += "show interfaces $($c.Interface)"
-            }
-
-            $missing += "show running-config interface $($c.Interface)"
-
-            if ($Known -notcontains "LOGGING") {
-                $missing += "show logging | include $($c.Interface)"
-            }
-        }
-    }
-
-    # Normal evidence expansion only when needed
-    if ($Contradictions.Count -eq 0) {
-
-        foreach ($f in $Findings) {
-
-            if (
-                $f.Category -eq "DHCP" -and
-                $Known -notcontains "RUNNING_CONFIG"
-            ) {
-                $missing += "show running-config | include dhcp|helper"
-            }
-
-            if (
-                $f.Category -eq "ROUTING" -and
-                $Known -notcontains "RUNNING_CONFIG"
-            ) {
-                $missing += "show running-config | include ^ip route"
-            }
-        }
-    }
-
-    return @($missing | Sort-Object -Unique)
-}
-
-function Get-PossibleExplanations {
-    param([array]$Contradictions)
-
-    $items = @()
-
-    foreach ($c in $Contradictions) {
-
-        if ($c.Type -eq "INTERFACE_STATE") {
-
-            $items += "File-t mund te jene mbledhur ne kohe te ndryshme."
-            $items += "$($c.Interface) mund te jete bere no shutdown pas running-config capture."
-            $items += "show ip interface brief mund te jete me i ri se running-config evidence."
-            $items += "Duhet evidence aktuale nga vet interface-i para se te aplikohet ndryshim."
-        }
-    }
-
-    return @($items | Sort-Object -Unique)
-}
-
-function Get-Decision {
-    param(
-        [array]$Findings,
-        [array]$Contradictions,
-        [array]$MissingEvidence
-    )
-
-    if ($Contradictions.Count -gt 0) {
-        return "COLLECT_MORE"
-    }
-
-    $confirmedRoot = @(
-        $Findings |
-        Where-Object {
-            $_.Role -eq "ROOT_CAUSE" -and
-            $_.Validation -eq "CONFIRMED"
-        }
-    )
-
-    if ($confirmedRoot.Count -gt 0) {
-        return "FIX"
-    }
-
-    if ($MissingEvidence.Count -gt 0) {
-        return "COLLECT_MORE"
-    }
-
-    if ($Findings.Count -gt 0) {
-        return "VERIFY"
-    }
-
-    return "STOP"
-}
-
-function Invoke-Ollama {
-    param(
-        [string]$InputText,
-        [array]$Findings,
-        [array]$Contradictions,
-        [array]$MissingEvidence,
-        [string]$Decision
-    )
-
-    $summary = ""
-
-    foreach ($f in $Findings) {
-
-        $summary += @"
-
-$($f.Validation) / $($f.Role)
-$($f.Category)
-$($f.Problem)
-Confidence: $($f.Confidence)%
-
-"@
-    }
-
-    $contradictionText = (
-        $Contradictions |
-        ForEach-Object { $_.Description }
-    ) -join "`n"
-
-    $missingText = $MissingEvidence -join "`n"
-
-    $aiPrompt = @"
-Ti je Network Engineer Troubleshooting Assistant.
-
-Mos shpik fakte.
-Mos propozo fix kur ka contradiction te pazgjidhur.
-Respekto Decision nga motori lokal.
-
-FINDINGS:
-$summary
-
-CONTRADICTIONS:
-$contradictionText
-
-MISSING EVIDENCE:
-$missingText
-
-DECISION:
-$Decision
-
-RAW INPUT:
-$InputText
-
-Pergjigju shkurt ne shqip:
-
-DECISION:
-ARSYEJA:
-EVIDENCE QE KEMI:
-EVIDENCE QE MUNGON:
-HAPI TJETER:
-"@
-
-    $body = @{
-        model  = "llama3.2"
-        prompt = $aiPrompt
-        stream = $false
-
-        options = @{
-            temperature = 0.05
-            num_predict = 300
-        }
-    } | ConvertTo-Json -Depth 10
-
-    try {
-
-        Write-Host ""
-        Write-Host "AI po interpreton decision engine..." -ForegroundColor Yellow
-
-        $response = Invoke-RestMethod `
-            -Uri "http://127.0.0.1:11434/api/generate" `
-            -Method Post `
-            -ContentType "application/json" `
-            -Body $body
-
-        return $response.response
-    }
-    catch {
-
-        return "Gabim Ollama: $($_.Exception.Message)"
-    }
-}
-
-# =============================================================
-# INPUT
-# =============================================================
 
 $inputText = ""
 $fileSummary = @()
@@ -485,248 +79,264 @@ if ($FilePath) {
     foreach ($file in $FilePath) {
 
         if (-not (Test-Path $file)) {
-
-            Write-Host "File nuk ekziston: $file" -ForegroundColor Red
+            Write-Output "ENGINE ERROR: File nuk ekziston: $file"
             exit 1
         }
 
-        $content = Get-Content -Path $file -Raw
+        $content = Get-Content $file -Raw
 
         if ([string]::IsNullOrWhiteSpace($content)) {
             continue
         }
 
-        $type = Get-EvidenceType -Content $content
+        $type = Get-EvidenceType $content
 
         $fileSummary += [PSCustomObject]@{
-            File    = $file
-            Type    = $type
-            Size    = $content.Length
-            Content = $content
+            File = $file
+            Type = $type
         }
 
-        $inputText += @"
-
-============================================================
-FILE: $file
-TYPE: $type
-============================================================
-
-$content
-
-"@
+        $inputText += "`r`n$content`r`n"
     }
 }
 
-if ($Prompt) {
-
-    $inputText += @"
-
-============================================================
-INCIDENT
-============================================================
-
-$Prompt
-
-"@
+if (-not [string]::IsNullOrWhiteSpace($Prompt)) {
+    $inputText += "`r`n$Prompt`r`n"
 }
+
+Write-Output ""
+Write-Output "============================================================"
+Write-Output " NETWORK TROUBLESHOOTER v5.7"
+Write-Output " FULL CCNA / CCNP RULE PACK - RELIABILITY PATCH"
+Write-Output "============================================================"
+Write-Output ""
 
 if ([string]::IsNullOrWhiteSpace($inputText)) {
 
-    Write-Host ""
-    Write-Host "Network Troubleshooter v3.9"
-    Write-Host "Evidence Freshness & Smart Next-Step Engine"
+    Write-Output "Nuk u dha incident description ose evidence."
     exit
 }
 
-# =============================================================
-# ENGINE
-# =============================================================
-
-$knownEvidence = @(Get-KnownEvidence -Files $fileSummary)
-
-$findings = @(
-    Invoke-RuleEngine `
-        -Text $inputText `
-        -EvidenceFiles $fileSummary |
-    Sort-Object Priority, Category
+$knownEvidence = @(
+    $fileSummary.Type |
+    Sort-Object -Unique
 )
 
-$contradictions = @(
-    Invoke-ContradictionEngine -Text $inputText
-)
+Write-Output "KNOWN EVIDENCE:"
 
-$missingEvidence = @(
-    Get-SmartMissingEvidence `
-        -Known $knownEvidence `
-        -Findings $findings `
-        -Contradictions $contradictions
-)
-
-$possibleExplanations = @(
-    Get-PossibleExplanations `
-        -Contradictions $contradictions
-)
-
-$decision = Get-Decision `
-    -Findings $findings `
-    -Contradictions $contradictions `
-    -MissingEvidence $missingEvidence
-
-# =============================================================
-# REPORT
-# =============================================================
-
-Write-Host ""
-Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host " NETWORK TROUBLESHOOTER v3.9" -ForegroundColor Cyan
-Write-Host " EVIDENCE FRESHNESS & SMART NEXT-STEP ENGINE" -ForegroundColor Cyan
-Write-Host "============================================================" -ForegroundColor Cyan
-
-Write-Host ""
-Write-Host "KNOWN EVIDENCE:" -ForegroundColor Yellow
-
-foreach ($item in $knownEvidence) {
-    Write-Host "- $item"
+if ($knownEvidence.Count -eq 0) {
+    Write-Output "- INCIDENT TEXT"
+}
+else {
+    foreach ($item in $knownEvidence) {
+        Write-Output "- $item"
+    }
 }
 
-Write-Host ""
-Write-Host "FINDINGS: $($findings.Count)" -ForegroundColor Yellow
+$findings = @()
+
+$ruleFunctions = @(
+    "Get-RuleLayer2",
+    "Get-RuleDhcpDns",
+    "Get-RuleRouting",
+    "Get-RuleOSPF",
+    "Get-RuleEIGRP",
+    "Get-RuleBGP",
+    "Get-RuleAclNat",
+    "Get-RuleSecurity",
+    "Get-RuleVPN",
+    "Get-RuleIPv6"
+)
+
+foreach ($ruleFunction in $ruleFunctions) {
+
+    if (Get-Command $ruleFunction -ErrorAction SilentlyContinue) {
+
+        try {
+            $result = & $ruleFunction -Text $inputText
+
+            if ($null -ne $result) {
+                $findings += @($result)
+            }
+        }
+        catch {
+            Write-Output ""
+            Write-Output "RULE ERROR [$ruleFunction]"
+            Write-Output $_.Exception.Message
+        }
+    }
+}
+
+$findings = @(
+    $findings |
+    Sort-Object Priority, Category, Problem
+)
+
+Write-Output ""
+Write-Output "FINDINGS: $($findings.Count)"
+Write-Output ""
 
 foreach ($f in $findings) {
 
-    Write-Host ""
-    Write-Host "[$($f.Severity)] [$($f.Validation)] [$($f.Role)] $($f.Category)" -ForegroundColor Cyan
-    Write-Host "Problem    : $($f.Problem)"
-    Write-Host "Evidence   : $($f.Evidence)"
-    Write-Host "Confidence : $($f.Confidence)%"
+    Write-Output "[$($f.Severity)] [$($f.Validation)] [$($f.Role)] $($f.Category)"
+    Write-Output "Problem    : $($f.Problem)"
+    Write-Output "Evidence   : $($f.Evidence)"
+    Write-Output "Confidence : $($f.Confidence)%"
 
     if ($f.Interface) {
-        Write-Host "Interface  : $($f.Interface)"
+        Write-Output "Interface  : $($f.Interface)"
     }
+
+    Write-Output ""
 }
 
-Write-Host ""
-Write-Host "============================================================" -ForegroundColor DarkCyan
-Write-Host " CONTRADICTIONS" -ForegroundColor Yellow
-Write-Host "============================================================" -ForegroundColor DarkCyan
-Write-Host ""
+Write-Output "============================================================"
+Write-Output " DECISION"
+Write-Output "============================================================"
+Write-Output ""
 
-if ($contradictions.Count -gt 0) {
+$rootCauses = @(
+    $findings |
+    Where-Object {
+        $_.Role -eq "ROOT_CAUSE" -and
+        $_.Validation -eq "CONFIRMED"
+    }
+)
 
-    foreach ($c in $contradictions) {
+$probableRoot = @(
+    $findings |
+    Where-Object {
+        $_.Role -eq "ROOT_CAUSE" -and
+        $_.Validation -eq "PROBABLE"
+    }
+)
 
-        Write-Host "- $($c.Description)" -ForegroundColor Red
+$symptoms = @(
+    $findings |
+    Where-Object {
+        $_.Role -eq "SYMPTOM"
+    }
+)
+
+if ($rootCauses.Count -gt 0) {
+
+    $decision = "FIX"
+
+    Write-Output "FIX"
+    Write-Output "Ka root cause te konfirmuar."
+
+}
+elseif ($probableRoot.Count -gt 0) {
+
+    $decision = "VERIFY"
+
+    Write-Output "VERIFY"
+    Write-Output "Ka root cause probable. Verifiko para ndryshimit."
+
+}
+elseif ($symptoms.Count -gt 0) {
+
+    $decision = "COLLECT_MORE"
+
+    Write-Output "COLLECT_MORE"
+    Write-Output "Ka simptoma, por root cause ende nuk eshte konfirmuar."
+
+}
+else {
+
+    $decision = "STOP"
+
+    Write-Output "STOP"
+    Write-Output "Nuk ka evidence te mjaftueshme per troubleshooting te sigurt."
+}
+
+Write-Output ""
+Write-Output "============================================================"
+Write-Output " SMART NEXT STEP"
+Write-Output "============================================================"
+Write-Output ""
+
+if ($findings.Count -gt 0) {
+
+    $next = $findings[0].NextCommand
+
+    if ($next) {
+        Write-Output $next
+    }
+    else {
+        Write-Output "Mblidh evidence shtese."
     }
 }
 else {
 
-    Write-Host "Nuk u gjet contradiction." -ForegroundColor Green
-}
-
-Write-Host ""
-Write-Host "============================================================" -ForegroundColor DarkCyan
-Write-Host " POSSIBLE EXPLANATIONS" -ForegroundColor Yellow
-Write-Host "============================================================" -ForegroundColor DarkCyan
-Write-Host ""
-
-if ($possibleExplanations.Count -gt 0) {
-
-    foreach ($item in $possibleExplanations) {
-        Write-Host "- $item"
-    }
-}
-else {
-
-    Write-Host "Nuk ka contradiction qe kerkon explanation."
-}
-
-Write-Host ""
-Write-Host "============================================================" -ForegroundColor DarkCyan
-Write-Host " MISSING EVIDENCE" -ForegroundColor Yellow
-Write-Host "============================================================" -ForegroundColor DarkCyan
-Write-Host ""
-
-if ($missingEvidence.Count -gt 0) {
-
-    foreach ($item in $missingEvidence) {
-        Write-Host "- $item" -ForegroundColor Green
-    }
-}
-else {
-
-    Write-Host "Nuk kerkohet evidence shtese ne kete faze."
-}
-
-Write-Host ""
-Write-Host "============================================================" -ForegroundColor DarkCyan
-Write-Host " DECISION" -ForegroundColor Yellow
-Write-Host "============================================================" -ForegroundColor DarkCyan
-Write-Host ""
-
-switch ($decision) {
-
-    "FIX" {
-        Write-Host "FIX" -ForegroundColor Green
-        Write-Host "Ka root cause te konfirmuar dhe nuk ka contradiction te pazgjidhur."
-    }
-
-    "VERIFY" {
-        Write-Host "VERIFY" -ForegroundColor Cyan
-        Write-Host "Ka findings, por duhet verifikim para ndryshimit."
-    }
-
-    "COLLECT_MORE" {
-        Write-Host "COLLECT_MORE" -ForegroundColor Yellow
-        Write-Host "Mos apliko ndryshim ende. Duhet evidence shtese."
-    }
-
-    "STOP" {
-        Write-Host "STOP" -ForegroundColor Red
-        Write-Host "Nuk ka evidence te mjaftueshme per troubleshooting te sigurt."
-    }
-}
-
-Write-Host ""
-Write-Host "============================================================" -ForegroundColor DarkCyan
-Write-Host " SMART NEXT STEP" -ForegroundColor Yellow
-Write-Host "============================================================" -ForegroundColor DarkCyan
-Write-Host ""
-
-if ($missingEvidence.Count -gt 0) {
-
-    Write-Host $missingEvidence[0] -ForegroundColor Green
-}
-elseif ($findings.Count -gt 0) {
-
-    Write-Host $findings[0].NextCommand -ForegroundColor Green
-}
-else {
-
-    Write-Host "Mblidh evidence shtese."
-}
-
-if ($Engine -eq "Fast") {
-
-    Write-Host ""
-    Write-Host "FAST MODE: Ollama nuk u perdor." -ForegroundColor Green
-    exit
+    Write-Output "Mblidh evidence shtese."
 }
 
 if ($Engine -eq "Hybrid") {
 
-    Write-Host ""
-    Write-Host "============================================================" -ForegroundColor Cyan
-    Write-Host " AI DECISION ANALYSIS" -ForegroundColor Cyan
-    Write-Host "============================================================" -ForegroundColor Cyan
+    Write-Output ""
+    Write-Output "============================================================"
+    Write-Output " HYBRID AI"
+    Write-Output "============================================================"
+    Write-Output ""
 
-    $result = Invoke-Ollama `
-        -InputText $inputText `
-        -Findings $findings `
-        -Contradictions $contradictions `
-        -MissingEvidence $missingEvidence `
-        -Decision $decision
+    try {
 
-    Write-Output $result
+        $summary = (
+            $findings |
+            ForEach-Object {
+                "$($_.Category): $($_.Problem) [$($_.Confidence)%]"
+            }
+        ) -join "`n"
+
+        $aiPrompt = @"
+Ti je NETOPS Network Troubleshooting Assistant.
+
+Mos shpik fakte.
+Perdor findings e rule engine.
+Pergjigju ne shqip.
+Jep:
+1. Analizen
+2. Root cause
+3. Fix
+4. Verification
+5. Risk para ndryshimit
+
+DECISION:
+$decision
+
+FINDINGS:
+$summary
+
+RAW INCIDENT:
+$inputText
+"@
+
+        $body = @{
+            model = "llama3.2"
+            prompt = $aiPrompt
+            stream = $false
+            options = @{
+                temperature = 0.05
+                num_predict = 350
+            }
+        } | ConvertTo-Json -Depth 10
+
+        $response = Invoke-RestMethod `
+            -Uri "http://127.0.0.1:11434/api/generate" `
+            -Method Post `
+            -ContentType "application/json" `
+            -Body $body
+
+        Write-Output $response.response
+    }
+    catch {
+        Write-Output "Ollama unavailable: $($_.Exception.Message)"
+    }
+}
+else {
+
+    Write-Output ""
+    Write-Output "FAST MODE: Ollama nuk u perdor."
 }
 

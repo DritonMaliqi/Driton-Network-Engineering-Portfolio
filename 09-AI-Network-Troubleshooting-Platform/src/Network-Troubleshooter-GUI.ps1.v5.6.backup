@@ -1,4 +1,4 @@
-﻿$WorkerPath = Join-Path $PSScriptRoot "Network-Engine-Worker.ps1"
+$WorkerPath = Join-Path $PSScriptRoot "Network-Engine-Worker.ps1"
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
@@ -255,7 +255,7 @@ function New-StatCard {
 
 $form = New-Object System.Windows.Forms.Form
 
-$form.Text = "NETOPS Network Troubleshooter v5.7 Rev.2"
+$form.Text = "NETOPS Network Troubleshooter v5.6"
 $form.StartPosition = "CenterScreen"
 $form.WindowState = "Maximized"
 $form.MinimumSize = New-Object System.Drawing.Size(1200,760)
@@ -373,7 +373,7 @@ $sidebar.Controls.Add($btnWorkflow,0,4)
 $sidebar.Controls.Add($btnSystem,0,5)
 
 $version = New-Object System.Windows.Forms.Label
-$version.Text = "v5.7 Rev.2 | Reliability Patch / Smart History"
+$version.Text = "v5.6  |  Incident Details / Smart History"
 $version.Dock = "Fill"
 $version.Padding = New-Object System.Windows.Forms.Padding(26,0,0,0)
 $version.TextAlign = "MiddleLeft"
@@ -1531,9 +1531,6 @@ $form.Add_Shown({
 })
 
 [System.Windows.Forms.Application]::Run($form)
-
-
-
 
 
 

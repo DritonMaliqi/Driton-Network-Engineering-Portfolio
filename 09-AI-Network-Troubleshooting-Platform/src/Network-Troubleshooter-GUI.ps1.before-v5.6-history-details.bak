@@ -1,4 +1,4 @@
-﻿$WorkerPath = Join-Path $PSScriptRoot "Network-Engine-Worker.ps1"
+$WorkerPath = Join-Path $PSScriptRoot "Network-Engine-Worker.ps1"
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
@@ -255,7 +255,7 @@ function New-StatCard {
 
 $form = New-Object System.Windows.Forms.Form
 
-$form.Text = "NETOPS Network Troubleshooter v5.7 Rev.2"
+$form.Text = "NETOPS Network Troubleshooter v5.5"
 $form.StartPosition = "CenterScreen"
 $form.WindowState = "Maximized"
 $form.MinimumSize = New-Object System.Drawing.Size(1200,760)
@@ -373,7 +373,7 @@ $sidebar.Controls.Add($btnWorkflow,0,4)
 $sidebar.Controls.Add($btnSystem,0,5)
 
 $version = New-Object System.Windows.Forms.Label
-$version.Text = "v5.7 Rev.2 | Reliability Patch / Smart History"
+$version.Text = "v5.5  |  Incident Resolution Workflow"
 $version.Dock = "Fill"
 $version.Padding = New-Object System.Windows.Forms.Padding(26,0,0,0)
 $version.TextAlign = "MiddleLeft"
@@ -950,11 +950,10 @@ $historyLayout = New-Object System.Windows.Forms.TableLayoutPanel
 
 $historyLayout.Dock = "Fill"
 $historyLayout.ColumnCount = 1
-$historyLayout.RowCount = 4
+$historyLayout.RowCount = 3
 
 $historyLayout.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",75)))
-$historyLayout.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Percent",62)))
-$historyLayout.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Percent",38)))
+$historyLayout.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Percent",100)))
 $historyLayout.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",65)))
 
 $pageHistory.Controls.Add($historyLayout)
@@ -976,40 +975,6 @@ $historyGrid.Dock = "Fill"
 Style-Grid $historyGrid
 
 $historyLayout.Controls.Add($historyGrid,0,1)
-
-# ============================================================
-# INCIDENT DETAILS PANEL - v5.6
-# ============================================================
-
-$historyDetailsPanel = New-Object System.Windows.Forms.Panel
-$historyDetailsPanel.Dock = "Fill"
-$historyDetailsPanel.BackColor = $CardBG
-$historyDetailsPanel.Padding = New-Object System.Windows.Forms.Padding(12)
-
-$historyDetailsTitle = New-Object System.Windows.Forms.Label
-$historyDetailsTitle.Text = "Incident Details"
-$historyDetailsTitle.Dock = "Top"
-$historyDetailsTitle.Height = 32
-$historyDetailsTitle.ForeColor = $Text
-$historyDetailsTitle.Font = New-Object System.Drawing.Font(
-    "Segoe UI",
-    12,
-    [System.Drawing.FontStyle]::Bold
-)
-
-$historyDetailsBox = New-Object System.Windows.Forms.RichTextBox
-$historyDetailsBox.Dock = "Fill"
-$historyDetailsBox.BackColor = [System.Drawing.Color]::FromArgb(2,8,23)
-$historyDetailsBox.ForeColor = $Text
-$historyDetailsBox.BorderStyle = "None"
-$historyDetailsBox.ReadOnly = $true
-$historyDetailsBox.Font = New-Object System.Drawing.Font("Consolas",10)
-$historyDetailsBox.Text = "Select an incident to view details."
-
-$historyDetailsPanel.Controls.Add($historyDetailsBox)
-$historyDetailsPanel.Controls.Add($historyDetailsTitle)
-
-$historyLayout.Controls.Add($historyDetailsPanel,0,2)
 
 $historyActions = New-Object System.Windows.Forms.FlowLayoutPanel
 $historyActions.Dock = "Fill"
@@ -1043,129 +1008,7 @@ $historyActions.Controls.Add($btnOpenReport)
 $historyActions.Controls.Add($btnResolveIncident)
 $historyActions.Controls.Add($btnOpenIncidentFolder)
 
-$historyLayout.Controls.Add($historyActions,0,3)
-
-function Show-HistoryIncidentDetails {
-
-    if ($historyGrid.SelectedRows.Count -eq 0) {
-
-        $historyDetailsBox.Text = "Select an incident to view details."
-        $btnResolveIncident.Enabled = $false
-
-        return
-    }
-
-    if (-not $historyGrid.Columns.Contains("IncidentID")) {
-        return
-    }
-
-    $incidentId = [string]$historyGrid.SelectedRows[0].Cells["IncidentID"].Value
-    $status = ""
-
-    if ($historyGrid.Columns.Contains("Status")) {
-        $status = [string]$historyGrid.SelectedRows[0].Cells["Status"].Value
-    }
-
-    # Disable Resolve when already resolved/closed
-    if (
-        $status -eq "Resolved" -or
-        $status -eq "Closed"
-    ) {
-
-        $btnResolveIncident.Enabled = $false
-        $btnResolveIncident.Text = "Already Resolved"
-    }
-    else {
-
-        $btnResolveIncident.Enabled = $true
-        $btnResolveIncident.Text = "Mark Resolved"
-    }
-
-    if ([string]::IsNullOrWhiteSpace($incidentId)) {
-        return
-    }
-
-    $incident = $null
-
-    if (Get-Command Get-NetOpsIncident -ErrorAction SilentlyContinue) {
-
-        try {
-            $incident = Get-NetOpsIncident -IncidentID $incidentId
-        }
-        catch {
-            $incident = $null
-        }
-    }
-
-    if ($incident) {
-
-        $description = [string]$incident.Description
-        $rootCause = [string]$incident.RootCause
-        $nextStep = [string]$incident.SmartNextStep
-        $notes = [string]$incident.Notes
-        $decision = [string]$incident.Decision
-        $confidence = [string]$incident.Confidence
-        $category = [string]$incident.Category
-        $severity = [string]$incident.Severity
-        $incidentStatus = [string]$incident.Status
-
-        $reportPath = Join-Path `
-            (Join-Path `
-                (Join-Path (Split-Path $PSScriptRoot) "data\Incidents") `
-                $incidentId
-            ) `
-            "incident-report.md"
-
-        $historyDetailsBox.Text = @"
-INCIDENT ID
-$incidentId
-
-STATUS
-$incidentStatus
-
-CATEGORY
-$category
-
-SEVERITY
-$severity
-
-CONFIDENCE
-$confidence%
-
-DECISION
-$decision
-
-DESCRIPTION
-$description
-
-ROOT CAUSE
-$rootCause
-
-SMART NEXT STEP
-$nextStep
-
-RESOLUTION NOTES
-$notes
-
-REPORT
-$reportPath
-"@
-    }
-    else {
-
-        $historyDetailsBox.Text = @"
-INCIDENT ID
-$incidentId
-
-STATUS
-$status
-
-Incident JSON could not be loaded.
-Use Open Incident Folder to inspect the saved files.
-"@
-    }
-}
-
+$historyLayout.Controls.Add($historyActions,0,2)
 
 function Refresh-History {
 
@@ -1274,7 +1117,6 @@ $btnResolveIncident.Add_Click({
 
         Refresh-History
         Refresh-Dashboard
-        Show-HistoryIncidentDetails
 
         [System.Windows.Forms.MessageBox]::Show(
             "$incidentId marked RESOLVED.",
@@ -1326,17 +1168,6 @@ $btnOpenIncidentFolder.Add_Click({
             "Incident folder was not found.",
             "NETOPS v5.5"
         )
-    }
-})
-
-
-$historyGrid.Add_SelectionChanged({
-
-    try {
-        Show-HistoryIncidentDetails
-    }
-    catch {
-        $historyDetailsBox.Text = "Details error: $($_.Exception.Message)"
     }
 })
 
@@ -1531,9 +1362,6 @@ $form.Add_Shown({
 })
 
 [System.Windows.Forms.Application]::Run($form)
-
-
-
 
 
 

@@ -373,7 +373,7 @@ $sidebar.Controls.Add($btnWorkflow,0,4)
 $sidebar.Controls.Add($btnSystem,0,5)
 
 $version = New-Object System.Windows.Forms.Label
-$version.Text = "v5.7 Rev.2 | Reliability Patch / Smart History"
+$version.Text = "v5.6  |  Incident Details / Smart History"
 $version.Dock = "Fill"
 $version.Padding = New-Object System.Windows.Forms.Padding(26,0,0,0)
 $version.TextAlign = "MiddleLeft"
@@ -1531,7 +1531,6 @@ $form.Add_Shown({
 })
 
 [System.Windows.Forms.Application]::Run($form)
-
 
 
 

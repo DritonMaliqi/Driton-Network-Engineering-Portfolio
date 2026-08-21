@@ -1,4 +1,4 @@
-param(
+﻿param(
     [Parameter(Mandatory=$true)]
     [string]$EnginePath,
 
@@ -23,16 +23,16 @@ if (-not (Test-Path $InputFile)) {
 
 try {
 
-    & $EnginePath `
+    & powershell.exe `
+        -NoProfile `
+        -ExecutionPolicy Bypass `
+        -File $EnginePath `
         -Engine $Mode `
         -FilePath $InputFile
-
 }
 catch {
 
-    Write-Output ""
     Write-Output "WORKER ERROR"
     Write-Output $_.Exception.Message
-
     exit 1
 }
