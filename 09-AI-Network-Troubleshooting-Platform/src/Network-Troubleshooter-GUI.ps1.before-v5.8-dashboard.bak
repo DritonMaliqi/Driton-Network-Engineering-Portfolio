@@ -42,23 +42,18 @@ $Red     = [System.Drawing.Color]::FromArgb(239,68,68)
 # ============================================================
 
 function Get-HistoryData {
-
-    # NETOPS v5.8 - Always resolve history from Project 09\data
-    $projectRoot = Split-Path $PSScriptRoot
-    $historyFile = Join-Path $projectRoot "data\Incident-History.csv"
-
-    if (-not (Test-Path $historyFile)) {
+    if (-not (Test-Path $History)) {
         return @()
     }
 
     try {
-        $rows = @(Import-Csv $historyFile)
-        return $rows
+        return @(Import-Csv $History)
     }
     catch {
         return @()
     }
 }
+
 function Invoke-TroubleshooterEngine {
     param(
         [string]$Prompt = "",
@@ -260,7 +255,7 @@ function New-StatCard {
 
 $form = New-Object System.Windows.Forms.Form
 
-$form.Text = "NETOPS Network Troubleshooter v5.8"
+$form.Text = "NETOPS Network Troubleshooter v5.7 Rev.2"
 $form.StartPosition = "CenterScreen"
 $form.WindowState = "Maximized"
 $form.MinimumSize = New-Object System.Drawing.Size(1200,760)
@@ -378,7 +373,7 @@ $sidebar.Controls.Add($btnWorkflow,0,4)
 $sidebar.Controls.Add($btnSystem,0,5)
 
 $version = New-Object System.Windows.Forms.Label
-$version.Text = "v5.8 | Dashboard Integration / Smart History"
+$version.Text = "v5.7 Rev.2 | Reliability Patch / Smart History"
 $version.Dock = "Fill"
 $version.Padding = New-Object System.Windows.Forms.Padding(26,0,0,0)
 $version.TextAlign = "MiddleLeft"
@@ -648,53 +643,19 @@ function Refresh-Dashboard {
         $ollamaStatus.ForeColor = $Red
     }
 
-        $recent = @(
-    $rows |
-    Sort-Object IncidentID -Descending |
-    Select-Object -First 10
-)
-
-    $table = New-Object System.Data.DataTable
-
-    foreach ($column in @(
-        "IncidentID",
-        "Created",
-        "Status",
-        "Category",
-        "Severity",
-        "Confidence",
-        "Decision"
-    )) {
-        [void]$table.Columns.Add($column)
-    }
-
-    foreach ($incident in $recent) {
-
-        $row = $table.NewRow()
-
-        $row["IncidentID"] = [string]$incident.IncidentID
-        $row["Created"]    = [string]$incident.Created
-        $row["Status"]     = [string]$incident.Status
-        $row["Category"]   = [string]$incident.Category
-        $row["Severity"]   = [string]$incident.Severity
-        $row["Confidence"] = [string]$incident.Confidence
-        $row["Decision"]   = [string]$incident.Decision
-
-        [void]$table.Rows.Add($row)
-    }
+    $recent = @(
+        $rows |
+        Sort-Object DateTime -Descending |
+        Select-Object -First 10 `
+            IncidentID,
+            DateTime,
+            Status,
+            Category,
+            Interface
+    )
 
     $recentGrid.DataSource = $null
-    $recentGrid.DataSource = $table
-
-    if ($recentGrid.Columns.Count -gt 0) {
-        $recentGrid.Columns["IncidentID"].HeaderText = "Incident ID"
-        $recentGrid.Columns["Created"].HeaderText    = "Created"
-        $recentGrid.Columns["Status"].HeaderText     = "Status"
-        $recentGrid.Columns["Category"].HeaderText   = "Category"
-        $recentGrid.Columns["Severity"].HeaderText   = "Severity"
-        $recentGrid.Columns["Confidence"].HeaderText = "Confidence"
-        $recentGrid.Columns["Decision"].HeaderText   = "Decision"
-    }
+    $recentGrid.DataSource = $recent
 }
 
 # ============================================================
@@ -924,7 +885,7 @@ $btnFast.Add_Click({
                     $script:CurrentIncident = Save-NetOpsIncident `
                         -Description $txtPrompt.Text `
                         -Analysis $output `
-                        -Status "Open"
+                        -Status "Investigating"
 
                     $txtResult.AppendText(
                         "`r`n`r`n[AUTO-SAVED] Incident ID: $($script:CurrentIncident.IncidentID)"
@@ -967,7 +928,7 @@ $btnHybrid.Add_Click({
             $script:CurrentIncident = Save-NetOpsIncident `
                 -Description $txtPrompt.Text `
                 -Analysis $txtResult.Text `
-                -Status "Open"
+                -Status "Investigating"
 
             $txtResult.AppendText(
                 "`r`n`r`n[AUTO-SAVED] Incident ID: $($script:CurrentIncident.IncidentID)"
@@ -1569,33 +1530,7 @@ $form.Add_Shown({
     Refresh-Dashboard
 })
 
-
-# ============================================================
-# NETOPS v5.8 DASHBOARD LIVE REFRESH FIX
-# ============================================================
-
-$btnRefreshDash.Add_Click({
-    Refresh-Dashboard
-})
-
-$btnDashboard.Add_Click({
-    Show-Page $pageDashboard
-    Refresh-Dashboard
-})
-
-$form.Add_Shown({
-    Refresh-Dashboard
-})
-
 [System.Windows.Forms.Application]::Run($form)
-
-
-
-
-
-
-
-
 
 
 

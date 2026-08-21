@@ -649,52 +649,672 @@ function Refresh-Dashboard {
     }
 
         $recent = @(
-    $rows |
-    Sort-Object IncidentID -Descending |
-    Select-Object -First 10
+        $rows |
+        Sort-Object {
+            try {
+                [datetime]$WorkerPath = Join-Path $PSScriptRoot "Network-Engine-Worker.ps1"
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+
+[System.Windows.Forms.Application]::EnableVisualStyles()
+
+# ============================================================
+# PATHS
+# ============================================================
+
+$Desktop  = [Environment]::GetFolderPath("Desktop")
+$Engine = Join-Path $PSScriptRoot "AI-Offline.ps1"
+
+$IncidentManager = Join-Path $PSScriptRoot "Incident-Manager.ps1"
+
+if (Test-Path $IncidentManager) {
+    . $IncidentManager
+}
+$Reports  = Join-Path $Desktop "Network-Troubleshooter-Reports"
+$History  = Join-Path $Reports "Incident-History.csv"
+$Workflow = Join-Path $Desktop "Network-Troubleshooter-v4.2.ps1"
+
+# ============================================================
+# COLORS
+# ============================================================
+
+$BG      = [System.Drawing.Color]::FromArgb(15,23,42)
+$SideBG  = [System.Drawing.Color]::FromArgb(17,28,46)
+$CardBG  = [System.Drawing.Color]::FromArgb(30,41,59)
+$PanelBG = [System.Drawing.Color]::FromArgb(21,32,51)
+
+$Text    = [System.Drawing.Color]::FromArgb(226,232,240)
+$Muted   = [System.Drawing.Color]::FromArgb(148,163,184)
+
+$Cyan    = [System.Drawing.Color]::FromArgb(34,211,238)
+$Green   = [System.Drawing.Color]::FromArgb(34,197,94)
+$Yellow  = [System.Drawing.Color]::FromArgb(250,204,21)
+$Red     = [System.Drawing.Color]::FromArgb(239,68,68)
+
+# ============================================================
+# DATA / ENGINE
+# ============================================================
+
+function Get-HistoryData {
+
+    # NETOPS v5.8 - Always resolve history from Project 09\data
+    $projectRoot = Split-Path $PSScriptRoot
+    $historyFile = Join-Path $projectRoot "data\Incident-History.csv"
+
+    if (-not (Test-Path $historyFile)) {
+        return @()
+    }
+
+    try {
+        $rows = @(Import-Csv $historyFile)
+        return $rows
+    }
+    catch {
+        return @()
+    }
+}
+function Invoke-TroubleshooterEngine {
+    param(
+        [string]$Prompt = "",
+        [string[]]$Files = @(),
+
+        [ValidateSet("Fast","Hybrid")]
+        [string]$Mode = "Fast"
+    )
+
+    if (-not (Test-Path $Engine)) {
+        return "ERROR: AI-Offline.ps1 nuk u gjet.`r`n$Engine"
+    }
+
+    $tempPromptFile = $null
+
+    try {
+
+        $allFiles = @()
+
+        foreach ($file in $Files) {
+            if (
+                -not [string]::IsNullOrWhiteSpace($file) -and
+                (Test-Path $file)
+            ) {
+                $allFiles += $file
+            }
+        }
+
+        # GUI incident description behet temporary evidence file.
+        # Kjo metode u testua direkt dhe funksionon me v3.9.
+        if (-not [string]::IsNullOrWhiteSpace($Prompt)) {
+
+            $tempPromptFile = Join-Path `
+                $env:TEMP `
+                ("NetTroubleshooter-" + [guid]::NewGuid().ToString() + ".txt")
+
+            Set-Content `
+                -Path $tempPromptFile `
+                -Value $Prompt `
+                -Encoding ASCII
+
+            $allFiles += $tempPromptFile
+        }
+
+        if ($allFiles.Count -eq 0) {
+            return "Vendos incident description ose evidence file."
+        }
+
+        $output = (
+            & $Engine `
+                -Engine $Mode `
+                -FilePath $allFiles `
+                *>&1 |
+            Out-String
+        )
+
+        return $output
+    }
+    catch {
+
+        return @"
+ENGINE ERROR
+
+$($_.Exception.Message)
+"@
+    }
+    finally {
+
+        if (
+            $tempPromptFile -and
+            (Test-Path $tempPromptFile)
+        ) {
+            Remove-Item `
+                -Path $tempPromptFile `
+                -Force `
+                -ErrorAction SilentlyContinue
+        }
+    }
+}
+# ============================================================
+# STYLE HELPERS
+# ============================================================
+
+function Style-NavButton {
+    param([System.Windows.Forms.Button]$Button)
+
+    $Button.Dock = "Fill"
+    $Button.FlatStyle = "Flat"
+    $Button.FlatAppearance.BorderSize = 0
+    $Button.BackColor = $CardBG
+    $Button.ForeColor = $Text
+    $Button.TextAlign = "MiddleLeft"
+    $Button.Padding = New-Object System.Windows.Forms.Padding(18,0,0,0)
+    $Button.Margin = New-Object System.Windows.Forms.Padding(12,5,12,5)
+    $Button.Font = New-Object System.Drawing.Font("Segoe UI",10)
+    $Button.Cursor = [System.Windows.Forms.Cursors]::Hand
+}
+
+function Style-ActionButton {
+    param([System.Windows.Forms.Button]$Button)
+
+    $Button.FlatStyle = "Flat"
+    $Button.FlatAppearance.BorderSize = 0
+    $Button.BackColor = $CardBG
+    $Button.ForeColor = $Text
+    $Button.Font = New-Object System.Drawing.Font("Segoe UI",10)
+    $Button.Cursor = [System.Windows.Forms.Cursors]::Hand
+}
+
+function Style-Grid {
+    param([System.Windows.Forms.DataGridView]$Grid)
+
+    $Grid.BackgroundColor = $CardBG
+    $Grid.BorderStyle = "None"
+    $Grid.ReadOnly = $true
+    $Grid.AllowUserToAddRows = $false
+    $Grid.AllowUserToDeleteRows = $false
+    $Grid.RowHeadersVisible = $false
+    $Grid.AutoSizeColumnsMode = "Fill"
+    $Grid.SelectionMode = "FullRowSelect"
+    $Grid.MultiSelect = $false
+
+    $Grid.ColumnHeadersDefaultCellStyle.BackColor = $PanelBG
+    $Grid.ColumnHeadersDefaultCellStyle.ForeColor = $Text
+    $Grid.ColumnHeadersDefaultCellStyle.SelectionBackColor = $PanelBG
+
+    $Grid.DefaultCellStyle.BackColor = $CardBG
+    $Grid.DefaultCellStyle.ForeColor = $Text
+    $Grid.DefaultCellStyle.SelectionBackColor = [System.Drawing.Color]::FromArgb(51,65,85)
+
+    $Grid.EnableHeadersVisualStyles = $false
+}
+
+function New-StatCard {
+    param(
+        [string]$Title,
+        [System.Drawing.Color]$ValueColor
+    )
+
+    $outer = New-Object System.Windows.Forms.Panel
+    $outer.Dock = "Fill"
+    $outer.Margin = New-Object System.Windows.Forms.Padding(8)
+    $outer.BackColor = $CardBG
+
+    $layout = New-Object System.Windows.Forms.TableLayoutPanel
+    $layout.Dock = "Fill"
+    $layout.RowCount = 2
+    $layout.ColumnCount = 1
+    $layout.BackColor = $CardBG
+
+    $layout.RowStyles.Add(
+        (New-Object System.Windows.Forms.RowStyle(
+            [System.Windows.Forms.SizeType]::Percent,
+            40
+        ))
+    )
+
+    $layout.RowStyles.Add(
+        (New-Object System.Windows.Forms.RowStyle(
+            [System.Windows.Forms.SizeType]::Percent,
+            60
+        ))
+    )
+
+    $titleLabel = New-Object System.Windows.Forms.Label
+    $titleLabel.Text = $Title
+    $titleLabel.Dock = "Fill"
+    $titleLabel.TextAlign = "MiddleLeft"
+    $titleLabel.Padding = New-Object System.Windows.Forms.Padding(16,4,0,0)
+    $titleLabel.ForeColor = $Muted
+    $titleLabel.Font = New-Object System.Drawing.Font("Segoe UI",9)
+
+    $valueLabel = New-Object System.Windows.Forms.Label
+    $valueLabel.Text = "0"
+    $valueLabel.Dock = "Fill"
+    $valueLabel.TextAlign = "MiddleLeft"
+    $valueLabel.Padding = New-Object System.Windows.Forms.Padding(16,0,0,6)
+    $valueLabel.ForeColor = $ValueColor
+    $valueLabel.Font = New-Object System.Drawing.Font(
+        "Segoe UI",
+        24,
+        [System.Drawing.FontStyle]::Bold
+    )
+
+    $layout.Controls.Add($titleLabel,0,0)
+    $layout.Controls.Add($valueLabel,0,1)
+
+    $outer.Controls.Add($layout)
+
+    return [PSCustomObject]@{
+        Panel = $outer
+        Value = $valueLabel
+    }
+}
+
+# ============================================================
+# MAIN FORM
+# ============================================================
+
+$form = New-Object System.Windows.Forms.Form
+
+$form.Text = "NETOPS Network Troubleshooter v5.8"
+$form.StartPosition = "CenterScreen"
+$form.WindowState = "Maximized"
+$form.MinimumSize = New-Object System.Drawing.Size(1200,760)
+$form.BackColor = $BG
+$form.ForeColor = $Text
+
+$form.Font = New-Object System.Drawing.Font(
+    "Segoe UI",
+    10
 )
 
-    $table = New-Object System.Data.DataTable
+# ============================================================
+# ROOT LAYOUT
+# ============================================================
 
-    foreach ($column in @(
-        "IncidentID",
-        "Created",
-        "Status",
-        "Category",
-        "Severity",
-        "Confidence",
-        "Decision"
+$root = New-Object System.Windows.Forms.TableLayoutPanel
+
+$root.Dock = "Fill"
+$root.ColumnCount = 2
+$root.RowCount = 1
+$root.BackColor = $BG
+
+$root.ColumnStyles.Add(
+    (New-Object System.Windows.Forms.ColumnStyle(
+        [System.Windows.Forms.SizeType]::Absolute,
+        280
+    ))
+)
+
+$root.ColumnStyles.Add(
+    (New-Object System.Windows.Forms.ColumnStyle(
+        [System.Windows.Forms.SizeType]::Percent,
+        100
+    ))
+)
+
+$form.Controls.Add($root)
+
+# ============================================================
+# SIDEBAR
+# ============================================================
+
+$sidebar = New-Object System.Windows.Forms.TableLayoutPanel
+
+$sidebar.Dock = "Fill"
+$sidebar.ColumnCount = 1
+$sidebar.RowCount = 9
+$sidebar.BackColor = $SideBG
+
+$sidebar.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",110)))
+$sidebar.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",60)))
+$sidebar.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",60)))
+$sidebar.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",60)))
+$sidebar.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",60)))
+$sidebar.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",60)))
+$sidebar.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Percent",100)))
+$sidebar.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",45)))
+$sidebar.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",10)))
+
+$root.Controls.Add($sidebar,0,0)
+
+# Branding
+$brandPanel = New-Object System.Windows.Forms.Panel
+$brandPanel.Dock = "Fill"
+$brandPanel.BackColor = $SideBG
+
+$logo = New-Object System.Windows.Forms.Label
+$logo.Text = "NETOPS"
+$logo.Location = New-Object System.Drawing.Point(24,20)
+$logo.Size = New-Object System.Drawing.Size(220,42)
+$logo.ForeColor = $Cyan
+$logo.Font = New-Object System.Drawing.Font(
+    "Segoe UI",
+    22,
+    [System.Drawing.FontStyle]::Bold
+)
+
+$subtitle = New-Object System.Windows.Forms.Label
+$subtitle.Text = "Network Troubleshooting Console"
+$subtitle.Location = New-Object System.Drawing.Point(26,66)
+$subtitle.Size = New-Object System.Drawing.Size(225,25)
+$subtitle.ForeColor = $Muted
+$subtitle.Font = New-Object System.Drawing.Font("Segoe UI",9)
+
+$brandPanel.Controls.Add($logo)
+$brandPanel.Controls.Add($subtitle)
+
+$sidebar.Controls.Add($brandPanel,0,0)
+
+# Navigation
+$btnDashboard = New-Object System.Windows.Forms.Button
+$btnDashboard.Text = "Dashboard"
+Style-NavButton $btnDashboard
+
+$btnAnalyze = New-Object System.Windows.Forms.Button
+$btnAnalyze.Text = "Analyze Incident"
+Style-NavButton $btnAnalyze
+
+$btnHistory = New-Object System.Windows.Forms.Button
+$btnHistory.Text = "Incident History"
+Style-NavButton $btnHistory
+
+$btnWorkflow = New-Object System.Windows.Forms.Button
+$btnWorkflow.Text = "Guided Workflow"
+Style-NavButton $btnWorkflow
+
+$btnSystem = New-Object System.Windows.Forms.Button
+$btnSystem.Text = "System Status"
+Style-NavButton $btnSystem
+
+$sidebar.Controls.Add($btnDashboard,0,1)
+$sidebar.Controls.Add($btnAnalyze,0,2)
+$sidebar.Controls.Add($btnHistory,0,3)
+$sidebar.Controls.Add($btnWorkflow,0,4)
+$sidebar.Controls.Add($btnSystem,0,5)
+
+$version = New-Object System.Windows.Forms.Label
+$version.Text = "v5.8 | Dashboard Integration / Smart History"
+$version.Dock = "Fill"
+$version.Padding = New-Object System.Windows.Forms.Padding(26,0,0,0)
+$version.TextAlign = "MiddleLeft"
+$version.ForeColor = $Muted
+$version.Font = New-Object System.Drawing.Font("Segoe UI",9)
+
+$sidebar.Controls.Add($version,0,7)
+
+# ============================================================
+# WORKSPACE
+# ============================================================
+
+$workspace = New-Object System.Windows.Forms.Panel
+$workspace.Dock = "Fill"
+$workspace.BackColor = $BG
+$workspace.Padding = New-Object System.Windows.Forms.Padding(28)
+
+$root.Controls.Add($workspace,1,0)
+
+# Pages
+$pageDashboard = New-Object System.Windows.Forms.Panel
+$pageDashboard.Dock = "Fill"
+$pageDashboard.BackColor = $BG
+
+$pageAnalyze = New-Object System.Windows.Forms.Panel
+$pageAnalyze.Dock = "Fill"
+$pageAnalyze.BackColor = $BG
+$pageAnalyze.Visible = $false
+
+$pageHistory = New-Object System.Windows.Forms.Panel
+$pageHistory.Dock = "Fill"
+$pageHistory.BackColor = $BG
+$pageHistory.Visible = $false
+
+$pageSystem = New-Object System.Windows.Forms.Panel
+$pageSystem.Dock = "Fill"
+$pageSystem.BackColor = $BG
+$pageSystem.Visible = $false
+
+$workspace.Controls.Add($pageDashboard)
+$workspace.Controls.Add($pageAnalyze)
+$workspace.Controls.Add($pageHistory)
+$workspace.Controls.Add($pageSystem)
+
+function Show-Page {
+    param($Page)
+
+    foreach ($p in @(
+        $pageDashboard,
+        $pageAnalyze,
+        $pageHistory,
+        $pageSystem
     )) {
-        [void]$table.Columns.Add($column)
+        $p.Visible = $false
     }
 
-    foreach ($incident in $recent) {
+    $Page.Visible = $true
+    $Page.BringToFront()
+}
 
-        $row = $table.NewRow()
+# ============================================================
+# DASHBOARD
+# ============================================================
 
-        $row["IncidentID"] = [string]$incident.IncidentID
-        $row["Created"]    = [string]$incident.Created
-        $row["Status"]     = [string]$incident.Status
-        $row["Category"]   = [string]$incident.Category
-        $row["Severity"]   = [string]$incident.Severity
-        $row["Confidence"] = [string]$incident.Confidence
-        $row["Decision"]   = [string]$incident.Decision
+$dash = New-Object System.Windows.Forms.TableLayoutPanel
 
-        [void]$table.Rows.Add($row)
+$dash.Dock = "Fill"
+$dash.ColumnCount = 1
+$dash.RowCount = 6
+$dash.BackColor = $BG
+
+$dash.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",85)))
+$dash.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",140)))
+$dash.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",65)))
+$dash.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",50)))
+$dash.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Percent",100)))
+$dash.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",10)))
+
+$pageDashboard.Controls.Add($dash)
+
+# Header
+$dashHeader = New-Object System.Windows.Forms.TableLayoutPanel
+$dashHeader.Dock = "Fill"
+$dashHeader.ColumnCount = 2
+$dashHeader.RowCount = 1
+
+$dashHeader.ColumnStyles.Add((New-Object System.Windows.Forms.ColumnStyle("Percent",100)))
+$dashHeader.ColumnStyles.Add((New-Object System.Windows.Forms.ColumnStyle("Absolute",190)))
+
+$headerLeft = New-Object System.Windows.Forms.Panel
+$headerLeft.Dock = "Fill"
+$headerLeft.BackColor = $BG
+
+$title = New-Object System.Windows.Forms.Label
+$title.Text = "Incident Dashboard"
+$title.Location = New-Object System.Drawing.Point(0,0)
+$title.Size = New-Object System.Drawing.Size(600,42)
+$title.ForeColor = $Text
+$title.Font = New-Object System.Drawing.Font(
+    "Segoe UI",
+    22,
+    [System.Drawing.FontStyle]::Bold
+)
+
+$description = New-Object System.Windows.Forms.Label
+$description.Text = "Network incident overview and operational health"
+$description.Location = New-Object System.Drawing.Point(2,47)
+$description.Size = New-Object System.Drawing.Size(650,25)
+$description.ForeColor = $Muted
+$description.Font = New-Object System.Drawing.Font("Segoe UI",9)
+
+$headerLeft.Controls.Add($title)
+$headerLeft.Controls.Add($description)
+
+$btnRefreshDash = New-Object System.Windows.Forms.Button
+$btnRefreshDash.Text = "Refresh Dashboard"
+$btnRefreshDash.Dock = "Fill"
+$btnRefreshDash.Margin = New-Object System.Windows.Forms.Padding(10,8,0,28)
+Style-ActionButton $btnRefreshDash
+
+$dashHeader.Controls.Add($headerLeft,0,0)
+$dashHeader.Controls.Add($btnRefreshDash,1,0)
+
+$dash.Controls.Add($dashHeader,0,0)
+
+# Cards
+$cards = New-Object System.Windows.Forms.TableLayoutPanel
+$cards.Dock = "Fill"
+$cards.ColumnCount = 4
+$cards.RowCount = 1
+$cards.BackColor = $BG
+
+for ($i = 0; $i -lt 4; $i++) {
+    $cards.ColumnStyles.Add(
+        (New-Object System.Windows.Forms.ColumnStyle("Percent",25))
+    )
+}
+
+$cardTotal = New-StatCard "TOTAL INCIDENTS" $Cyan
+$cardOpen = New-StatCard "OPEN" $Red
+$cardMonitoring = New-StatCard "MONITORING" $Yellow
+$cardResolved = New-StatCard "RESOLVED" $Green
+
+$cards.Controls.Add($cardTotal.Panel,0,0)
+$cards.Controls.Add($cardOpen.Panel,1,0)
+$cards.Controls.Add($cardMonitoring.Panel,2,0)
+$cards.Controls.Add($cardResolved.Panel,3,0)
+
+$dash.Controls.Add($cards,0,1)
+
+# Health row
+$healthPanel = New-Object System.Windows.Forms.TableLayoutPanel
+$healthPanel.Dock = "Fill"
+$healthPanel.ColumnCount = 3
+$healthPanel.RowCount = 1
+
+$healthPanel.ColumnStyles.Add((New-Object System.Windows.Forms.ColumnStyle("Percent",60)))
+$healthPanel.ColumnStyles.Add((New-Object System.Windows.Forms.ColumnStyle("Percent",20)))
+$healthPanel.ColumnStyles.Add((New-Object System.Windows.Forms.ColumnStyle("Percent",20)))
+
+$healthLabel = New-Object System.Windows.Forms.Label
+$healthLabel.Dock = "Fill"
+$healthLabel.TextAlign = "MiddleLeft"
+$healthLabel.Font = New-Object System.Drawing.Font(
+    "Segoe UI",
+    16,
+    [System.Drawing.FontStyle]::Bold
+)
+
+$engineStatus = New-Object System.Windows.Forms.Label
+$engineStatus.Dock = "Fill"
+$engineStatus.TextAlign = "MiddleCenter"
+$engineStatus.Font = New-Object System.Drawing.Font(
+    "Segoe UI",
+    9,
+    [System.Drawing.FontStyle]::Bold
+)
+
+$ollamaStatus = New-Object System.Windows.Forms.Label
+$ollamaStatus.Dock = "Fill"
+$ollamaStatus.TextAlign = "MiddleCenter"
+$ollamaStatus.Font = New-Object System.Drawing.Font(
+    "Segoe UI",
+    9,
+    [System.Drawing.FontStyle]::Bold
+)
+
+$healthPanel.Controls.Add($healthLabel,0,0)
+$healthPanel.Controls.Add($engineStatus,1,0)
+$healthPanel.Controls.Add($ollamaStatus,2,0)
+
+$dash.Controls.Add($healthPanel,0,2)
+
+$recentTitle = New-Object System.Windows.Forms.Label
+$recentTitle.Text = "Recent Incidents"
+$recentTitle.Dock = "Fill"
+$recentTitle.TextAlign = "BottomLeft"
+$recentTitle.ForeColor = $Text
+$recentTitle.Font = New-Object System.Drawing.Font(
+    "Segoe UI",
+    14,
+    [System.Drawing.FontStyle]::Bold
+)
+
+$dash.Controls.Add($recentTitle,0,3)
+
+$recentGrid = New-Object System.Windows.Forms.DataGridView
+$recentGrid.Dock = "Fill"
+Style-Grid $recentGrid
+
+$dash.Controls.Add($recentGrid,0,4)
+
+function Refresh-Dashboard {
+    $rows = @(Get-HistoryData)
+
+    $total = $rows.Count
+    $open = @($rows | Where-Object { $_.Status -eq "OPEN" }).Count
+    $monitoring = @($rows | Where-Object { $_.Status -eq "MONITORING" }).Count
+    $resolved = @($rows | Where-Object { $_.Status -eq "RESOLVED" }).Count
+
+    $cardTotal.Value.Text = "$total"
+    $cardOpen.Value.Text = "$open"
+    $cardMonitoring.Value.Text = "$monitoring"
+    $cardResolved.Value.Text = "$resolved"
+
+    if ($total -eq 0) {
+        $healthLabel.Text = "Health Score: N/A"
+        $healthLabel.ForeColor = $Muted
     }
+    else {
+        $score = 100 - ($open * 25) - ($monitoring * 10)
+
+        if ($score -lt 0) {
+            $score = 0
+        }
+
+        if ($score -ge 90) {
+            $healthLabel.Text = "Health Score: $score/100 - HEALTHY"
+            $healthLabel.ForeColor = $Green
+        }
+        elseif ($score -ge 70) {
+            $healthLabel.Text = "Health Score: $score/100 - ATTENTION"
+            $healthLabel.ForeColor = $Yellow
+        }
+        else {
+            $healthLabel.Text = "Health Score: $score/100 - DEGRADED"
+            $healthLabel.ForeColor = $Red
+        }
+    }
+
+    if (Test-Path $Engine) {
+        $engineStatus.Text = "ENGINE  READY"
+        $engineStatus.ForeColor = $Green
+    }
+    else {
+        $engineStatus.Text = "ENGINE  OFFLINE"
+        $engineStatus.ForeColor = $Red
+    }
+
+    try {
+        ollama --version | Out-Null
+        $ollamaStatus.Text = "OLLAMA  READY"
+        $ollamaStatus.ForeColor = $Green
+    }
+    catch {
+        $ollamaStatus.Text = "OLLAMA  OFFLINE"
+        $ollamaStatus.ForeColor = $Red
+    }
+
+    $recent = @(
+        $rows |
+        Sort-Object DateTime -Descending |
+        Select-Object -First 10 `
+            IncidentID,
+            DateTime,
+            Status,
+            Category,
+            Interface
+    )
 
     $recentGrid.DataSource = $null
-    $recentGrid.DataSource = $table
-
-    if ($recentGrid.Columns.Count -gt 0) {
-        $recentGrid.Columns["IncidentID"].HeaderText = "Incident ID"
-        $recentGrid.Columns["Created"].HeaderText    = "Created"
-        $recentGrid.Columns["Status"].HeaderText     = "Status"
-        $recentGrid.Columns["Category"].HeaderText   = "Category"
-        $recentGrid.Columns["Severity"].HeaderText   = "Severity"
-        $recentGrid.Columns["Confidence"].HeaderText = "Confidence"
-        $recentGrid.Columns["Decision"].HeaderText   = "Decision"
-    }
+    $recentGrid.DataSource = $recent
 }
 
 # ============================================================
@@ -924,7 +1544,7 @@ $btnFast.Add_Click({
                     $script:CurrentIncident = Save-NetOpsIncident `
                         -Description $txtPrompt.Text `
                         -Analysis $output `
-                        -Status "Open"
+                        -Status "Investigating"
 
                     $txtResult.AppendText(
                         "`r`n`r`n[AUTO-SAVED] Incident ID: $($script:CurrentIncident.IncidentID)"
@@ -967,7 +1587,7 @@ $btnHybrid.Add_Click({
             $script:CurrentIncident = Save-NetOpsIncident `
                 -Description $txtPrompt.Text `
                 -Analysis $txtResult.Text `
-                -Status "Open"
+                -Status "Investigating"
 
             $txtResult.AppendText(
                 "`r`n`r`n[AUTO-SAVED] Incident ID: $($script:CurrentIncident.IncidentID)"
@@ -1592,6 +2212,964 @@ $form.Add_Shown({
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.Created
+            }
+            catch {
+                [datetime]::MinValue
+            }
+        } -Descending |
+        Select-Object -First 10
+    )
+
+    $table = New-Object System.Data.DataTable
+
+    foreach ($column in @(
+        "IncidentID",
+        "Created",
+        "Status",
+        "Category",
+        "Severity",
+        "Confidence",
+        "Decision"
+    )) {
+        [void]$table.Columns.Add($column)
+    }
+
+    foreach ($incident in $recent) {
+
+        $row = $table.NewRow()
+
+        $row["IncidentID"] = [string]$incident.IncidentID
+        $row["Created"]    = [string]$incident.Created
+        $row["Status"]     = [string]$incident.Status
+        $row["Category"]   = [string]$incident.Category
+        $row["Severity"]   = [string]$incident.Severity
+        $row["Confidence"] = [string]$incident.Confidence
+        $row["Decision"]   = [string]$incident.Decision
+
+        [void]$table.Rows.Add($row)
+    }
+
+    $recentGrid.DataSource = $null
+    $recentGrid.DataSource = $table
+
+    if ($recentGrid.Columns.Count -gt 0) {
+        $recentGrid.Columns["IncidentID"].HeaderText = "Incident ID"
+        $recentGrid.Columns["Created"].HeaderText    = "Created"
+        $recentGrid.Columns["Status"].HeaderText     = "Status"
+        $recentGrid.Columns["Category"].HeaderText   = "Category"
+        $recentGrid.Columns["Severity"].HeaderText   = "Severity"
+        $recentGrid.Columns["Confidence"].HeaderText = "Confidence"
+        $recentGrid.Columns["Decision"].HeaderText   = "Decision"
+    }
+}
+
+# ============================================================
+# ANALYZE INCIDENT PAGE
+# ============================================================
+
+$analyze = New-Object System.Windows.Forms.TableLayoutPanel
+
+$analyze.Dock = "Fill"
+$analyze.ColumnCount = 1
+$analyze.RowCount = 8
+
+$analyze.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",70)))
+$analyze.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",28)))
+$analyze.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",120)))
+$analyze.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",28)))
+$analyze.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",48)))
+$analyze.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",60)))
+$analyze.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",35)))
+$analyze.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Percent",100)))
+
+$pageAnalyze.Controls.Add($analyze)
+
+$analyzeTitle = New-Object System.Windows.Forms.Label
+$analyzeTitle.Text = "Analyze Incident"
+$analyzeTitle.Dock = "Fill"
+$analyzeTitle.TextAlign = "MiddleLeft"
+$analyzeTitle.Font = New-Object System.Drawing.Font(
+    "Segoe UI",
+    22,
+    [System.Drawing.FontStyle]::Bold
+)
+
+$analyze.Controls.Add($analyzeTitle,0,0)
+
+$lblPrompt = New-Object System.Windows.Forms.Label
+$lblPrompt.Text = "Incident description"
+$lblPrompt.Dock = "Fill"
+$lblPrompt.ForeColor = $Muted
+
+$analyze.Controls.Add($lblPrompt,0,1)
+
+$txtPrompt = New-Object System.Windows.Forms.TextBox
+$txtPrompt.Dock = "Fill"
+$txtPrompt.Multiline = $true
+$txtPrompt.ScrollBars = "Vertical"
+$txtPrompt.BackColor = $CardBG
+$txtPrompt.ForeColor = $Text
+$txtPrompt.BorderStyle = "FixedSingle"
+$txtPrompt.Font = New-Object System.Drawing.Font("Segoe UI",10)
+
+$analyze.Controls.Add($txtPrompt,0,2)
+
+$lblFiles = New-Object System.Windows.Forms.Label
+$lblFiles.Text = "Evidence files"
+$lblFiles.Dock = "Fill"
+$lblFiles.ForeColor = $Muted
+
+$analyze.Controls.Add($lblFiles,0,3)
+
+$fileRow = New-Object System.Windows.Forms.TableLayoutPanel
+$fileRow.Dock = "Fill"
+$fileRow.ColumnCount = 2
+$fileRow.RowCount = 1
+
+$fileRow.ColumnStyles.Add((New-Object System.Windows.Forms.ColumnStyle("Percent",100)))
+$fileRow.ColumnStyles.Add((New-Object System.Windows.Forms.ColumnStyle("Absolute",180)))
+
+$txtFiles = New-Object System.Windows.Forms.TextBox
+$txtFiles.Dock = "Fill"
+$txtFiles.BackColor = $CardBG
+$txtFiles.ForeColor = $Text
+
+$btnBrowse = New-Object System.Windows.Forms.Button
+$btnBrowse.Text = "Browse Files"
+$btnBrowse.Dock = "Fill"
+$btnBrowse.Margin = New-Object System.Windows.Forms.Padding(10,0,0,0)
+Style-ActionButton $btnBrowse
+
+$fileRow.Controls.Add($txtFiles,0,0)
+$fileRow.Controls.Add($btnBrowse,1,0)
+
+$analyze.Controls.Add($fileRow,0,4)
+
+$actionRow = New-Object System.Windows.Forms.FlowLayoutPanel
+$actionRow.Dock = "Fill"
+$actionRow.FlowDirection = "LeftToRight"
+$actionRow.WrapContents = $false
+$actionRow.Padding = New-Object System.Windows.Forms.Padding(0,10,0,0)
+
+$btnFast = New-Object System.Windows.Forms.Button
+$btnFast.Text = "Analyze - FAST"
+$btnFast.Size = New-Object System.Drawing.Size(190,42)
+Style-ActionButton $btnFast
+$btnFast.BackColor = [System.Drawing.Color]::FromArgb(8,145,178)
+
+$btnHybrid = New-Object System.Windows.Forms.Button
+$btnHybrid.Text = "Analyze - HYBRID AI"
+$btnHybrid.Size = New-Object System.Drawing.Size(210,42)
+$btnHybrid.Margin = New-Object System.Windows.Forms.Padding(12,0,0,0)
+Style-ActionButton $btnHybrid
+
+$actionRow.Controls.Add($btnFast)
+$actionRow.Controls.Add($btnHybrid)
+
+$analyze.Controls.Add($actionRow,0,5)
+
+$resultTitle = New-Object System.Windows.Forms.Label
+$resultTitle.Text = "Analysis Result"
+$resultTitle.Dock = "Fill"
+$resultTitle.TextAlign = "BottomLeft"
+$resultTitle.ForeColor = $Text
+$resultTitle.Font = New-Object System.Drawing.Font(
+    "Segoe UI",
+    12,
+    [System.Drawing.FontStyle]::Bold
+)
+
+$analyze.Controls.Add($resultTitle,0,6)
+
+$txtResult = New-Object System.Windows.Forms.RichTextBox
+$txtResult.Dock = "Fill"
+$txtResult.BackColor = [System.Drawing.Color]::FromArgb(2,8,23)
+$txtResult.ForeColor = $Text
+$txtResult.BorderStyle = "None"
+$txtResult.ReadOnly = $true
+$txtResult.Font = New-Object System.Drawing.Font("Consolas",10)
+
+$analyze.Controls.Add($txtResult,0,7)
+
+$btnBrowse.Add_Click({
+    $dialog = New-Object System.Windows.Forms.OpenFileDialog
+
+    $dialog.Title = "Select Network Evidence Files"
+    $dialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*"
+    $dialog.Multiselect = $true
+
+    if ($dialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
+        $txtFiles.Text = $dialog.FileNames -join ";"
+    }
+})
+
+function Get-SelectedEvidenceFiles {
+    $list = @()
+
+    foreach ($file in ($txtFiles.Text -split ";")) {
+        $clean = $file.Trim()
+
+        if ($clean -and (Test-Path $clean)) {
+            $list += $clean
+        }
+    }
+
+    return $list
+}
+
+$btnFast.Add_Click({
+
+    $txtResult.Text = "Analyzing..."
+    $form.Refresh()
+
+    try {
+
+        if ([string]::IsNullOrWhiteSpace($txtPrompt.Text)) {
+            $txtResult.Text = "Vendos incident description."
+            return
+        }
+
+        $desktopPath = [Environment]::GetFolderPath("Desktop")
+
+        $inputFile = Join-Path `
+            $desktopPath `
+            "GUI-LAST-INPUT.txt"
+
+        $workerFile = Join-Path `
+            $desktopPath `
+            "Network-Engine-Worker.ps1"
+
+        # Shkruaj incidentin si ASCII evidence
+        [System.IO.File]::WriteAllText(
+            $inputFile,
+            [string]$txtPrompt.Text,
+            [System.Text.Encoding]::ASCII
+        )
+
+        if (-not (Test-Path $workerFile)) {
+
+            $txtResult.Text = "ERROR: Network-Engine-Worker.ps1 nuk u gjet."
+            return
+        }
+
+        # IMPORTANT:
+        # powershell.exe eshte proces i RI dhe i izoluar nga WinForms.
+        $args = @(
+            "-NoProfile"
+            "-ExecutionPolicy"
+            "Bypass"
+            "-File"
+            $workerFile
+            "-EnginePath"
+            $Engine
+            "-InputFile"
+            $inputFile
+            "-Mode"
+            "Fast"
+        )
+
+        $output = (
+            & powershell.exe @args 2>&1 |
+            Out-String
+        )
+
+        if ([string]::IsNullOrWhiteSpace($output)) {
+
+            $txtResult.Text = "Worker perfundoi pa output."
+        }
+        else {
+
+            $txtResult.Text = $output
+
+            # NETOPS v5.4 AUTO-SAVE
+            if (
+                (Get-Command Save-NetOpsIncident -ErrorAction SilentlyContinue) -and
+                $output -match '(?im)^FINDINGS:\s*[1-9]'
+            ) {
+                try {
+                    $script:CurrentIncident = Save-NetOpsIncident `
+                        -Description $txtPrompt.Text `
+                        -Analysis $output `
+                        -Status "Investigating"
+
+                    $txtResult.AppendText(
+                        "`r`n`r`n[AUTO-SAVED] Incident ID: $($script:CurrentIncident.IncidentID)"
+                    )
+                }
+                catch {
+                    $txtResult.AppendText(
+                        "`r`nAUTO-SAVE ERROR: $($_.Exception.Message)"
+                    )
+                }
+            }
+        }
+    }
+    catch {
+
+        $txtResult.Text = @"
+GUI / WORKER ERROR
+
+$($_.Exception.Message)
+"@
+    }
+})
+$btnHybrid.Add_Click({
+    $txtResult.Text = "Hybrid AI analysis running..."
+    $form.Refresh()
+
+    $files = @(Get-SelectedEvidenceFiles)
+
+    $txtResult.Text = Invoke-TroubleshooterEngine `
+        -Prompt $txtPrompt.Text `
+        -Files $files `
+        -Mode "Hybrid"
+
+    # NETOPS v5.4 HYBRID AUTO-SAVE
+    if (
+        (Get-Command Save-NetOpsIncident -ErrorAction SilentlyContinue) -and
+        $txtResult.Text -match '(?im)^FINDINGS:\s*[1-9]'
+    ) {
+        try {
+            $script:CurrentIncident = Save-NetOpsIncident `
+                -Description $txtPrompt.Text `
+                -Analysis $txtResult.Text `
+                -Status "Investigating"
+
+            $txtResult.AppendText(
+                "`r`n`r`n[AUTO-SAVED] Incident ID: $($script:CurrentIncident.IncidentID)"
+            )
+        }
+        catch {
+            $txtResult.AppendText(
+                "`r`nAUTO-SAVE ERROR: $($_.Exception.Message)"
+            )
+        }
+    }
+})
+
+# ============================================================
+# INCIDENT HISTORY PAGE
+# ============================================================
+
+$historyLayout = New-Object System.Windows.Forms.TableLayoutPanel
+
+$historyLayout.Dock = "Fill"
+$historyLayout.ColumnCount = 1
+$historyLayout.RowCount = 4
+
+$historyLayout.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",75)))
+$historyLayout.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Percent",62)))
+$historyLayout.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Percent",38)))
+$historyLayout.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",65)))
+
+$pageHistory.Controls.Add($historyLayout)
+
+$historyTitle = New-Object System.Windows.Forms.Label
+$historyTitle.Text = "Incident History"
+$historyTitle.Dock = "Fill"
+$historyTitle.TextAlign = "MiddleLeft"
+$historyTitle.Font = New-Object System.Drawing.Font(
+    "Segoe UI",
+    22,
+    [System.Drawing.FontStyle]::Bold
+)
+
+$historyLayout.Controls.Add($historyTitle,0,0)
+
+$historyGrid = New-Object System.Windows.Forms.DataGridView
+$historyGrid.Dock = "Fill"
+Style-Grid $historyGrid
+
+$historyLayout.Controls.Add($historyGrid,0,1)
+
+# ============================================================
+# INCIDENT DETAILS PANEL - v5.6
+# ============================================================
+
+$historyDetailsPanel = New-Object System.Windows.Forms.Panel
+$historyDetailsPanel.Dock = "Fill"
+$historyDetailsPanel.BackColor = $CardBG
+$historyDetailsPanel.Padding = New-Object System.Windows.Forms.Padding(12)
+
+$historyDetailsTitle = New-Object System.Windows.Forms.Label
+$historyDetailsTitle.Text = "Incident Details"
+$historyDetailsTitle.Dock = "Top"
+$historyDetailsTitle.Height = 32
+$historyDetailsTitle.ForeColor = $Text
+$historyDetailsTitle.Font = New-Object System.Drawing.Font(
+    "Segoe UI",
+    12,
+    [System.Drawing.FontStyle]::Bold
+)
+
+$historyDetailsBox = New-Object System.Windows.Forms.RichTextBox
+$historyDetailsBox.Dock = "Fill"
+$historyDetailsBox.BackColor = [System.Drawing.Color]::FromArgb(2,8,23)
+$historyDetailsBox.ForeColor = $Text
+$historyDetailsBox.BorderStyle = "None"
+$historyDetailsBox.ReadOnly = $true
+$historyDetailsBox.Font = New-Object System.Drawing.Font("Consolas",10)
+$historyDetailsBox.Text = "Select an incident to view details."
+
+$historyDetailsPanel.Controls.Add($historyDetailsBox)
+$historyDetailsPanel.Controls.Add($historyDetailsTitle)
+
+$historyLayout.Controls.Add($historyDetailsPanel,0,2)
+
+$historyActions = New-Object System.Windows.Forms.FlowLayoutPanel
+$historyActions.Dock = "Fill"
+$historyActions.Padding = New-Object System.Windows.Forms.Padding(0,10,0,0)
+
+$btnRefreshHistory = New-Object System.Windows.Forms.Button
+$btnRefreshHistory.Text = "Refresh"
+$btnRefreshHistory.Size = New-Object System.Drawing.Size(140,42)
+Style-ActionButton $btnRefreshHistory
+
+$btnOpenReport = New-Object System.Windows.Forms.Button
+$btnOpenReport.Text = "Open Report"
+$btnOpenReport.Size = New-Object System.Drawing.Size(160,42)
+$btnOpenReport.Margin = New-Object System.Windows.Forms.Padding(12,0,0,0)
+Style-ActionButton $btnOpenReport
+
+$btnResolveIncident = New-Object System.Windows.Forms.Button
+$btnResolveIncident.Text = "Mark Resolved"
+$btnResolveIncident.Size = New-Object System.Drawing.Size(160,42)
+$btnResolveIncident.Margin = New-Object System.Windows.Forms.Padding(12,0,0,0)
+Style-ActionButton $btnResolveIncident
+
+$btnOpenIncidentFolder = New-Object System.Windows.Forms.Button
+$btnOpenIncidentFolder.Text = "Open Incident Folder"
+$btnOpenIncidentFolder.Size = New-Object System.Drawing.Size(185,42)
+$btnOpenIncidentFolder.Margin = New-Object System.Windows.Forms.Padding(12,0,0,0)
+Style-ActionButton $btnOpenIncidentFolder
+
+$historyActions.Controls.Add($btnRefreshHistory)
+$historyActions.Controls.Add($btnOpenReport)
+$historyActions.Controls.Add($btnResolveIncident)
+$historyActions.Controls.Add($btnOpenIncidentFolder)
+
+$historyLayout.Controls.Add($historyActions,0,3)
+
+function Show-HistoryIncidentDetails {
+
+    if ($historyGrid.SelectedRows.Count -eq 0) {
+
+        $historyDetailsBox.Text = "Select an incident to view details."
+        $btnResolveIncident.Enabled = $false
+
+        return
+    }
+
+    if (-not $historyGrid.Columns.Contains("IncidentID")) {
+        return
+    }
+
+    $incidentId = [string]$historyGrid.SelectedRows[0].Cells["IncidentID"].Value
+    $status = ""
+
+    if ($historyGrid.Columns.Contains("Status")) {
+        $status = [string]$historyGrid.SelectedRows[0].Cells["Status"].Value
+    }
+
+    # Disable Resolve when already resolved/closed
+    if (
+        $status -eq "Resolved" -or
+        $status -eq "Closed"
+    ) {
+
+        $btnResolveIncident.Enabled = $false
+        $btnResolveIncident.Text = "Already Resolved"
+    }
+    else {
+
+        $btnResolveIncident.Enabled = $true
+        $btnResolveIncident.Text = "Mark Resolved"
+    }
+
+    if ([string]::IsNullOrWhiteSpace($incidentId)) {
+        return
+    }
+
+    $incident = $null
+
+    if (Get-Command Get-NetOpsIncident -ErrorAction SilentlyContinue) {
+
+        try {
+            $incident = Get-NetOpsIncident -IncidentID $incidentId
+        }
+        catch {
+            $incident = $null
+        }
+    }
+
+    if ($incident) {
+
+        $description = [string]$incident.Description
+        $rootCause = [string]$incident.RootCause
+        $nextStep = [string]$incident.SmartNextStep
+        $notes = [string]$incident.Notes
+        $decision = [string]$incident.Decision
+        $confidence = [string]$incident.Confidence
+        $category = [string]$incident.Category
+        $severity = [string]$incident.Severity
+        $incidentStatus = [string]$incident.Status
+
+        $reportPath = Join-Path `
+            (Join-Path `
+                (Join-Path (Split-Path $PSScriptRoot) "data\Incidents") `
+                $incidentId
+            ) `
+            "incident-report.md"
+
+        $historyDetailsBox.Text = @"
+INCIDENT ID
+$incidentId
+
+STATUS
+$incidentStatus
+
+CATEGORY
+$category
+
+SEVERITY
+$severity
+
+CONFIDENCE
+$confidence%
+
+DECISION
+$decision
+
+DESCRIPTION
+$description
+
+ROOT CAUSE
+$rootCause
+
+SMART NEXT STEP
+$nextStep
+
+RESOLUTION NOTES
+$notes
+
+REPORT
+$reportPath
+"@
+    }
+    else {
+
+        $historyDetailsBox.Text = @"
+INCIDENT ID
+$incidentId
+
+STATUS
+$status
+
+Incident JSON could not be loaded.
+Use Open Incident Folder to inspect the saved files.
+"@
+    }
+}
+
+
+function Refresh-History {
+
+    $historyFile = Join-Path `
+        (Split-Path $PSScriptRoot) `
+        "data\Incident-History.csv"
+
+    $historyGrid.DataSource = $null
+
+    if (-not (Test-Path $historyFile)) {
+        return
+    }
+
+    $rows = @(
+        Import-Csv $historyFile |
+        Where-Object { $_.IncidentID } |
+        Sort-Object Updated -Descending
+    )
+
+    if ($rows.Count -gt 0) {
+
+        $table = New-Object System.Data.DataTable
+
+        foreach ($column in @(
+            "IncidentID",
+            "Created",
+            "Updated",
+            "Title",
+            "Category",
+            "Severity",
+            "Status",
+            "Findings",
+            "Confidence",
+            "Decision",
+            "RootCause",
+            "ReportPath"
+        )) {
+            [void]$table.Columns.Add($column)
+        }
+
+        foreach ($item in $rows) {
+
+            $row = $table.NewRow()
+
+            foreach ($column in $table.Columns.ColumnName) {
+                $row[$column] = [string]$item.$column
+            }
+
+            [void]$table.Rows.Add($row)
+        }
+
+        $historyGrid.DataSource = $table
+    }
+}
+
+$btnResolveIncident.Add_Click({
+
+    if ($historyGrid.SelectedRows.Count -eq 0) {
+
+        [System.Windows.Forms.MessageBox]::Show(
+            "Select an incident first.",
+            "NETOPS v5.5"
+        )
+
+        return
+    }
+
+    if (-not $historyGrid.Columns.Contains("IncidentID")) {
+
+        [System.Windows.Forms.MessageBox]::Show(
+            "IncidentID column is missing.",
+            "NETOPS v5.5"
+        )
+
+        return
+    }
+
+    $incidentId = [string]$historyGrid.SelectedRows[0].Cells["IncidentID"].Value
+
+    if ([string]::IsNullOrWhiteSpace($incidentId)) {
+        return
+    }
+
+    $notes = [Microsoft.VisualBasic.Interaction]::InputBox(
+        "Write resolution notes / verification performed:",
+        "Resolve Incident",
+        "Issue fixed and connectivity verified."
+    )
+
+    if (-not (Get-Command Set-NetOpsIncidentStatus -ErrorAction SilentlyContinue)) {
+
+        [System.Windows.Forms.MessageBox]::Show(
+            "Incident Manager status function is not available.",
+            "NETOPS v5.5"
+        )
+
+        return
+    }
+
+    try {
+
+        Set-NetOpsIncidentStatus `
+            -IncidentID $incidentId `
+            -Status "Resolved" `
+            -Notes $notes
+
+        Refresh-History
+        Refresh-Dashboard
+        Show-HistoryIncidentDetails
+
+        [System.Windows.Forms.MessageBox]::Show(
+            "$incidentId marked RESOLVED.",
+            "NETOPS v5.5"
+        )
+    }
+    catch {
+
+        [System.Windows.Forms.MessageBox]::Show(
+            $_.Exception.Message,
+            "Resolution Error"
+        )
+    }
+})
+
+
+$btnOpenIncidentFolder.Add_Click({
+
+    if ($historyGrid.SelectedRows.Count -eq 0) {
+
+        [System.Windows.Forms.MessageBox]::Show(
+            "Select an incident first.",
+            "NETOPS v5.5"
+        )
+
+        return
+    }
+
+    if (-not $historyGrid.Columns.Contains("IncidentID")) {
+        return
+    }
+
+    $incidentId = [string]$historyGrid.SelectedRows[0].Cells["IncidentID"].Value
+
+    if (-not $incidentId) {
+        return
+    }
+
+    $incidentFolder = Join-Path `
+        (Join-Path (Split-Path $PSScriptRoot) "data\Incidents") `
+        $incidentId
+
+    if (Test-Path $incidentFolder) {
+        Start-Process explorer.exe $incidentFolder
+    }
+    else {
+
+        [System.Windows.Forms.MessageBox]::Show(
+            "Incident folder was not found.",
+            "NETOPS v5.5"
+        )
+    }
+})
+
+
+$historyGrid.Add_SelectionChanged({
+
+    try {
+        Show-HistoryIncidentDetails
+    }
+    catch {
+        $historyDetailsBox.Text = "Details error: $($_.Exception.Message)"
+    }
+})
+
+
+$btnOpenReport.Add_Click({
+    if ($historyGrid.SelectedRows.Count -eq 0) {
+        [System.Windows.Forms.MessageBox]::Show(
+            "Select an incident first.",
+            "Network Troubleshooter"
+        )
+        return
+    }
+
+    if (-not $historyGrid.Columns.Contains("ReportPath")) {
+        [System.Windows.Forms.MessageBox]::Show(
+            "ReportPath column is missing.",
+            "Network Troubleshooter"
+        )
+        return
+    }
+
+    $path = [string]$historyGrid.SelectedRows[0].Cells["ReportPath"].Value
+
+    if ($path -and (Test-Path $path)) {
+        Start-Process notepad.exe -ArgumentList "`"$path`""
+    }
+    else {
+        [System.Windows.Forms.MessageBox]::Show(
+            "Report file was not found.",
+            "Network Troubleshooter"
+        )
+    }
+})
+
+# ============================================================
+# SYSTEM STATUS PAGE
+# ============================================================
+
+$systemLayout = New-Object System.Windows.Forms.TableLayoutPanel
+
+$systemLayout.Dock = "Fill"
+$systemLayout.ColumnCount = 1
+$systemLayout.RowCount = 3
+
+$systemLayout.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",75)))
+$systemLayout.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Percent",100)))
+$systemLayout.RowStyles.Add((New-Object System.Windows.Forms.RowStyle("Absolute",65)))
+
+$pageSystem.Controls.Add($systemLayout)
+
+$systemTitle = New-Object System.Windows.Forms.Label
+$systemTitle.Text = "System Status"
+$systemTitle.Dock = "Fill"
+$systemTitle.TextAlign = "MiddleLeft"
+$systemTitle.Font = New-Object System.Drawing.Font(
+    "Segoe UI",
+    22,
+    [System.Drawing.FontStyle]::Bold
+)
+
+$systemLayout.Controls.Add($systemTitle,0,0)
+
+$systemBox = New-Object System.Windows.Forms.RichTextBox
+$systemBox.Dock = "Fill"
+$systemBox.BackColor = [System.Drawing.Color]::FromArgb(2,8,23)
+$systemBox.ForeColor = $Text
+$systemBox.ReadOnly = $true
+$systemBox.BorderStyle = "None"
+$systemBox.Font = New-Object System.Drawing.Font("Consolas",10)
+
+$systemLayout.Controls.Add($systemBox,0,1)
+
+$systemActions = New-Object System.Windows.Forms.FlowLayoutPanel
+$systemActions.Dock = "Fill"
+$systemActions.Padding = New-Object System.Windows.Forms.Padding(0,10,0,0)
+
+$btnRefreshSystem = New-Object System.Windows.Forms.Button
+$btnRefreshSystem.Text = "Refresh Status"
+$btnRefreshSystem.Size = New-Object System.Drawing.Size(170,42)
+Style-ActionButton $btnRefreshSystem
+
+$systemActions.Controls.Add($btnRefreshSystem)
+
+$systemLayout.Controls.Add($systemActions,0,2)
+
+function Refresh-SystemStatus {
+    $lines = @()
+
+    $lines += "NETWORK TROUBLESHOOTER v5.5"
+    $lines += ""
+
+    $lines += "Troubleshooting Engine:"
+    $lines += $Engine
+    $lines += $(if (Test-Path $Engine) { "STATUS: READY" } else { "STATUS: NOT FOUND" })
+
+    $lines += ""
+    $lines += "Guided Workflow:"
+    $lines += $Workflow
+    $lines += $(if (Test-Path $Workflow) { "STATUS: READY" } else { "STATUS: NOT FOUND" })
+
+    $lines += ""
+    $lines += "Incident Reports:"
+    $lines += $Reports
+
+    $reportCount = @(
+        Get-ChildItem `
+            -Path $Reports `
+            -Filter "INC-*.txt" `
+            -ErrorAction SilentlyContinue
+    ).Count
+
+    $lines += "Reports Found: $reportCount"
+
+    $lines += ""
+    $lines += "Incident History:"
+    $lines += $History
+    $lines += $(if (Test-Path $History) { "STATUS: READY" } else { "STATUS: NOT FOUND" })
+
+    $lines += ""
+    $lines += "Ollama:"
+
+    try {
+        $lines += (ollama --version | Out-String).Trim()
+        $lines += "STATUS: READY"
+        $lines += ""
+        $lines += "Installed Models:"
+        $lines += (ollama list | Out-String)
+    }
+    catch {
+        $lines += "STATUS: NOT READY"
+    }
+
+    $systemBox.Text = $lines -join "`r`n"
+}
+
+# ============================================================
+# EVENTS
+# ============================================================
+
+$btnDashboard.Add_Click({
+    Show-Page $pageDashboard
+    Refresh-Dashboard
+})
+
+$btnAnalyze.Add_Click({
+    Show-Page $pageAnalyze
+})
+
+$btnHistory.Add_Click({
+    Show-Page $pageHistory
+    Refresh-History
+})
+
+$btnSystem.Add_Click({
+    Show-Page $pageSystem
+    Refresh-SystemStatus
+})
+
+$btnWorkflow.Add_Click({
+    if (Test-Path $Workflow) {
+        Start-Process `
+            powershell.exe `
+            -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$Workflow`""
+    }
+    else {
+        [System.Windows.Forms.MessageBox]::Show(
+            "Network-Troubleshooter-v4.2.ps1 nuk u gjet.",
+            "Network Troubleshooter"
+        )
+    }
+})
+
+$btnRefreshDash.Add_Click({
+    Refresh-Dashboard
+})
+
+$btnRefreshHistory.Add_Click({
+    Refresh-History
+})
+
+$btnRefreshSystem.Add_Click({
+    Refresh-SystemStatus
+})
+
+# ============================================================
+# INITIAL LOAD
+# ============================================================
+
+$form.Add_Shown({
+    Show-Page $pageDashboard
+    Refresh-Dashboard
+})
+
+
+# ============================================================
+# NETOPS v5.8 DASHBOARD LIVE REFRESH FIX
+# ============================================================
+
+$btnRefreshDash.Add_Click({
+    Refresh-Dashboard
+})
+
+$btnDashboard.Add_Click({
+    Show-Page $pageDashboard
+    Refresh-Dashboard
+})
+
+$form.Add_Shown({
+    Refresh-Dashboard
+})
+
+[System.Windows.Forms.Application]::Run($form)
 
 
 

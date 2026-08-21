@@ -1,4 +1,4 @@
-﻿$ProjectRoot = Split-Path $PSScriptRoot
+$ProjectRoot = Split-Path $PSScriptRoot
 $DataRoot = Join-Path $ProjectRoot "data"
 $IncidentRoot = Join-Path $DataRoot "Incidents"
 $ReportRoot = Join-Path $DataRoot "Reports"
@@ -38,8 +38,8 @@ function Save-NetOpsIncident {
         [Parameter(Mandatory=$true)]
         [string]$Analysis,
 
-        [ValidateSet("Open","Investigating","Monitoring","Resolved","Closed")]
-        [string]$Status = "Open",
+        [ValidateSet("Investigating","Monitoring","Resolved","Closed")]
+        [string]$Status = "Investigating",
 
         [string]$Notes = "",
 
@@ -265,7 +265,12 @@ function Set-NetOpsIncidentStatus {
         [Parameter(Mandatory=$true)]
         [string]$IncidentID,
 
-        [ValidateSet("Open","Investigating","Monitoring","Resolved","Closed")]
+        [ValidateSet(
+            "Investigating",
+            "Monitoring",
+            "Resolved",
+            "Closed"
+        )]
         [string]$Status,
 
         [string]$Notes = ""
@@ -308,5 +313,3 @@ function Open-NetOpsIncidentFolder {
         Start-Process explorer.exe $folder
     }
 }
-
-
