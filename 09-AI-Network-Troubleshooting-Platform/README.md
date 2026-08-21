@@ -1,6 +1,6 @@
 # 09 - NETOPS AI-Assisted Network Troubleshooting Platform
 
-![NETOPS v5.7 Rev.2 GUI](./screenshots/NETOPS-v5.7-Rev2-GUI.jpg)
+![NETOPS v5.7 Rev.2 GUI](./screenshots/NETOPS-v5.7-Rev2-GUI.png)
 
 A practical Network Engineering and NOC troubleshooting platform built with PowerShell, deterministic rule-based diagnostics, evidence correlation, root-cause analysis, incident management, Windows Forms GUI, automated reporting, and optional local Ollama AI integration.
 
