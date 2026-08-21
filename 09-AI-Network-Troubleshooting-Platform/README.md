@@ -1,18 +1,19 @@
 # 09 - NETOPS AI-Assisted Network Troubleshooting Platform
 
-![NETOPS v5.7 Rev.2 GUI](./screenshots/NETOPS-v5.7-Rev2-GUI.png)
+![NETOPS GUI](./screenshots/NETOPS-v5.7-Rev2-GUI.png)
 
-A practical Network Engineering and NOC troubleshooting platform built with PowerShell, deterministic rule-based diagnostics, evidence correlation, root-cause analysis, incident management, Windows Forms GUI, automated reporting, and optional local Ollama AI integration.
+A practical Network Engineering and NOC troubleshooting platform built with PowerShell, deterministic rule-based diagnostics, evidence correlation, root-cause analysis, incident lifecycle management, Windows Forms GUI, automated reporting, and optional local Ollama AI integration.
 
-**Current Version:** NETOPS v5.7 Rev.2  
+**Current GUI Release:** NETOPS v5.8  
+**Diagnostic Engine:** v5.7 Reliability Patch  
 **Status:** Stable Lab / Portfolio Release  
 **Focus:** CCNA + CCNP troubleshooting workflows
 
 ## Project Overview
 
-This project started as a PowerShell troubleshooting rule engine and evolved into a local Network Operations troubleshooting platform. It is designed to accept incident descriptions and technical evidence, identify root causes and symptoms, recommend the next troubleshooting command, and automatically document incidents for later review.
+NETOPS started as a PowerShell troubleshooting rule engine and evolved into a local Network Operations troubleshooting platform. It accepts incident descriptions and technical evidence, identifies root causes and symptoms, recommends the next troubleshooting command, saves incidents automatically, and tracks their operational lifecycle.
 
-The current release includes:
+The current platform includes:
 
 - Windows Forms troubleshooting GUI
 - FAST deterministic analysis mode
@@ -26,41 +27,97 @@ The current release includes:
 - Incident History dashboard
 - Incident Details panel
 - Open Report / Open Incident Folder workflow
-- Mark Resolved workflow
+- Incident lifecycle tracking
+- Dashboard counters and Health Score
+- Recent Incidents table
 - Markdown + JSON incident documentation
 - CSV incident history
 - Reliability regression testing
 - Professional Desktop shortcut / application icon workflow
 
+## v5.8 Dashboard Integration & Incident Lifecycle
+
+The v5.8 update focused on turning the GUI into a more realistic NOC-style incident console while keeping the v5.7 diagnostic engine stable.
+
+### Dashboard integration
+
+The Dashboard now reads directly from the Project 09 incident history and displays live operational counters:
+
+- **Total Incidents**
+- **Open**
+- **Monitoring**
+- **Resolved**
+- **Health Score**
+
+The Health Score reacts to active incidents:
+
+- Open / Investigating incidents reduce the score by 25 points each.
+- Monitoring incidents reduce the score by 10 points each.
+- A fully resolved incident set returns the dashboard to 100/100.
+
+### Incident lifecycle
+
+NETOPS now supports a practical incident workflow:
+
+```text
+OPEN -> MONITORING -> RESOLVED
+```
+
+This lifecycle was tested successfully with incident `INC-20260821-017`:
+
+```text
+OPEN
+Total: 17 | Open: 1 | Monitoring: 0 | Resolved: 16
+Health Score: 75/100 - ATTENTION
+
+MONITORING
+Total: 17 | Open: 0 | Monitoring: 1 | Resolved: 16
+Health Score: 90/100 - HEALTHY
+
+RESOLVED
+Total: 17 | Open: 0 | Monitoring: 0 | Resolved: 17
+Health Score: 100/100 - HEALTHY
+```
+
+### Recent Incidents
+
+The Dashboard Recent Incidents section now shows the latest incident records with professional operational fields:
+
+| Field | Purpose |
+|---|---|
+| Incident ID | Unique incident reference |
+| Created | Creation timestamp |
+| Status | Open / Monitoring / Resolved |
+| Category | VLAN, DHCP, OSPF, GRE, etc. |
+| Severity | HIGH / MEDIUM / LOW |
+| Confidence | Diagnostic confidence score |
+| Decision | FIX / VERIFY / COLLECT_MORE / STOP |
+
+Recent incidents are sorted by `IncidentID` descending so the newest incident is displayed first.
+
 ## v5.7 Rev.2 Reliability Patch
 
-The v5.7 Rev.2 update focused on reliability after practical CCNA and CCNP incident testing.
+The diagnostic engine remains on the tested v5.7 reliability release.
 
-### Fixes added
+### Reliability fixes
 
 1. **IPv6 Default Gateway false-positive fix**
    - Windows-style output can place an IPv6 gateway on the line after `Default Gateway:`.
    - The engine no longer reports `Default Gateway missing` when a valid IPv6 gateway is present on the next line.
 
 2. **GRE Tunnel Source / Destination mismatch detection**
-   - Added support for phrases such as:
-     - tunnel destination mismatch
-     - incorrect tunnel destination
-     - wrong tunnel source
-     - GRE source/destination mismatch
+   - Supports tunnel destination mismatch, incorrect destination, wrong source, and GRE endpoint mismatch wording.
 
 3. **Multi-root-cause VLAN + DHCP analysis**
    - The engine can detect an explicit access-port VLAN mismatch while simultaneously diagnosing DHCP/APIPA problems.
 
 4. **Version synchronization**
-   - Engine header updated to v5.7.
-   - GUI title and footer updated to v5.7 Rev.2.
+   - Diagnostic engine header uses v5.7.
+   - GUI/dashboard release is v5.8.
 
 ## Validation Results
 
 ### Full Rule Pack Regression Suite
-
-The CCNA / CCNP rule pack completed:
 
 ```text
 PASSED : 27
@@ -78,15 +135,14 @@ NETOPS v5.7 RELIABILITY PATCH REV.2: READY
 
 ### Real GUI Retests
 
-All three previously problematic scenarios were successfully retested through the actual GUI:
-
 | Test | Result | Key Finding |
 |---|---|---|
 | IPv6 default route | PASS | IPv6 Default Route Missing, 98% confidence |
 | GRE destination mismatch | PASS | GRE Tunnel Source/Destination Misconfiguration, 98% confidence |
 | VLAN + DHCP multi-root cause | PASS | VLAN mismatch + DHCP Relay Missing + APIPA symptoms |
-
-The multi-root-cause test produced four findings and correctly prioritized the access-port VLAN mismatch as the first troubleshooting action.
+| Incident lifecycle | PASS | OPEN -> MONITORING -> RESOLVED |
+| Dashboard counters | PASS | Total/Open/Monitoring/Resolved update correctly |
+| Health Score | PASS | 75 -> 90 -> 100 during lifecycle test |
 
 ## Practical CCNA / CCNP Tests Completed
 
@@ -126,15 +182,15 @@ The engine uses modular PowerShell rules covering:
 
 Every analyzed incident can be stored under the project data directory with structured documentation.
 
-Example artifacts:
-
 ```text
 data/
 ├── Incident-History.csv
 ├── Incidents/
 │   └── INC-YYYYMMDD-XXX/
 │       ├── incident.json
-│       └── incident-report.md
+│       ├── incident-report.md
+│       ├── analysis.txt
+│       └── incident-description.txt
 └── Reports/
 ```
 
@@ -145,7 +201,9 @@ The GUI supports:
 - Open Report
 - Open Incident Folder
 - Mark Resolved
-- Resolution status tracking
+- Lifecycle status tracking
+- Dashboard live counters
+- Recent incident review
 
 ## Decision Engine
 
@@ -208,6 +266,7 @@ show interfaces Fa0/2 switchport
 - PowerShell automation
 - GUI application development
 - Incident lifecycle management
+- Dashboard / operational status design
 - Regression testing
 - Technical documentation
 - Network automation / DevNet fundamentals
@@ -222,7 +281,7 @@ show interfaces Fa0/2 switchport
 
 ## Release Notes
 
-Detailed v5.7 Rev.2 notes are available in [`docs/NETOPS-v5.7-Rev2-Release.md`](./docs/NETOPS-v5.7-Rev2-Release.md).
+The v5.7 reliability notes are available in [`docs/NETOPS-v5.7-Rev2-Release.md`](./docs/NETOPS-v5.7-Rev2-Release.md). The v5.8 dashboard and lifecycle improvements are summarized in this README.
 
 ## Disclaimer
 
