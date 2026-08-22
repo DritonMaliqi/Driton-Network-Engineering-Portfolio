@@ -869,9 +869,7 @@ $btnFast.Add_Click({
             $desktopPath `
             "GUI-LAST-INPUT.txt"
 
-        $workerFile = Join-Path `
-            $desktopPath `
-            "Network-Engine-Worker.ps1"
+        $workerFile = $WorkerPath
 
         # Shkruaj incidentin si ASCII evidence
         [System.IO.File]::WriteAllText(
@@ -1588,6 +1586,9 @@ $form.Add_Shown({
 })
 
 [System.Windows.Forms.Application]::Run($form)
+
+
+
 
 
 
