@@ -2,3 +2,13 @@
 09-AI-Network-Troubleshooting-Platform/data/
 09-AI-Network-Troubleshooting-Platform/**/*.bak
 09-AI-Network-Troubleshooting-Platform/**/*.backup
+
+# NETOPS generated backups
+*.BACKUP-*.ps1
+*.backup-*.ps1
+*.BAK
+*.bak
+
+# Temporary NETOPS files
+09-AI-Network-Troubleshooting-Platform/backup/
+09-AI-Network-Troubleshooting-Platform/src/*BACKUP*
