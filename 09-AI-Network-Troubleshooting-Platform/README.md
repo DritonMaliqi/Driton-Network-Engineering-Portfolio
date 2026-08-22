@@ -1,13 +1,21 @@
-﻿# 09 - NETOPS AI-Assisted Network Troubleshooting Platform
+# 09 - NETOPS AI-Assisted Network Troubleshooting Platform
 
 ![NETOPS v5.8 Dashboard](./screenshots/NETOPS-v5.8-Dashboard-FINAL.png)
 
 A practical Network Engineering and NOC troubleshooting platform built with PowerShell, deterministic rule-based diagnostics, evidence correlation, root-cause analysis, incident lifecycle management, Windows Forms GUI, automated reporting, and optional local Ollama AI integration.
 
 **Current GUI Release:** NETOPS v5.8  
-**Diagnostic Engine:** v5.7 Reliability Patch  
-**Status:** Stable Lab / Portfolio Release  
+**Diagnostic Engine:** v5.7 Reliability Patch + Natural English / Dependency-Aware Enhancements  **Status:** Stable Lab / Portfolio Release  
 **Focus:** CCNA + CCNP troubleshooting workflows
+
+
+## Latest Engine Improvements
+
+### Natural English Normalizer
+NETOPS now recognizes common natural-English CCNA/CCNP incident descriptions for VLAN, Trunk, DHCP, OSPF, EIGRP, BGP, NAT, GRE, IPsec and IPv6 troubleshooting.
+
+### Dependency-Aware Smart Next Step
+NETOPS prioritizes troubleshooting using network dependencies: Layer 2 -> IP/DHCP -> Routing -> ACL/NAT -> VPN. In multi-problem incidents this helps select the most logical first troubleshooting command.
 
 ## Project Overview
 
@@ -184,14 +192,14 @@ Every analyzed incident can be stored under the project data directory with stru
 
 ```text
 data/
-â”œâ”€â”€ Incident-History.csv
-â”œâ”€â”€ Incidents/
-â”‚   â””â”€â”€ INC-YYYYMMDD-XXX/
-â”‚       â”œâ”€â”€ incident.json
-â”‚       â”œâ”€â”€ incident-report.md
-â”‚       â”œâ”€â”€ analysis.txt
-â”‚       â””â”€â”€ incident-description.txt
-â””â”€â”€ Reports/
+|-- Incident-History.csv
+|-- Incidents/
+|   `-- INC-YYYYMMDD-XXX/
+|       |-- incident.json
+|       |-- incident-report.md
+|       |-- analysis.txt
+|       `-- incident-description.txt
+`-- Reports/
 ```
 
 The GUI supports:
@@ -286,5 +294,6 @@ The v5.7 reliability notes are available in [`docs/NETOPS-v5.7-Rev2-Release.md`]
 ## Disclaimer
 
 This is a lab and portfolio project. Diagnostic rules and configuration recommendations must be validated before use in production networks.
+
 
 
