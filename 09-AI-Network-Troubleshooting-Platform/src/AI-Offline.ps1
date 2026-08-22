@@ -133,6 +133,139 @@ else {
     }
 }
 
+
+# ============================================================
+# NETOPS NATURAL ENGLISH NORMALIZER
+# Converts common CCNA/CCNP English descriptions into the
+# canonical evidence formats already understood by the rules.
+# ============================================================
+
+$normalizedEvidence = @()
+
+# ------------------------------------------------------------
+# VLAN - Expected VLAN / Configured VLAN / Interface
+# ------------------------------------------------------------
+
+$expectedVlan = [regex]::Match(
+    $inputText,
+    '(?im)^\s*Expected\s+VLAN\s*:\s*(\d+)'
+)
+
+$configuredVlan = [regex]::Match(
+    $inputText,
+    '(?im)^\s*Configured\s+VLAN\s*:\s*(\d+)'
+)
+
+$vlanInterface = [regex]::Match(
+    $inputText,
+    '(?im)^\s*Interface\s*:\s*((?:Fa|Gi|FastEthernet|GigabitEthernet)[0-9\/\.]+)'
+)
+
+if (
+    $expectedVlan.Success -and
+    $configuredVlan.Success -and
+    $vlanInterface.Success
+) {
+    $normalizedEvidence += (
+        "Interface {0} should be in VLAN {1} but is configured in VLAN {2}" -f
+        $vlanInterface.Groups[1].Value,
+        $expectedVlan.Groups[1].Value,
+        $configuredVlan.Groups[1].Value
+    )
+}
+
+# ------------------------------------------------------------
+# TRUNK - Natural allowed VLAN descriptions
+# ------------------------------------------------------------
+
+$expectedTrunk = [regex]::Match(
+    $inputText,
+    '(?im)^\s*Expected\s+allowed\s+VLANs?\s*:\s*([0-9,\- ]+)'
+)
+
+$configuredTrunk = [regex]::Match(
+    $inputText,
+    '(?im)^\s*Configured\s+allowed\s+VLANs?(?:\s+on\s+[^:\r\n]+)?\s*:\s*([0-9,\- ]+)'
+)
+
+if (
+    $expectedTrunk.Success -and
+    $configuredTrunk.Success
+) {
+    $normalizedEvidence += "Vlans allowed on trunk: $($expectedTrunk.Groups[1].Value.Trim())"
+    $normalizedEvidence += "Vlans allowed on trunk: $($configuredTrunk.Groups[1].Value.Trim())"
+}
+
+# ------------------------------------------------------------
+# OSPF - R1/R2 natural area descriptions
+# ------------------------------------------------------------
+
+if ($inputText -match '(?i)\bOSPF\b') {
+
+    $ospfAreas = @(
+        [regex]::Matches(
+            $inputText,
+            '(?im)\bR(?:\d+|-[A-Z0-9_-]+)\b[^\r\n]*?\barea\s*[:=]?\s*(\d+)'
+        ) |
+        ForEach-Object { $_.Groups[1].Value } |
+        Select-Object -Unique
+    )
+
+    $ospfNetwork = [regex]::Match(
+        $inputText,
+        '(?i)\b(\d{1,3}(?:\.\d{1,3}){3}\/\d{1,2})\b'
+    )
+
+    if (
+        $ospfNetwork.Success -and
+        $ospfAreas.Count -ge 2
+    ) {
+        foreach ($area in $ospfAreas) {
+            $normalizedEvidence += "$($ospfNetwork.Groups[1].Value) OSPF area $area"
+        }
+    }
+}
+
+# ------------------------------------------------------------
+# EIGRP - autonomous system wording
+# ------------------------------------------------------------
+
+if ($inputText -match '(?i)\bEIGRP\b') {
+
+    $eigrpAS = @(
+        [regex]::Matches(
+            $inputText,
+            '(?i)(?:autonomous\s+system|EIGRP\s+AS)\s*[:=]?\s*(\d+)'
+        ) |
+        ForEach-Object { $_.Groups[1].Value } |
+        Select-Object -Unique
+    )
+
+    if ($eigrpAS.Count -ge 2) {
+        foreach ($asn in $eigrpAS) {
+            $normalizedEvidence += "EIGRP AS $asn"
+        }
+    }
+}
+
+# ------------------------------------------------------------
+# BGP - remote AS / remote-as wording
+# ------------------------------------------------------------
+
+if (
+    $inputText -match '(?i)\bBGP\b.*remote[\s-]+AS\s+mismatch' -or
+    $inputText -match '(?i)remote\s+AS\s+mismatch.*\bBGP\b'
+) {
+    $normalizedEvidence += "BGP remote-as mismatch"
+}
+
+# Add normalized evidence without removing original incident text
+if ($normalizedEvidence.Count -gt 0) {
+
+    $inputText += "`r`n`r`n# NORMALIZED ENGLISH EVIDENCE`r`n"
+    $inputText += ($normalizedEvidence -join "`r`n")
+    $inputText += "`r`n"
+}
 $findings = @()
 
 $ruleFunctions = @(
@@ -258,7 +391,55 @@ Write-Output ""
 
 if ($findings.Count -gt 0) {
 
-    $next = $findings[0].NextCommand
+    # NETOPS DEPENDENCY-AWARE SMART NEXT STEP
+    $dependencyOrder = @{
+        "INTERFACE" = 10
+        "LAYER2"    = 20
+        "VLAN"      = 20
+        "TRUNK"     = 20
+        "IP"        = 30
+        "DHCP"      = 30
+        "DNS"       = 35
+        "ROUTING"   = 40
+        "OSPF"      = 40
+        "EIGRP"     = 40
+        "BGP"       = 45
+        "IPV6"      = 45
+        "ACL"       = 50
+        "NAT"       = 55
+        "GRE"       = 60
+        "IPSEC"     = 60
+        "SECURITY"  = 70
+    }
+
+    $smartFinding = $findings |
+        Where-Object { $_.Role -eq "ROOT_CAUSE" } |
+        Sort-Object @{
+            Expression = {
+                if ($dependencyOrder.ContainsKey([string]$_.Category)) {
+                    $dependencyOrder[[string]$_.Category]
+                }
+                else {
+                    999
+                }
+            }
+        }, @{
+            Expression = {
+                if ($_.Validation -eq "CONFIRMED") { 0 } else { 1 }
+            }
+        }, @{
+            Expression = { [int]$_.Priority }
+        }, @{
+            Expression = { -([int]$_.Confidence) }
+        } |
+        Select-Object -First 1
+
+    if ($smartFinding) {
+        $next = $smartFinding.NextCommand
+    }
+    else {
+        $next = $findings[0].NextCommand
+    }
 
     if ($next) {
         Write-Output $next
@@ -339,4 +520,8 @@ else {
     Write-Output ""
     Write-Output "FAST MODE: Ollama nuk u perdor."
 }
+
+
+
+
 

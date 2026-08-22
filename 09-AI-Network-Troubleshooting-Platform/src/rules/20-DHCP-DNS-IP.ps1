@@ -90,6 +90,30 @@
             -Priority 10
     }
 
+    # ---------------------------------------------------------
+    # NETOPS DHCP NATURAL ENGLISH RELAY
+    # ---------------------------------------------------------
+
+    if (
+        $Text -match '(?i)\bthere\s+is\s+no\s+ip\s+helper-address\b' -or
+        $Text -match '(?i)\bno\s+ip\s+helper-address\s+configured\b' -or
+        $Text -match '(?i)\bip\s+helper-address\s+is\s+not\s+configured\b'
+    ) {
+
+        $findings += New-NetFinding `
+            -Category "DHCP" `
+            -Severity "HIGH" `
+            -Role "ROOT_CAUSE" `
+            -Validation "CONFIRMED" `
+            -Problem "DHCP Relay Missing." `
+            -Evidence "Gateway interface does not have an ip helper-address configured." `
+            -Fix "Configure ip helper-address toward the DHCP server." `
+            -Verify "show running-config interface; ipconfig /renew" `
+            -NextCommand "show running-config | include helper-address" `
+            -Confidence 98 `
+            -Priority 10
+    }
+
     if (
         $Text -match '(?i)DNS.*(?:failure|failed|not resolving|nuk rezolvon)' -or
         $Text -match '(?i)nslookup.*(?:timed out|server failed)'
@@ -127,4 +151,6 @@
 
     return @($findings)
 }
+
+
 
