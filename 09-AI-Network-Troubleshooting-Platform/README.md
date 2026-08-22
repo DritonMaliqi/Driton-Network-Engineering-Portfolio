@@ -5,7 +5,8 @@
 A practical Network Engineering and NOC troubleshooting platform built with PowerShell, deterministic rule-based diagnostics, evidence correlation, root-cause analysis, incident lifecycle management, Windows Forms GUI, automated reporting, and optional local Ollama AI integration.
 
 **Current GUI Release:** NETOPS v5.8  
-**Diagnostic Engine:** v5.7 Reliability Patch + Natural English / Dependency-Aware Enhancements  **Status:** Stable Lab / Portfolio Release  
+**Diagnostic Engine:** v5.7 Reliability Patch + Natural English / Dependency-Aware Enhancements  
+**Status:** Stable Lab / Portfolio Release  
 **Focus:** CCNA + CCNP troubleshooting workflows
 
 
