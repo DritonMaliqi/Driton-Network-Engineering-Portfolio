@@ -1,12 +1,12 @@
-# 09 - NETOPS AI-Assisted Network Troubleshooting Platform
+﻿# 09 - NETOPS Network Troubleshooter v6.0
 
-![NETOPS v5.8 Dashboard](./screenshots/NETOPS-v5.8-Dashboard-FINAL.png)
+![NETOPS Dashboard](./screenshots/NETOPS-v5.8-Dashboard-FINAL.png)
 
 A practical Network Engineering and NOC troubleshooting platform built with PowerShell, deterministic rule-based diagnostics, evidence correlation, root-cause analysis, incident lifecycle management, Windows Forms GUI, automated reporting, and optional local Ollama AI integration.
 
-**Current GUI Release:** NETOPS v5.8  
-**Diagnostic Engine:** v5.7 Reliability Patch + Natural English / Dependency-Aware Enhancements  
-**Status:** Stable Lab / Portfolio Release  
+**Current GUI Release:** NETOPS v6.0  
+**Diagnostic Engine:** Deterministic CCNA/CCNP RCA + Hybrid AI Fusion  
+**Status:** Completed Portfolio Release  
 **Focus:** CCNA + CCNP troubleshooting workflows
 
 
@@ -44,65 +44,81 @@ The current platform includes:
 - Reliability regression testing
 - Professional Desktop shortcut / application icon workflow
 
-## v5.8 Dashboard Integration & Incident Lifecycle
+## v6.0 Incident Lifecycle & Analysis Platform
 
-The v5.8 update focused on turning the GUI into a more realistic NOC-style incident console while keeping the v5.7 diagnostic engine stable.
+NETOPS v6.0 expands the project into a complete network incident-analysis workflow.
 
-### Dashboard integration
+### Key v6.0 Capabilities
 
-The Dashboard now reads directly from the Project 09 incident history and displays live operational counters:
+- Incident Workspace
+- Active Incident tracking
+- Structured per-incident evidence
+- Log Correlation
+- Routing Analysis
+- Wireshark / TShark Packet Capture
+- Packet Analysis
+- Root Cause Analysis
+- RCA + Hybrid AI Fusion
+- Evidence Health Score
+- Full Incident Analysis
+- Post-Fix Verification
+- Controlled Incident Closure
 
-- **Total Incidents**
-- **Open**
-- **Monitoring**
-- **Resolved**
-- **Health Score**
+### Incident Lifecycle
 
-The Health Score reacts to active incidents:
+CREATE INCIDENT -> COLLECT EVIDENCE -> ANALYZE -> RCA -> HYBRID AI -> FULL ANALYSIS -> VERIFY -> CLOSE
 
-- Open / Investigating incidents reduce the score by 25 points each.
-- Monitoring incidents reduce the score by 10 points each.
-- A fully resolved incident set returns the dashboard to 100/100.
+### Incident Workspace
 
-### Incident lifecycle
+Each incident stores its own Logs, Packet Captures, Routing evidence, RCA reports, Hybrid AI reports, Config Backups, Final Reports and Verification evidence.
 
-NETOPS now supports a practical incident workflow:
+### Incident Dashboard
 
-```text
-OPEN -> MONITORING -> RESOLVED
-```
+The dashboard displays RCA classification, Severity, Confidence, Decision, Evidence Health Score, latest activity and evidence counts.
 
-This lifecycle was tested successfully with incident `INC-20260821-017`:
+Example:
 
-```text
-OPEN
-Total: 17 | Open: 1 | Monitoring: 0 | Resolved: 16
-Health Score: 75/100 - ATTENTION
+RCA: ROUTING / INTERFACE FAILURE
+Severity: HIGH
+Confidence: HIGH
+Decision: FIX / VERIFY
+Evidence Health: 100/100 (STRONG)
 
-MONITORING
-Total: 17 | Open: 0 | Monitoring: 1 | Resolved: 16
-Health Score: 90/100 - HEALTHY
+Evidence Health represents evidence completeness, not proof that the network is healthy.
 
-RESOLVED
-Total: 17 | Open: 0 | Monitoring: 0 | Resolved: 17
-Health Score: 100/100 - HEALTHY
-```
+### Root Cause Analysis
 
-### Recent Incidents
+NETOPS correlates interface, routing, log and packet evidence into a deterministic RCA verdict.
 
-The Dashboard Recent Incidents section now shows the latest incident records with professional operational fields:
+Example failure chain:
 
-| Field | Purpose |
-|---|---|
-| Incident ID | Unique incident reference |
-| Created | Creation timestamp |
-| Status | Open / Monitoring / Resolved |
-| Category | VLAN, DHCP, OSPF, GRE, etc. |
-| Severity | HIGH / MEDIUM / LOW |
-| Confidence | Diagnostic confidence score |
-| Decision | FIX / VERIFY / COLLECT_MORE / STOP |
+Interface DOWN -> OSPF Neighbor DOWN -> Route Loss -> Connectivity Failure
 
-Recent incidents are sorted by `IncidentID` descending so the newest incident is displayed first.
+### RCA + Hybrid AI Fusion
+
+Deterministic RCA remains the primary technical conclusion.
+Local Ollama AI is used to enrich explanation, remediation, verification commands and closure notes.
+
+Tested model: llama3.2:3b
+
+### Packet Capture & Analysis
+
+NETOPS integrates Wireshark, TShark and Npcap for packet capture and analysis of ARP, DNS, ICMP, TCP, UDP and OSPF traffic.
+
+### Full Incident Analysis
+
+NETOPS generates a consolidated Final Incident Report and checks evidence completeness before closure.
+
+### Post-Fix Verification
+
+Incident closure requires:
+
+- Interface: PASSED
+- OSPF Adjacency: PASSED
+- Routing: PASSED
+- Connectivity: PASSED
+
+Only after all required checks pass does NETOPS return READY FOR CLOSURE.
 
 ## v5.7 Rev.2 Reliability Patch
 
@@ -295,6 +311,8 @@ The v5.7 reliability notes are available in [`docs/NETOPS-v5.7-Rev2-Release.md`]
 ## Disclaimer
 
 This is a lab and portfolio project. Diagnostic rules and configuration recommendations must be validated before use in production networks.
+
+
 
 
 
