@@ -1,302 +1,654 @@
-﻿# 09 - NETOPS Network Troubleshooter v6.0
+# 09 - NETOPS Network Troubleshooter v6.0
 
-![NETOPS Dashboard](./screenshots/NETOPS-v5.8-Dashboard-FINAL.png)
+![NETOPS Project Banner](./AI-Network-Troubleshooting-Platform.png)
 
-A practical Network Engineering and NOC troubleshooting platform built with PowerShell, deterministic rule-based diagnostics, evidence correlation, root-cause analysis, incident lifecycle management, Windows Forms GUI, automated reporting, and optional local Ollama AI integration.
+A practical Windows-based Network Engineering and NOC troubleshooting platform built with PowerShell, Windows Forms, deterministic CCNA/CCNP diagnostics, evidence correlation, packet analysis, Root Cause Analysis, incident lifecycle management, automated reporting, and optional local Ollama AI enrichment.
 
-**Current GUI Release:** NETOPS v6.0  
-**Diagnostic Engine:** Deterministic CCNA/CCNP RCA + Hybrid AI Fusion  
+**Current Release:** NETOPS v6.0  
+**Diagnostic Approach:** Deterministic CCNA/CCNP RCA + Hybrid AI Fusion  
 **Status:** Completed Portfolio Release  
-**Focus:** CCNA + CCNP troubleshooting workflows
+**Focus:** Network troubleshooting, NOC workflows, evidence-driven RCA, automation, and post-fix verification
 
+---
 
-## Latest Engine Improvements
+## Why This Project Matters
 
-### Natural English Normalizer
-NETOPS now recognizes common natural-English CCNA/CCNP incident descriptions for VLAN, Trunk, DHCP, OSPF, EIGRP, BGP, NAT, GRE, IPsec and IPv6 troubleshooting.
+NETOPS is designed to demonstrate more than isolated Cisco commands. It models a realistic troubleshooting workflow in which evidence is collected, correlated, analyzed, verified, and preserved throughout the incident lifecycle.
 
-### Dependency-Aware Smart Next Step
-NETOPS prioritizes troubleshooting using network dependencies: Layer 2 -> IP/DHCP -> Routing -> ACL/NAT -> VPN. In multi-problem incidents this helps select the most logical first troubleshooting command.
+What makes the project different:
 
-## Project Overview
+- Deterministic troubleshooting remains the primary technical decision layer.
+- Hybrid AI is used to enrich explanations rather than replace verified evidence.
+- Packet captures, routing output, logs, RCA reports, and configuration backups can be associated with an active incident.
+- Incidents are not closed just because evidence is complete; post-fix verification is required.
+- The workflow is structured around practical Junior Network Engineer / NOC operational tasks.
 
-NETOPS started as a PowerShell troubleshooting rule engine and evolved into a local Network Operations troubleshooting platform. It accepts incident descriptions and technical evidence, identifies root causes and symptoms, recommends the next troubleshooting command, saves incidents automatically, and tracks their operational lifecycle.
+---
 
-The current platform includes:
+## Platform Architecture
 
-- Windows Forms troubleshooting GUI
-- FAST deterministic analysis mode
-- Optional HYBRID / local Ollama AI workflow
-- Modular CCNA / CCNP rule pack
+```text
+Incident Description / Technical Evidence
+                 |
+                 v
+      Deterministic Rule Engine
+                 |
+                 v
+     Evidence Correlation Layer
+                 |
+      +----------+-----------+
+      |          |           |
+      v          v           v
+   Routing      Logs       Packets
+   Analysis   Correlation   Analysis
+      \          |          /
+       \         |         /
+        +--------+--------+
+                 |
+                 v
+        Root Cause Analysis
+                 |
+                 v
+         Hybrid AI Fusion
+                 |
+                 v
+       Full Incident Analysis
+                 |
+                 v
+        Post-Fix Verification
+                 |
+                 v
+          Incident Closure
+```
+
+The deterministic RCA verdict remains the authoritative technical conclusion. Hybrid AI is used to improve explanation, remediation guidance, verification steps, and closure notes.
+
+---
+
+## Core Capabilities
+
+### Troubleshooting Engine
+
+- FAST deterministic analysis
+- CCNA / CCNP-oriented rule coverage
 - Root-cause vs symptom classification
+- Severity assessment
 - Confidence scoring
 - FIX / VERIFY / COLLECT_MORE / STOP decisions
 - Smart next-step recommendations
-- Automatic incident saving
-- Incident History dashboard
-- Incident Details panel
-- Open Report / Open Incident Folder workflow
-- Incident lifecycle tracking
-- Dashboard counters and Health Score
-- Recent Incidents table
-- Markdown + JSON incident documentation
-- CSV incident history
-- Reliability regression testing
-- Professional Desktop shortcut / application icon workflow
+- Natural-English incident normalization
+- Dependency-aware troubleshooting order
 
-## v6.0 Incident Lifecycle & Analysis Platform
+### Network Tools
 
-NETOPS v6.0 expands the project into a complete network incident-analysis workflow.
-
-### Key v6.0 Capabilities
-
-- Incident Workspace
-- Active Incident tracking
-- Structured per-incident evidence
-- Log Correlation
+- Ping
+- Traceroute
+- Cisco show-command reference
+- Device Inventory
+- Topology View
+- Configuration Backup / Restore
 - Routing Analysis
-- Wireshark / TShark Packet Capture
+- Log Correlation
+- Packet Capture / Wireshark
 - Packet Analysis
 - Root Cause Analysis
 - RCA + Hybrid AI Fusion
-- Evidence Health Score
+- Incident Workspace
+- Incident Dashboard
 - Full Incident Analysis
-- Post-Fix Verification
-- Controlled Incident Closure
+- Post-Fix Verification / Closure
 
-### Incident Lifecycle
+---
 
-CREATE INCIDENT -> COLLECT EVIDENCE -> ANALYZE -> RCA -> HYBRID AI -> FULL ANALYSIS -> VERIFY -> CLOSE
+## Incident Lifecycle
 
-### Incident Workspace
+NETOPS v6.0 implements a complete evidence-driven incident workflow:
 
-Each incident stores its own Logs, Packet Captures, Routing evidence, RCA reports, Hybrid AI reports, Config Backups, Final Reports and Verification evidence.
+```text
+CREATE INCIDENT
+      |
+      v
+COLLECT EVIDENCE
+      |
+      v
+LOG / PACKET / ROUTING ANALYSIS
+      |
+      v
+ROOT CAUSE ANALYSIS
+      |
+      v
+HYBRID AI FUSION
+      |
+      v
+FULL INCIDENT ANALYSIS
+      |
+      v
+POST-FIX VERIFICATION
+      |
+      v
+INCIDENT CLOSURE
+```
 
-### Incident Dashboard
+This prevents premature closure and keeps troubleshooting evidence traceable from detection to resolution.
 
-The dashboard displays RCA classification, Severity, Confidence, Decision, Evidence Health Score, latest activity and evidence counts.
+---
+
+## Incident Workspace
+
+Each active incident can use its own structured evidence directory:
+
+```text
+INC-YYYYMMDD-XXX
+|
+|-- 01-Logs
+|-- 02-Packet-Captures
+|-- 03-Routing
+|-- 04-RCA
+|-- 05-Hybrid-AI
+|-- 06-Config-Backups
+|-- 07-Screenshots
+|-- 08-Final-Report
+|-- 09-Verification
+`-- incident-summary.txt
+```
+
+This design keeps evidence isolated per incident and supports later review, verification, and documentation.
+
+---
+
+## Incident Dashboard
+
+The Incident Dashboard provides a centralized operational view of the active incident.
+
+It can display:
+
+- Active Incident ID
+- Incident status
+- RCA classification
+- Severity
+- Confidence
+- Decision
+- Evidence Health Score
+- Last activity
+- Log evidence count
+- Packet evidence count
+- Routing evidence count
+- RCA reports
+- Hybrid AI reports
+- Configuration backups
+- Screenshots
 
 Example:
 
+```text
 RCA: ROUTING / INTERFACE FAILURE
 Severity: HIGH
 Confidence: HIGH
 Decision: FIX / VERIFY
 Evidence Health: 100/100 (STRONG)
+```
 
-Evidence Health represents evidence completeness, not proof that the network is healthy.
+> **Evidence Health** measures evidence completeness. It does not mean that the network itself is healthy or that the incident is resolved.
 
-### Root Cause Analysis
+---
 
-NETOPS correlates interface, routing, log and packet evidence into a deterministic RCA verdict.
+## Device Inventory
 
-Example failure chain:
+The Device Inventory module is designed to track operational network assets such as:
 
+- Device name
+- Device type
+- Vendor
+- Model
+- Management IP
+- Site
+- Reachability status
+
+The inventory can be used as a foundation for topology and troubleshooting workflows.
+
+---
+
+## Network Topology
+
+Topology View provides a visual representation of devices and links for troubleshooting context.
+
+Typical use cases:
+
+- Understand device relationships
+- Review logical links
+- Identify relevant routers / switches
+- Support incident context before deeper analysis
+
+---
+
+## Configuration Backup / Restore
+
+NETOPS can preserve device configuration evidence and associate configuration backups with the active incident.
+
+Typical workflow:
+
+```text
+Collect configuration
+        |
+        v
+Store backup
+        |
+        v
+Associate with incident
+        |
+        v
+Use during RCA / verification
+```
+
+Configuration evidence is kept separate from generated PowerShell backup files.
+
+---
+
+## Routing Analysis
+
+The Routing Analysis module evaluates evidence from Cisco-style commands such as:
+
+```text
+show ip route
+show ip protocols
+show ip ospf neighbor
+show ip ospf interface brief
+show ip route ospf
+show ip eigrp neighbors
+show ip eigrp topology
+show bgp ipv4 unicast summary
+```
+
+It can identify information such as:
+
+- Gateway of last resort
+- Static routes
+- OSPF routes
+- OSPF Router ID
+- OSPF neighbor state
+- Route-loss indicators
+- Dynamic routing evidence
+
+---
+
+## Log Correlation
+
+NETOPS correlates network events into an operational timeline.
+
+Example correlated chain:
+
+```text
+Interface DOWN
+      |
+      v
+OSPF Neighbor DOWN
+      |
+      v
+Route Loss
+      |
+      v
+Connectivity Failure
+```
+
+The module can work with evidence such as:
+
+- Interface state changes
+- Line protocol changes
+- OSPF adjacency changes
+- Route removal
+- NAT failures
+- ACL deny events
+
+---
+
+## Packet Capture / Wireshark
+
+NETOPS integrates with:
+
+- Wireshark
+- TShark
+- Npcap
+
+Supported capture workflows include:
+
+- Interface discovery
+- Automated packet capture
+- ICMP filtering
+- ARP filtering
+- DNS filtering
+- TCP filtering
+- UDP filtering
+- OSPF filtering
+- PCAP / PCAPNG preservation
+- Active-incident evidence storage
+
+---
+
+## Packet Analysis
+
+Packet Analysis uses TShark-based inspection of PCAP / PCAPNG files.
+
+The module can summarize:
+
+- Total packet count
+- ARP
+- DNS
+- ICMP
+- TCP
+- UDP
+- OSPF
+- TCP retransmissions
+- Fast retransmissions
+- Duplicate ACKs
+- TCP resets
+- DNS errors
+- ICMP unreachable / TTL exceeded
+- ARP duplicate-address indicators
+- Top source IP addresses
+- Top destination IP addresses
+
+Example finding:
+
+```text
+NETOPS FINDINGS
+------------------------------------------------------------
+TCP reset packets detected.
+```
+
+---
+
+## Root Cause Analysis
+
+NETOPS RCA correlates routing, log, packet, and incident evidence into a deterministic technical verdict.
+
+Example:
+
+```text
+INCIDENT CLASSIFICATION
+------------------------------------------------------------
+Incident Type: ROUTING / INTERFACE FAILURE
+Severity: HIGH
+Confidence: HIGH
+
+LIKELY ROOT CAUSE
+------------------------------------------------------------
+Physical or Layer-2 interface failure caused OSPF adjacency loss and routing impact.
+
+CORRELATED EVIDENCE
+------------------------------------------------------------
+* Interface-down evidence detected.
+* OSPF neighbor-down evidence detected.
+* Route-loss evidence detected.
+
+DEPENDENCY CHAIN
+------------------------------------------------------------
 Interface DOWN -> OSPF Neighbor DOWN -> Route Loss -> Connectivity Failure
 
-### RCA + Hybrid AI Fusion
-
-Deterministic RCA remains the primary technical conclusion.
-Local Ollama AI is used to enrich explanation, remediation, verification commands and closure notes.
-
-Tested model: llama3.2:3b
-
-### Packet Capture & Analysis
-
-NETOPS integrates Wireshark, TShark and Npcap for packet capture and analysis of ARP, DNS, ICMP, TCP, UDP and OSPF traffic.
-
-### Full Incident Analysis
-
-NETOPS generates a consolidated Final Incident Report and checks evidence completeness before closure.
-
-### Post-Fix Verification
-
-Incident closure requires:
-
-- Interface: PASSED
-- OSPF Adjacency: PASSED
-- Routing: PASSED
-- Connectivity: PASSED
-
-Only after all required checks pass does NETOPS return READY FOR CLOSURE.
-
-## v5.7 Rev.2 Reliability Patch
-
-The diagnostic engine remains on the tested v5.7 reliability release.
-
-### Reliability fixes
-
-1. **IPv6 Default Gateway false-positive fix**
-   - Windows-style output can place an IPv6 gateway on the line after `Default Gateway:`.
-   - The engine no longer reports `Default Gateway missing` when a valid IPv6 gateway is present on the next line.
-
-2. **GRE Tunnel Source / Destination mismatch detection**
-   - Supports tunnel destination mismatch, incorrect destination, wrong source, and GRE endpoint mismatch wording.
-
-3. **Multi-root-cause VLAN + DHCP analysis**
-   - The engine can detect an explicit access-port VLAN mismatch while simultaneously diagnosing DHCP/APIPA problems.
-
-4. **Version synchronization**
-   - Diagnostic engine header uses v5.7.
-   - GUI/dashboard release is v5.8.
-
-## Validation Results
-
-### Full Rule Pack Regression Suite
-
-```text
-PASSED : 27
-FAILED : 0
-NETOPS v5.3 RULE PACK: READY
+DECISION
+------------------------------------------------------------
+FIX / VERIFY
 ```
 
-### v5.7 Rev.2 Reliability Regression Suite
+---
+
+## RCA + Hybrid AI Fusion
+
+NETOPS can combine deterministic RCA with a local Ollama model.
+
+Tested local model:
 
 ```text
-PASSED : 8
-FAILED : 0
-NETOPS v5.7 RELIABILITY PATCH REV.2: READY
+llama3.2:3b
 ```
 
-### Real GUI Retests
+The deterministic RCA remains the primary conclusion. Hybrid AI is used to enrich:
 
-| Test | Result | Key Finding |
-|---|---|---|
-| IPv6 default route | PASS | IPv6 Default Route Missing, 98% confidence |
-| GRE destination mismatch | PASS | GRE Tunnel Source/Destination Misconfiguration, 98% confidence |
-| VLAN + DHCP multi-root cause | PASS | VLAN mismatch + DHCP Relay Missing + APIPA symptoms |
-| Incident lifecycle | PASS | OPEN -> MONITORING -> RESOLVED |
-| Dashboard counters | PASS | Total/Open/Monitoring/Resolved update correctly |
-| Health Score | PASS | 75 -> 90 -> 100 during lifecycle test |
+- Executive summary
+- Root-cause explanation
+- Correlated evidence narrative
+- Remediation guidance
+- Cisco verification commands
+- Verification plan
+- Incident closure notes
 
-## Practical CCNA / CCNP Tests Completed
+The Fusion workflow also removes conflicting legacy output when a confirmed RCA verdict already exists.
 
-The platform has been manually tested with scenarios including:
+---
+
+## Full Incident Analysis
+
+The Full Incident Analysis module creates a consolidated Final Incident Report from the active incident.
+
+It evaluates:
+
+- Evidence completeness
+- Latest RCA
+- Incident classification
+- Severity
+- Confidence
+- Root cause
+- Missing evidence
+- Verification requirements
+
+Example:
+
+```text
+Evidence Score: 100/100
+Operational Decision: KEEP OPEN / VERIFY
+```
+
+NETOPS intentionally does **not** automatically close an incident simply because evidence is complete.
+
+---
+
+## Post-Fix Verification
+
+Before closure, NETOPS requires service-restoration evidence.
+
+Typical verification checks:
+
+### Interface
+
+```text
+show ip interface brief
+```
+
+Expected result:
+
+```text
+up / up
+```
+
+### OSPF
+
+```text
+show ip ospf neighbor
+```
+
+Expected result:
+
+```text
+FULL
+```
+
+### Routing
+
+```text
+show ip route
+```
+
+Expected result: required route or prefix is present.
+
+### Connectivity
+
+```text
+ping <destination>
+```
+
+Expected result: successful reachability.
+
+Example final verification:
+
+```text
+INTERFACE      : PASSED
+OSPF ADJACENCY : PASSED
+ROUTING        : PASSED
+CONNECTIVITY   : PASSED
+
+FINAL DECISION
+READY FOR CLOSURE
+```
+
+Only after all required verification checks pass can the incident be closed.
+
+---
+
+## Example Incident Scenario
+
+A tested routing / interface scenario followed this chain:
+
+```text
+GigabitEthernet interface DOWN
+        |
+        v
+OSPF adjacency FULL -> DOWN
+        |
+        v
+192.168.30.0/24 route removed
+        |
+        v
+Routing degradation
+```
+
+NETOPS correlated the evidence and returned:
+
+```text
+Incident Type: ROUTING / INTERFACE FAILURE
+Severity: HIGH
+Confidence: HIGH
+Decision: FIX / VERIFY
+```
+
+Post-fix evidence later confirmed:
+
+```text
+Interface = UP/UP
+OSPF = FULL
+Route = PRESENT
+Ping = SUCCESS
+```
+
+Final verification result:
+
+```text
+READY FOR CLOSURE
+```
+
+---
+
+## Troubleshooting Coverage
+
+The deterministic engine has been developed and tested against scenarios including:
 
 - VLAN access-port mismatch
-- Trunk allowed VLAN mismatch
+- Trunk allowed-VLAN mismatch
 - DHCP relay missing
 - APIPA addressing
 - Missing default gateway
-- IPv6 default route missing
+- IPv6 default-route problems
 - OSPF area mismatch
-- OSPF MTU mismatch / EXSTART
+- OSPF MTU / EXSTART issues
 - EIGRP autonomous-system mismatch
 - BGP remote-AS mismatch
-- NAT ACL missing source subnet
-- IPsec crypto parameter mismatch
+- NAT source / ACL problems
+- ACL deny events
 - GRE tunnel endpoint mismatch
-- Multiple simultaneous network faults
+- IPsec parameter mismatch
+- Interface failure
+- OSPF neighbor loss
+- Route loss
+- Multi-fault troubleshooting scenarios
 
-## Modular Rule Coverage
+---
 
-The engine uses modular PowerShell rules covering:
+## Deterministic Rule Areas
 
-- Layer 2 / VLAN / trunking
-- DHCP / DNS / IPv4
-- Routing
+The modular rule engine covers areas such as:
+
+- Layer 2
+- VLANs
+- 802.1Q trunking
+- DHCP
+- DNS
+- IPv4
+- IPv6
+- Static routing
 - OSPF
 - EIGRP
 - BGP
-- ACL / NAT
-- Network security controls
-- VPN / WAN / GRE / IPsec
-- IPv6
+- ACL
+- NAT / PAT
+- GRE
+- IPsec
+- Network-security troubleshooting
 
-## Incident Management
+---
 
-Every analyzed incident can be stored under the project data directory with structured documentation.
+## Decision Model
 
-```text
-data/
-|-- Incident-History.csv
-|-- Incidents/
-|   `-- INC-YYYYMMDD-XXX/
-|       |-- incident.json
-|       |-- incident-report.md
-|       |-- analysis.txt
-|       `-- incident-description.txt
-`-- Reports/
-```
+NETOPS uses operational decisions such as:
 
-The GUI supports:
+- **FIX** — strong root-cause evidence supports a controlled correction.
+- **VERIFY** — a probable cause exists but should be validated before change.
+- **COLLECT_MORE** — more evidence is required.
+- **STOP** — available evidence is insufficient for safe troubleshooting.
+- **FIX / VERIFY** — apply the identified correction and then verify service restoration.
+- **READY FOR CLOSURE** — required post-fix checks have passed.
 
-- Refresh History
-- View Incident Details
-- Open Report
-- Open Incident Folder
-- Mark Resolved
-- Lifecycle status tracking
-- Dashboard live counters
-- Recent incident review
-
-## Decision Engine
-
-NETOPS uses four primary decisions:
-
-- **FIX** - a root cause is confirmed strongly enough to proceed with a controlled correction.
-- **VERIFY** - a probable root cause exists but should be validated before configuration changes.
-- **COLLECT_MORE** - additional evidence is required.
-- **STOP** - available evidence is insufficient for a safe diagnosis.
-
-## Example Troubleshooting Output
-
-```text
-[HIGH] [CONFIRMED] [ROOT_CAUSE] VLAN
-Problem    : Access Port VLAN Mismatch.
-Evidence   : Fa0/2 should be in VLAN 10 but is configured in VLAN 20.
-Confidence : 99%
-Interface  : Fa0/2
-
-[HIGH] [CONFIRMED] [ROOT_CAUSE] DHCP
-Problem    : DHCP Relay Missing.
-Confidence : 98%
-
-DECISION
-FIX
-
-SMART NEXT STEP
-show interfaces Fa0/2 switchport
-```
+---
 
 ## Technologies
 
 - PowerShell
 - Windows Forms
-- Cisco IOS troubleshooting concepts
-- IPv4 / IPv6
-- VLAN / 802.1Q trunking
-- DHCP / DNS
-- Static and dynamic routing
-- OSPF / EIGRP / BGP
-- ACL / NAT / PAT
-- GRE / IPsec VPN
-- Regular expressions
-- Evidence correlation
-- Root Cause Analysis
-- Incident Management
-- Markdown / JSON / CSV reporting
+- Cisco IOS-style troubleshooting evidence
+- Wireshark
+- TShark
+- Npcap
 - Ollama
 - Llama 3.2
+- CSV
+- JSON
+- Markdown
+- PCAP / PCAPNG
+- Git
+- GitHub
+
+---
 
 ## Skills Demonstrated
 
 - Network troubleshooting methodology
 - Cisco IOS diagnostics
-- Layer 2 and Layer 3 fault isolation
+- Layer 2 / Layer 3 fault isolation
 - Routing-protocol troubleshooting
-- Network security troubleshooting
+- Network-security troubleshooting
 - Root Cause Analysis
 - Evidence correlation
+- Packet analysis
 - PowerShell automation
-- GUI application development
+- Windows GUI development
 - Incident lifecycle management
-- Dashboard / operational status design
-- Regression testing
+- Operational dashboard design
+- Verification-before-closure workflow
 - Technical documentation
 - Network automation / DevNet fundamentals
 
+---
+
 ## Intended Roles
+
+This project is relevant to portfolio preparation for roles such as:
 
 - Junior Network Engineer
 - NOC Technician
@@ -304,15 +656,63 @@ show interfaces Fa0/2 switchport
 - Network Administrator
 - Junior Network Automation / DevNet Engineer
 
-## Release Notes
+---
 
-The v5.7 reliability notes are available in [`docs/NETOPS-v5.7-Rev2-Release.md`](./docs/NETOPS-v5.7-Rev2-Release.md). The v5.8 dashboard and lifecycle improvements are summarized in this README.
+## Project Structure
+
+```text
+09-AI-Network-Troubleshooting-Platform/
+|
+|-- data/
+|-- docs/
+|-- evidence/
+|-- reports/
+|-- sample-evidence/
+|-- screenshots/
+|-- src/
+|-- tests/
+|-- topology/
+|-- AI-Network-Troubleshooting-Platform.png
+`-- README.md
+```
+
+---
+
+## Legacy / Previous Release Notes
+
+Earlier NETOPS releases focused on the core deterministic rule engine, reliability patches, dashboard integration, and incident-history workflows. Those iterations provided the foundation for the v6.0 lifecycle architecture.
+
+Historical release material remains in the project documentation and screenshots for development traceability.
+
+---
+
+## Engineering Principles
+
+1. Evidence before configuration changes.
+2. Deterministic RCA before AI enrichment.
+3. Separate confirmed facts from observations.
+4. Preserve evidence per incident.
+5. Validate remediation before closure.
+6. Do not interpret evidence completeness as proof of service restoration.
+7. Keep incidents open until post-fix verification succeeds.
+
+---
+
+## Current Version
+
+**NETOPS Network Troubleshooter v6.0**  
+**Incident Lifecycle / RCA / Hybrid AI**  
+**Status: Completed Portfolio Release**
+
+---
 
 ## Disclaimer
 
-This is a lab and portfolio project. Diagnostic rules and configuration recommendations must be validated before use in production networks.
+This is a lab and portfolio project. Diagnostic rules, remediation guidance, and configuration recommendations should always be validated before use in production networks.
 
+---
 
+## Author
 
-
-
+**Driton Maliqi**  
+Network Engineering Portfolio Project
