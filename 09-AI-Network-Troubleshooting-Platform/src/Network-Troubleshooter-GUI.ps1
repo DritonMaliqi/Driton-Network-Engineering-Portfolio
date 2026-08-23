@@ -1,4 +1,14 @@
-﻿$WorkerPath = Join-Path $PSScriptRoot "Network-Engine-Worker.ps1"
+﻿$WorkerPath =
+            "TIMELINE / SEARCH" {
+                Start-Process powershell.exe -ArgumentList @(
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    "$env:USERPROFILE\Documents\NETOPS\Tools\NETOPS-Timeline-Search-Filters.ps1"
+                )
+                break
+            } Join-Path $PSScriptRoot "Network-Engine-Worker.ps1"
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
@@ -9307,6 +9317,7 @@ function Show-NetOpsNetworkToolbox {
 
     $btnRcaHybridTool.Text =
         "RCA + HYBRID AI"
+        "TIMELINE / SEARCH"
 
     $btnRcaHybridTool.Location =
         New-Object System.Drawing.Point(
@@ -9491,6 +9502,7 @@ else {
 
 
 [System.Windows.Forms.Application]::Run($form)
+
 
 
 
