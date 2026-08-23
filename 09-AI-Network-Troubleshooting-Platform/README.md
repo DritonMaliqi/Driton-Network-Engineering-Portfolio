@@ -1,4 +1,4 @@
-# 09 - NETOPS Network Troubleshooter v6.0
+﻿# 09 - NETOPS Network Troubleshooter v6.0
 
 ![NETOPS Project Banner](./AI-Network-Troubleshooting-Platform.png)
 
@@ -8,6 +8,61 @@ A practical Windows-based Network Engineering and NOC troubleshooting platform b
 **Diagnostic Approach:** Deterministic CCNA/CCNP RCA + Hybrid AI Fusion  
 **Status:** Completed Portfolio Release  
 **Focus:** Network troubleshooting, NOC workflows, evidence-driven RCA, automation, and post-fix verification
+
+---
+
+
+---
+
+## NETOPS v6.0 Visual Walkthrough
+
+### 1. Main Incident Dashboard
+
+![NETOPS v6.0 Main Dashboard](./screenshots/01-Main-Dashboard-v6.0.png)
+
+The main dashboard summarizes total, open, monitoring, and resolved incidents together with Health Score, deterministic engine readiness, Ollama readiness, and recent incident activity.
+
+### 2. Network Tools
+
+![NETOPS v6.0 Network Tools](./screenshots/02-Network-Tools-v6.0.png)
+
+The Network Tools console provides access to Ping, Traceroute, Cisco command references, Device Inventory, Topology View, Config Backup / Restore, Routing Analysis, Log Correlation, Packet Capture, Packet Analysis, Root Cause Analysis, and Hybrid AI.
+
+### 3. Network Topology
+
+![NETOPS v6.0 Network Topology](./screenshots/03-Network-Topology-v6.0.png)
+
+Topology View provides a visual representation of devices, sites, links, and operational state.
+
+### 4. Cisco Show Commands
+
+![NETOPS v6.0 Cisco Show Commands](./screenshots/04-Cisco-Show-Commands-v6.0.png)
+
+The Cisco Show Commands module provides quick CCNA/CCNP troubleshooting references for common operational verification commands.
+
+### 5. Routing Analysis
+
+![NETOPS v6.0 Routing Analysis](./screenshots/05-Routing-Analysis-v6.0.png)
+
+Routing Analysis evaluates routing tables, OSPF, EIGRP, BGP, static routes, gateway information, and routing-protocol evidence.
+
+### 6. Packet Capture / Wireshark
+
+![NETOPS v6.0 Packet Capture](./screenshots/06-Packet-Capture-v6.0.png)
+
+Packet Capture integrates Wireshark and TShark for interface selection, filtered packet collection, and PCAP/PCAPNG preservation.
+
+### 7. Incident Dashboard
+
+![NETOPS v6.0 Incident Dashboard](./screenshots/07-Incident-Dashboard-v6.0.png)
+
+The incident dashboard centralizes active-incident evidence, RCA status, severity, confidence, decision, Evidence Health Score, and operational activity.
+
+### 8. Incident Closure
+
+![NETOPS v6.0 Closure Dashboard](./screenshots/08-Closure-Dashboard-v6.0.png)
+
+Closure is permitted only after required post-fix verification confirms interface state, routing recovery, adjacency restoration, and connectivity.
 
 ---
 
@@ -598,12 +653,12 @@ The modular rule engine covers areas such as:
 
 NETOPS uses operational decisions such as:
 
-- **FIX** — strong root-cause evidence supports a controlled correction.
-- **VERIFY** — a probable cause exists but should be validated before change.
-- **COLLECT_MORE** — more evidence is required.
-- **STOP** — available evidence is insufficient for safe troubleshooting.
-- **FIX / VERIFY** — apply the identified correction and then verify service restoration.
-- **READY FOR CLOSURE** — required post-fix checks have passed.
+- **FIX** â€” strong root-cause evidence supports a controlled correction.
+- **VERIFY** â€” a probable cause exists but should be validated before change.
+- **COLLECT_MORE** â€” more evidence is required.
+- **STOP** â€” available evidence is insufficient for safe troubleshooting.
+- **FIX / VERIFY** â€” apply the identified correction and then verify service restoration.
+- **READY FOR CLOSURE** â€” required post-fix checks have passed.
 
 ---
 
@@ -716,3 +771,4 @@ This is a lab and portfolio project. Diagnostic rules, remediation guidance, and
 
 **Driton Maliqi**  
 Network Engineering Portfolio Project
+
