@@ -7,6 +7,26 @@
 
 NETOPS IPAM is a bilingual offline desktop application for IPv4 subnet calculation, equal-size subnetting, VLSM planning, and local IP address inventory. It provides a practical workflow for CCNA/CCNP labs, small-network documentation, and day-to-day Network Engineering tasks.
 
+## Application Preview
+
+### IPv4 Subnet Calculator
+
+Calculate the network, subnet mask, wildcard mask, broadcast address, usable range, and host capacity from an IPv4/CIDR input.
+
+![NETOPS IPAM IPv4 subnet calculator](docs/images/01-subnet-calculator.png)
+
+### Equal-Size Subnet and VLSM Planner
+
+Split a parent network into equal-size subnets or create a largest-requirement-first VLSM addressing plan.
+
+![NETOPS IPAM VLSM planner](docs/images/02-vlsm-planner.png)
+
+### IP Address Manager
+
+Document IP allocations with hostname, prefix, device type, VLAN, location, status, and description fields.
+
+![NETOPS IPAM address inventory](docs/images/03-ip-address-manager.png)
+
 ## Key Features
 
 - English and Albanian user interface
@@ -70,4 +90,3 @@ This tool is intended for planning and documentation. Validate addressing plans 
 ## Version
 
 Version 1.0.0 – Completed.
-
