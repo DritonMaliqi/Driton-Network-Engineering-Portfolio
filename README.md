@@ -36,6 +36,7 @@ My objective is to demonstrate a structured engineering approach:
 | [11 - NETOPS Config Vault](./11-NETOPS-Config-Vault/) | Python, Tkinter, SQLite, Cisco IOS, Configuration Backup, Change Detection | Completed |
 | [12 - NETOPS IP Address Manager & Subnet Planner](./12-NETOPS-IPAM/) | Python, Tkinter, SQLite, IPv4, CIDR, VLSM, IPAM | Completed |
 | [13 - NETOPS Network Inventory & Documentation Tool](./13-NETOPS-Network-Inventory/) | Python, Tkinter, SQLite, Asset Inventory, CSV, HTML Reporting | Completed |
+| [14 - NETOPS Network Log & Syslog Analyzer](./14-NETOPS-Syslog-Analyzer/) | Python, Tkinter, Cisco Syslog, Event Parsing, Incident Detection, HTML Reporting | Completed |
 
 ## Technical Skills
 

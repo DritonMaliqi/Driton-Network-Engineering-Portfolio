@@ -1,0 +1,13 @@
+Sep  8 21:40:01 SW-ACCESS-01 %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to down
+Sep  8 21:40:02 SW-ACCESS-01 %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to down
+Sep  8 21:40:08 SW-ACCESS-01 %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to up
+Sep  8 21:40:09 SW-ACCESS-01 %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to up
+Sep  8 21:41:12 SW-ACCESS-01 %PM-4-ERR_DISABLE: bpduguard error detected on Fa0/10, putting Fa0/10 in err-disable state
+Sep  8 21:42:02 R-HQ-01 %OSPF-5-ADJCHG: Process 100, Nbr 2.2.2.2 on GigabitEthernet0/1 from FULL to DOWN, Neighbor Down: Interface down or detached
+Sep  8 21:42:40 R-HQ-01 %BGP-5-ADJCHANGE: neighbor 10.0.23.2 Down BGP Notification sent
+Sep  8 21:43:01 SW-CORE-01 %SPANTREE-2-RECV_PVID_ERR: Received BPDU with inconsistent peer vlan id 10 on GigabitEthernet1/0/24 VLAN20
+Sep  8 21:44:15 R-HQ-01 %IP-4-DUPADDR: Duplicate address 192.168.99.1 on GigabitEthernet0/0, sourced by 0011.2233.4455
+Sep  8 21:45:00 R-HQ-01 %SEC_LOGIN-4-LOGIN_FAILED: Login failed [user: admin] [Source: 192.168.99.50] [localport: 22]
+Sep  8 21:46:10 SW-CORE-01 %SYS-5-CONFIG_I: Configured from console by netadmin on vty0 (192.168.99.50)
+Sep  8 21:47:12 SW-ACCESS-01 %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to down
+Sep  8 21:47:18 SW-ACCESS-01 %LINK-3-UPDOWN: Interface GigabitEthernet0/1, changed state to up
