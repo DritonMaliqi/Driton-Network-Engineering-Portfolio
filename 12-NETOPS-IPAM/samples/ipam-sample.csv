@@ -1,0 +1,6 @@
+ip_address,prefix,hostname,device_type,vlan,location,status,description
+192.168.10.1,24,R-HQ-01,Router,10,HQ Server Room,Assigned,Finance default gateway
+192.168.10.10,24,PC-FIN-01,Workstation,10,HQ Floor 1,Assigned,Finance workstation
+192.168.20.1,24,R-HQ-01,Router,20,HQ Server Room,Assigned,HR default gateway
+192.168.50.10,24,DNS-01,Server,50,HQ Server Room,Reserved,Internal DNS server
+192.168.99.11,24,SW-ACCESS-01,Switch,99,HQ Rack A,Assigned,Management address
