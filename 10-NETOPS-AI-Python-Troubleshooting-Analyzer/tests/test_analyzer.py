@@ -2,7 +2,7 @@ import unittest
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from netops_ai import analyze_config, detect_device_name, compare_configs
+from netops_ai import analyze_config, detect_device_name, compare_configs, EN_FINDINGS, UI
 
 class AnalyzerTests(unittest.TestCase):
     def test_missing_trunk_vlan(self):
@@ -40,5 +40,11 @@ class AnalyzerTests(unittest.TestCase):
         titles = [x[0] for x in compare_configs(a, b)[2]]
         self.assertIn("OSPF area mismatch", titles)
         self.assertIn("BGP remote-as mismatch", titles)
+
+    def test_bilingual_catalogs(self):
+        self.assertEqual(UI["en"]["analyze"], "Analyze")
+        for sample in ("DNS request timed out", "Gi0/2 err-disabled 10", "BGP neighbor 10.0.0.2 is Idle"):
+            for finding in analyze_config(sample):
+                self.assertIn(finding["title"], EN_FINDINGS)
 
 if __name__ == "__main__": unittest.main()
