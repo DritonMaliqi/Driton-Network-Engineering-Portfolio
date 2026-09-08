@@ -30,6 +30,7 @@ The project follows an evidence-first workflow:
 - Export incident reports to printable HTML/PDF.
 - Run offline without sending configurations to cloud services.
 - Build a standalone Windows executable with PyInstaller.
+- Switch the complete interface, diagnostics, device-comparison results and new reports between Albanian and English.
 
 ## Troubleshooting coverage
 
@@ -109,7 +110,7 @@ Database files, generated reports, build output and device configurations are ex
 
 ## Current release
 
-**v3.1 — Completed**
+**v4.0 — Completed**
 
 - Offline Python analysis engine
 - Device comparison module
@@ -117,6 +118,7 @@ Database files, generated reports, build output and device configurations are ex
 - HTML/PDF reporting workflow
 - Windows executable build
 - Desktop shortcut and application icon
+- Bilingual Albanian/English interface and technical output
 
 ## Author
 
