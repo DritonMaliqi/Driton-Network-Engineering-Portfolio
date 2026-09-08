@@ -18,6 +18,44 @@ else:
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 DB_PATH = DATA_DIR / "netops_ai.db"
 
+UI = {
+    "sq": {"subtitle":"Analizues i Konfigurimeve Cisco  •  Offline","analyzer":"ANALIZUESI","compare":"KRAHASO PAJISJET","history":"HISTORIKU I INCIDENTEVE","device":"Pajisja:","load":"Ngarko konfigurimin","analyze":"Analizo","clear":"Pastro","input":"NGJIT KONFIGURIMIN / OUTPUT-IN","result":"REZULTATI I ANALIZËS","save":"Ruaj incidentin","load_a":"Ngarko Pajisjen A","load_b":"Ngarko Pajisjen B","compare_btn":"Krahaso","device_a":"PAJISJA A","device_b":"PAJISJA B","mismatches":"MOSPËRPUTHJET","date":"Data","status":"Statusi","details":"Shfaq detajet","resolve":"Shëno RESOLVED","export":"Eksporto raportin","delete":"Fshi incidentin","refresh":"Rifresko","language":"Gjuha:"},
+    "en": {"subtitle":"Cisco Configuration Analyzer  •  Offline","analyzer":"ANALYZER","compare":"COMPARE DEVICES","history":"INCIDENT HISTORY","device":"Device:","load":"Load configuration","analyze":"Analyze","clear":"Clear","input":"PASTE CONFIGURATION / OUTPUT","result":"ANALYSIS RESULT","save":"Save incident","load_a":"Load Device A","load_b":"Load Device B","compare_btn":"Compare","device_a":"DEVICE A","device_b":"DEVICE B","mismatches":"MISMATCHES","date":"Date","status":"Status","details":"Show details","resolve":"Mark RESOLVED","export":"Export report","delete":"Delete incident","refresh":"Refresh","language":"Language:"}
+}
+
+EN_FINDINGS = {
+"OSPF area mismatch":("OSPF area mismatch","The same OSPF network is assigned to different areas.","Assign the shared segment to the same OSPF area on both routers."),
+"VLAN mungon në trunk":("VLAN missing from trunk","An access VLAN is not permitted on the trunk.","Add the missing VLAN to the trunk allowed-VLAN list."),
+"DHCP nuk ka caktuar adresë":("DHCP address assignment failed","An APIPA address indicates that the client did not receive a DHCP lease.","Check the DHCP pool/server, client VLAN, relay and ip helper-address."),
+"Interface administrativisht i mbyllur":("Interface administratively shut down","The shutdown command is present on an interface.","If the interface should be active, verify the link and apply no shutdown."),
+"Default gateway nuk është gjetur":("Default gateway not found","An IP address exists but no Layer 2 management default gateway was found.","Verify the management gateway and configure ip default-gateway when required."),
+"Kontrollo Native VLAN":("Check Native VLAN","A native VLAN is configured and must match on both trunk endpoints.","Compare the native VLAN on both ends and change it only when a mismatch is confirmed."),
+"Port err-disabled":("Port is err-disabled","A protection mechanism automatically disabled the port.","Identify the trigger, correct it, then use shutdown/no shutdown."),
+"Line protocol DOWN":("Line protocol DOWN","The physical or data-link layer is not operational.","Check cabling, speed/duplex, encapsulation and both link endpoints."),
+"Gabime CRC në interface":("Interface CRC errors","A damaged cable/transceiver or duplex mismatch is likely.","Inspect the cable/transceiver and verify speed and duplex on both ends."),
+"Duplex mismatch i mundshëm":("Possible duplex mismatch","One side may use half-duplex while the peer uses full/auto.","Use matching speed and duplex settings on both ends, normally auto/auto."),
+"Port pa lidhje fizike":("Port has no physical link","The port does not detect a connected device or physical signal.","Check device power, cabling, transceiver and the remote port."),
+"STP/VLAN inconsistency":("STP/VLAN inconsistency","STP blocked the port because of a VLAN mismatch.","Match native VLAN and trunk parameters on both ends before recovery."),
+"EtherChannel i paformuar":("EtherChannel not formed","Member ports have inconsistent settings or incompatible negotiation modes.","Match mode, VLAN, trunk, speed/duplex and LACP/PAgP settings."),
+"Port i bllokuar nga STP":("Port blocked by STP","STP is blocking a redundant path; this may be expected behavior.","Verify the root bridge and topology. Do not force the port into forwarding."),
+"OSPF ngecur në EXSTART/EXCHANGE":("OSPF stuck in EXSTART/EXCHANGE","An MTU mismatch is the most common cause.","Match MTU on both ends; use mtu-ignore only with a justified design."),
+"OSPF ngecur në INIT":("OSPF stuck in INIT","Hello packets are received one-way; multicast, ACL or link parameters may block the return path.","Check bidirectional communication, ACLs and OSPF interface parameters."),
+"OSPF Hello/Dead mismatch":("OSPF Hello/Dead timer mismatch","OSPF neighbors use different Hello/Dead timers.","Match the OSPF Hello and Dead intervals on both ends."),
+"Routing authentication mismatch":("Routing authentication mismatch","Authentication type, key ID or key differs between neighbors.","Match authentication settings without exposing the secret."),
+"EIGRP K-values mismatch":("EIGRP K-values mismatch","EIGRP routers use different metric K-values.","Match metric weights/K-values throughout the EIGRP domain."),
+"BGP neighbor nuk është Established":("BGP neighbor is not Established","TCP/179, reachability, remote-AS, update-source or authentication may be incorrect.","Verify reachability, remote-AS, source interface, ACL and peer password."),
+"DHCP pool i shterur ose NAK":("DHCP pool exhausted or NAK received","The pool has no free addresses or client parameters do not match.","Correct network/default-router/exclusions or expand the pool according to the IP plan."),
+"Dështim DNS":("DNS resolution failure","The hostname cannot be resolved even though IP connectivity may work.","Check the client DNS address, reachability, DNS service and record."),
+"NAT nuk krijon përkthime":("NAT creates no translations","Traffic may not match the NAT rule, or inside/outside roles may be incorrect.","Check inside/outside roles, NAT ACL, routing and generate new traffic."),
+"Trafik i bllokuar nga ACL":("Traffic blocked by ACL","An ACL is denying the required flow.","Locate the exact ACE and direction; make the smallest change and retain required denies."),
+"HSRP nuk ka Active të qëndrueshëm":("HSRP has no stable Active router","Peer, group, virtual IP, authentication or VLAN settings may not match.","Match group, virtual IP and authentication; verify Layer 2 peer connectivity."),
+"Komandë IOS e pasaktë ose e pambështetur":("Invalid or unsupported IOS command","The CLI rejected the command or the platform does not support it.","Check syntax and use an equivalent command supported by the platform."),
+"VPN IPsec/IKE DOWN":("IPsec/IKE VPN is DOWN","Peer reachability, proposal, PSK, interesting traffic or NAT exemption may not match.","Compare peer, proposals, key, interesting traffic and return routing."),
+"Router-on-a-stick pa dot1Q":("Router-on-a-stick missing dot1Q","A subinterface exists but dot1Q encapsulation was not found.","Configure dot1Q with the correct VLAN and verify the switch trunk."),
+"OSPF pa interface/network aktiv":("OSPF has no active interface/network","The OSPF process exists but no participating interface was found.","Add only the planned interfaces using a network statement or interface-level OSPF."),
+"ACL mohon të gjithë trafikun":("ACL denies all traffic","A deny-any statement exists without a visible permit.","Add only the required permits before the implicit/explicit deny and verify security behavior."),
+"Nuk u gjet problem i qartë":("No clear problem detected","Automated rules did not identify a direct fault.","Collect the recommended outputs and troubleshoot the path layer by layer.")}
+
 
 def resource_path(name):
     base = Path(getattr(sys, "_MEIPASS", APP_DIR))
@@ -331,6 +369,7 @@ def analyze_config(text):
 class NetOpsApp(tk.Tk):
     def __init__(self):
         super().__init__()
+        self.language = tk.StringVar(value="sq")
         self.title("NETOPS AI – Network Troubleshooting Analyzer")
         try: self.iconbitmap(str(resource_path("netops-ai.ico")))
         except (tk.TclError, OSError): pass
@@ -344,6 +383,23 @@ class NetOpsApp(tk.Tk):
         self.db.commit()
         self.protocol("WM_DELETE_WINDOW", self.close_app)
         self._style(); self._build(); self.refresh_history()
+
+    def tr(self, key): return UI[self.language.get()][key]
+
+    def switch_language(self, _event=None):
+        values = {}
+        for name in ("input_text", "output_text", "compare_a", "compare_b", "compare_output"):
+            widget = getattr(self, name, None)
+            if widget: values[name] = widget.get("1.0", "end").rstrip()
+        device = self.device.get() if hasattr(self, "device") else "SW-ACCESS-01"
+        for child in self.winfo_children(): child.destroy()
+        self._build(); self.device.delete(0, "end"); self.device.insert(0, device)
+        for name, value in values.items():
+            widget = getattr(self, name); widget.config(state="normal"); widget.insert("1.0", value)
+            if name in ("output_text", "compare_output"): widget.config(state="disabled")
+        self.refresh_history()
+        if values.get("input_text", "").strip(): self.run_analysis()
+        if values.get("compare_a", "").strip() and values.get("compare_b", "").strip(): self.run_compare()
 
     def _style(self):
         s = ttk.Style(self); s.theme_use("clam")
@@ -360,59 +416,62 @@ class NetOpsApp(tk.Tk):
     def _build(self):
         header = ttk.Frame(self); header.pack(fill="x", padx=18, pady=(16, 8))
         ttk.Label(header, text="NETOPS AI", style="Title.TLabel").pack(side="left")
-        ttk.Label(header, text="Cisco Configuration Analyzer  •  Offline").pack(side="left", padx=18, pady=8)
+        ttk.Label(header, text=self.tr("subtitle")).pack(side="left", padx=18, pady=8)
+        ttk.Label(header, text=self.tr("language")).pack(side="right", padx=(8, 4))
+        lang = ttk.Combobox(header, textvariable=self.language, values=("sq", "en"), width=7, state="readonly")
+        lang.pack(side="right"); lang.bind("<<ComboboxSelected>>", self.switch_language)
 
         notebook = ttk.Notebook(self); notebook.pack(fill="both", expand=True, padx=18, pady=(0, 18))
         analyzer = ttk.Frame(notebook); compare = ttk.Frame(notebook); history = ttk.Frame(notebook)
-        notebook.add(analyzer, text="  ANALYZER  "); notebook.add(compare, text="  COMPARE DEVICES  "); notebook.add(history, text="  INCIDENT HISTORY  ")
+        notebook.add(analyzer, text=f"  {self.tr('analyzer')}  "); notebook.add(compare, text=f"  {self.tr('compare')}  "); notebook.add(history, text=f"  {self.tr('history')}  ")
 
         bar = ttk.Frame(analyzer); bar.pack(fill="x", pady=10)
-        ttk.Label(bar, text="Pajisja:").pack(side="left")
+        ttk.Label(bar, text=self.tr("device")).pack(side="left")
         self.device = ttk.Entry(bar, width=26); self.device.pack(side="left", padx=(6, 14)); self.device.insert(0, "SW-ACCESS-01")
-        ttk.Button(bar, text="Ngarko konfigurimin", command=self.load_file).pack(side="left", padx=4)
-        ttk.Button(bar, text="Analizo", command=self.run_analysis).pack(side="left", padx=4)
-        ttk.Button(bar, text="Pastro", command=self.clear).pack(side="left", padx=4)
+        ttk.Button(bar, text=self.tr("load"), command=self.load_file).pack(side="left", padx=4)
+        ttk.Button(bar, text=self.tr("analyze"), command=self.run_analysis).pack(side="left", padx=4)
+        ttk.Button(bar, text=self.tr("clear"), command=self.clear).pack(side="left", padx=4)
 
         panes = ttk.Panedwindow(analyzer, orient="horizontal"); panes.pack(fill="both", expand=True)
         left = ttk.Frame(panes, style="Card.TFrame"); right = ttk.Frame(panes, style="Card.TFrame")
         panes.add(left, weight=1); panes.add(right, weight=1)
-        ttk.Label(left, text="NGJIT KONFIGURIMIN / OUTPUT-IN", style="Card.TLabel").pack(anchor="w", padx=12, pady=(12, 5))
+        ttk.Label(left, text=self.tr("input"), style="Card.TLabel").pack(anchor="w", padx=12, pady=(12, 5))
         self.input_text = tk.Text(left, bg="#07101e", fg="#d8e8ff", insertbackground="white", relief="flat", font=("Consolas", 10), wrap="none")
         self.input_text.pack(fill="both", expand=True, padx=12, pady=(0, 12))
-        ttk.Label(right, text="REZULTATI I ANALIZËS", style="Card.TLabel").pack(anchor="w", padx=12, pady=(12, 5))
+        ttk.Label(right, text=self.tr("result"), style="Card.TLabel").pack(anchor="w", padx=12, pady=(12, 5))
         self.output_text = tk.Text(right, bg="#07101e", fg="#d8e8ff", insertbackground="white", relief="flat", font=("Consolas", 10), wrap="word", state="disabled")
         self.output_text.pack(fill="both", expand=True, padx=12, pady=(0, 8))
-        ttk.Button(right, text="Ruaj incidentin", command=self.save_incident).pack(anchor="e", padx=12, pady=(0, 12))
+        ttk.Button(right, text=self.tr("save"), command=self.save_incident).pack(anchor="e", padx=12, pady=(0, 12))
 
         compare_bar = ttk.Frame(compare); compare_bar.pack(fill="x", pady=10)
-        ttk.Button(compare_bar, text="Ngarko Pajisjen A", command=lambda: self.load_compare(self.compare_a)).pack(side="left", padx=4)
-        ttk.Button(compare_bar, text="Ngarko Pajisjen B", command=lambda: self.load_compare(self.compare_b)).pack(side="left", padx=4)
-        ttk.Button(compare_bar, text="Krahaso", command=self.run_compare).pack(side="left", padx=4)
-        ttk.Button(compare_bar, text="Pastro", command=self.clear_compare).pack(side="left", padx=4)
+        ttk.Button(compare_bar, text=self.tr("load_a"), command=lambda: self.load_compare(self.compare_a)).pack(side="left", padx=4)
+        ttk.Button(compare_bar, text=self.tr("load_b"), command=lambda: self.load_compare(self.compare_b)).pack(side="left", padx=4)
+        ttk.Button(compare_bar, text=self.tr("compare_btn"), command=self.run_compare).pack(side="left", padx=4)
+        ttk.Button(compare_bar, text=self.tr("clear"), command=self.clear_compare).pack(side="left", padx=4)
         compare_panes = ttk.Panedwindow(compare, orient="horizontal"); compare_panes.pack(fill="both", expand=True)
         ca = ttk.Frame(compare_panes, style="Card.TFrame"); cb = ttk.Frame(compare_panes, style="Card.TFrame"); cr = ttk.Frame(compare_panes, style="Card.TFrame")
         compare_panes.add(ca, weight=1); compare_panes.add(cb, weight=1); compare_panes.add(cr, weight=1)
-        ttk.Label(ca, text="PAJISJA A", style="Card.TLabel").pack(anchor="w", padx=10, pady=(10, 4))
+        ttk.Label(ca, text=self.tr("device_a"), style="Card.TLabel").pack(anchor="w", padx=10, pady=(10, 4))
         self.compare_a = tk.Text(ca, bg="#07101e", fg="#d8e8ff", insertbackground="white", relief="flat", font=("Consolas", 9), wrap="none")
         self.compare_a.pack(fill="both", expand=True, padx=10, pady=(0, 10))
-        ttk.Label(cb, text="PAJISJA B", style="Card.TLabel").pack(anchor="w", padx=10, pady=(10, 4))
+        ttk.Label(cb, text=self.tr("device_b"), style="Card.TLabel").pack(anchor="w", padx=10, pady=(10, 4))
         self.compare_b = tk.Text(cb, bg="#07101e", fg="#d8e8ff", insertbackground="white", relief="flat", font=("Consolas", 9), wrap="none")
         self.compare_b.pack(fill="both", expand=True, padx=10, pady=(0, 10))
-        ttk.Label(cr, text="MOBSPËRPUTHJET", style="Card.TLabel").pack(anchor="w", padx=10, pady=(10, 4))
+        ttk.Label(cr, text=self.tr("mismatches"), style="Card.TLabel").pack(anchor="w", padx=10, pady=(10, 4))
         self.compare_output = tk.Text(cr, bg="#07101e", fg="#d8e8ff", insertbackground="white", relief="flat", font=("Consolas", 9), wrap="word", state="disabled")
         self.compare_output.pack(fill="both", expand=True, padx=10, pady=(0, 10))
 
         columns = ("id", "date", "device", "status")
         self.tree = ttk.Treeview(history, columns=columns, show="headings")
-        for col, label, width in [("id", "ID", 70), ("date", "Data", 180), ("device", "Pajisja", 260), ("status", "Statusi", 120)]:
+        for col, label, width in [("id", "ID", 70), ("date", self.tr("date"), 180), ("device", self.tr("device").rstrip(":"), 260), ("status", self.tr("status"), 120)]:
             self.tree.heading(col, text=label); self.tree.column(col, width=width, anchor="center")
         self.tree.pack(fill="both", expand=True, pady=(12, 8))
         hbar = ttk.Frame(history); hbar.pack(fill="x", pady=(0, 12))
-        ttk.Button(hbar, text="Shfaq detajet", command=self.show_details).pack(side="left", padx=4)
-        ttk.Button(hbar, text="Shëno RESOLVED", command=self.resolve).pack(side="left", padx=4)
-        ttk.Button(hbar, text="Eksporto raportin", command=self.export_report).pack(side="left", padx=4)
-        ttk.Button(hbar, text="Fshi incidentin", command=self.delete_incident).pack(side="left", padx=4)
-        ttk.Button(hbar, text="Rifresko", command=self.refresh_history).pack(side="left", padx=4)
+        ttk.Button(hbar, text=self.tr("details"), command=self.show_details).pack(side="left", padx=4)
+        ttk.Button(hbar, text=self.tr("resolve"), command=self.resolve).pack(side="left", padx=4)
+        ttk.Button(hbar, text=self.tr("export"), command=self.export_report).pack(side="left", padx=4)
+        ttk.Button(hbar, text=self.tr("delete"), command=self.delete_incident).pack(side="left", padx=4)
+        ttk.Button(hbar, text=self.tr("refresh"), command=self.refresh_history).pack(side="left", padx=4)
 
     def load_file(self):
         path = filedialog.askopenfilename(filetypes=[("Text and config", "*.txt *.cfg *.log"), ("All files", "*.*")])
@@ -434,11 +493,15 @@ class NetOpsApp(tk.Tk):
     def run_compare(self):
         first = self.compare_a.get("1.0", "end").strip(); second = self.compare_b.get("1.0", "end").strip()
         if not first or not second:
-            messagebox.showwarning("Mungojnë të dhënat", "Ngarko ose ngjit konfigurimin e të dy pajisjeve."); return
+            messagebox.showwarning("Missing data" if self.language.get()=="en" else "Mungojnë të dhënat", "Load or paste both device configurations." if self.language.get()=="en" else "Ngarko ose ngjit konfigurimin e të dy pajisjeve."); return
         a_name, b_name, issues = compare_configs(first, second)
-        blocks = [f"KRAHASIMI: {a_name} ↔ {b_name}\n"]
+        blocks = [f"{'COMPARISON' if self.language.get() == 'en' else 'KRAHASIMI'}: {a_name} ↔ {b_name}\n"]
         for i, (title, evidence, verify, fix, retest) in enumerate(issues, 1):
-            blocks.append(f"{i}. {title}\n\nEVIDENCA\n{evidence}\n\nVERIFIKO\n{verify}\n\nNDRYSHIMI MINIMAL\n{fix}\n\nRITESTIMI\n{retest}")
+            if self.language.get() == "en":
+                title, evidence, verify, fix, retest = self.english_compare(title, evidence, verify, fix, retest)
+                blocks.append(f"{i}. {title}\n\nEVIDENCE\n{evidence}\n\nVERIFY\n{verify}\n\nMINIMAL CHANGE\n{fix}\n\nRETEST\n{retest}")
+            else:
+                blocks.append(f"{i}. {title}\n\nEVIDENCA\n{evidence}\n\nVERIFIKO\n{verify}\n\nNDRYSHIMI MINIMAL\n{fix}\n\nRITESTIMI\n{retest}")
         result = ("\n\n" + "─" * 42 + "\n\n").join(blocks)
         self.compare_output.config(state="normal"); self.compare_output.delete("1.0", "end"); self.compare_output.insert("1.0", result); self.compare_output.config(state="disabled")
 
@@ -455,18 +518,54 @@ class NetOpsApp(tk.Tk):
         blocks = []
         for i, f in enumerate(findings, 1):
             retest = self.retest_for(f['title'])
-            blocks.append(f"{i}. {f['title']}\nNiveli: {f['severity']}  |  Siguria: {f['confidence']}%\n\n"
-                          f"SIMPTOMA\n{f['title']} u identifikua në konfigurimin/output-in e ngarkuar.\n\n"
-                          f"SHKAKU I MUNDSHËM\n{f['cause']}\n\n"
-                          f"EVIDENCA\nNënshkrimi teknik i këtij problemi u gjet në të dhënat e pajisjes.\n\n"
-                          f"VERIFIKO PARA NDRYSHIMIT\n{f['verify']}\n\n"
-                          f"NDRYSHIMI MINIMAL\n{f['fix']}\n\n"
-                          f"RITESTIMI / MBYLLJA\n{retest}")
+            if self.language.get() == "en":
+                title, cause, fix = EN_FINDINGS.get(f['title'], (f['title'], f['cause'], f['fix']))
+                blocks.append(f"{i}. {title}\nSeverity: {f['severity']}  |  Confidence: {f['confidence']}%\n\n"
+                              f"SYMPTOM\n{title} was identified in the loaded configuration/output.\n\n"
+                              f"PROBABLE CAUSE\n{cause}\n\n"
+                              f"EVIDENCE\nThe technical signature of this issue was found in the device data.\n\n"
+                              f"VERIFY BEFORE CHANGE\n{f['verify']}\n\n"
+                              f"MINIMAL CHANGE\n{fix}\n\n"
+                              f"RETEST / CLOSURE\n{retest}")
+            else:
+                blocks.append(f"{i}. {f['title']}\nNiveli: {f['severity']}  |  Siguria: {f['confidence']}%\n\n"
+                              f"SIMPTOMA\n{f['title']} u identifikua në konfigurimin/output-in e ngarkuar.\n\n"
+                              f"SHKAKU I MUNDSHËM\n{f['cause']}\n\n"
+                              f"EVIDENCA\nNënshkrimi teknik i këtij problemi u gjet në të dhënat e pajisjes.\n\n"
+                              f"VERIFIKO PARA NDRYSHIMIT\n{f['verify']}\n\n"
+                              f"NDRYSHIMI MINIMAL\n{f['fix']}\n\n"
+                              f"RITESTIMI / MBYLLJA\n{retest}")
         return "\n\n" + ("\n\n" + "─" * 56 + "\n\n").join(blocks)
 
     @staticmethod
-    def retest_for(title):
+    def english_compare(title, evidence, verify, fix, retest):
+        titles = {"Native VLAN mismatch":"Native VLAN mismatch","Allowed VLAN mismatch":"Allowed VLAN mismatch","OSPF area mismatch":"OSPF area mismatch","Nuk u gjet subnet i përbashkët":"No shared subnet found","EtherChannel mode mismatch":"EtherChannel mode mismatch","BGP remote-as mismatch":"BGP remote-AS mismatch","Nuk u gjet mospërputhje e drejtpërdrejtë":"No direct mismatch found"}
+        phrases = {"Vetëm te ":"Only on ","Rrjeti ":"Network "," pret AS ":" expects AS "," për ":" for "," por ":", but "," është AS ":" is AS ","U krahasuan ":"Compared "," për parametrat e disponueshëm.":" using the available parameters."}
+        for sq, en in phrases.items(): evidence = evidence.replace(sq, en)
+        guidance = {
+            "Native VLAN mismatch":("show interfaces trunk on both switches","Match the native VLAN only on the ports connected to each other.","Confirm both ends show the same native VLAN and no STP inconsistent port."),
+            "Allowed VLAN mismatch":("show interfaces trunk on both endpoints","Permit only required VLANs and make the list consistent on that link.","Verify allowed/active VLANs and ping from a host in the affected VLAN."),
+            "OSPF area mismatch":("show ip ospf interface brief and show ip ospf neighbor on both routers","Assign the shared segment to the same area.","The adjacency must reach FULL and OSPF routes must appear in the routing table."),
+            "Nuk u gjet subnet i përbashkët":("show ip interface brief and show cdp neighbors","Confirm which interfaces are directly connected; change IP/mask only when they should be peers.","Ping the peer and check ARP/CDP. This may be normal if the devices are not directly connected."),
+            "EtherChannel mode mismatch":("show etherchannel summary on both switches","Use a compatible pair: LACP active/active or active/passive; static on/on.","The port-channel must be up and member ports bundled (P)."),
+            "BGP remote-as mismatch":("show ip bgp summary and show running-config | section router bgp","Set remote-AS to the peer's actual AS.","The BGP session must become Established."),
+            "Nuk u gjet mospërputhje e drejtpërdrejtë":("Add operational output (neighbors, trunks, routes) if the issue persists.","Do not change configuration without additional evidence.","Repeat the original test from source to destination.")}
+        ev, fx, rt = guidance.get(title, (verify, fix, retest))
+        return titles.get(title, title), evidence, ev, fx, rt
+
+    def retest_for(self, title):
         lower = title.lower()
+        if self.language.get() == "en":
+            if "bgp" in lower: return "Repeat show ip bgp summary; the session must be Established and expected prefixes must appear."
+            if "ospf" in lower: return "Repeat show ip ospf neighbor; adjacency must reach FULL and OSPF routes must appear in show ip route."
+            if "dhcp" in lower or "apipa" in lower: return "Renew the lease, check ipconfig /all and ping the default gateway."
+            if "dns" in lower: return "Repeat nslookup, then ping the hostname and IP to separate DNS from IP connectivity."
+            if "vlan" in lower or "trunk" in lower: return "Repeat show vlan brief/show interfaces trunk, then ping the gateway from the affected VLAN."
+            if "acl" in lower: return "Repeat the permitted flow and one negative test that must remain blocked; verify counters."
+            if "nat" in lower: return "Generate new traffic, verify translations/counters and confirm the return path."
+            if "vpn" in lower or "ipsec" in lower: return "Generate interesting traffic, verify IKE/IPsec SAs and test both directions."
+            if "etherchannel" in lower: return "Run show etherchannel summary; the port-channel must be up and members bundled."
+            return "Repeat the original failing test, add one adjacent positive test and verify the return path."
         if "bgp" in lower: return "Përsërit show ip bgp summary; gjendja duhet të jetë Established dhe prefikset e pritura të shfaqen."
         if "ospf" in lower: return "Përsërit show ip ospf neighbor; fqinjësia duhet të arrijë FULL dhe rrugët OSPF të shfaqen në show ip route."
         if "dhcp" in lower or "apipa" in lower: return "Rinovo lease-in, kontrollo ipconfig /all dhe testo ping drejt gateway-t."
@@ -481,7 +580,7 @@ class NetOpsApp(tk.Tk):
     def run_analysis(self):
         cfg = self.input_text.get("1.0", "end").strip()
         if not cfg:
-            messagebox.showwarning("Mungon konfigurimi", "Ngjit ose ngarko konfigurimin që dëshiron të analizosh."); return
+            messagebox.showwarning("Configuration missing" if self.language.get()=="en" else "Mungon konfigurimi", "Paste or load the configuration to analyze." if self.language.get()=="en" else "Ngjit ose ngarko konfigurimin që dëshiron të analizosh."); return
         self.apply_detected_device(cfg)
         result = self.format_findings(analyze_config(cfg))
         self.output_text.config(state="normal"); self.output_text.delete("1.0", "end"); self.output_text.insert("1.0", result); self.output_text.config(state="disabled")
@@ -490,10 +589,10 @@ class NetOpsApp(tk.Tk):
         cfg = self.input_text.get("1.0", "end").strip()
         result = self.output_text.get("1.0", "end").strip()
         if not cfg or not result:
-            messagebox.showwarning("Analiza mungon", "Fillimisht ngarko konfigurimin dhe shtyp Analizo."); return
+            messagebox.showwarning("Analysis missing" if self.language.get()=="en" else "Analiza mungon", "Load the configuration and select Analyze first." if self.language.get()=="en" else "Fillimisht ngarko konfigurimin dhe shtyp Analizo."); return
         self.db.execute("INSERT INTO incidents(created_at,device,config,result,status) VALUES(?,?,?,?,?)",
                         (datetime.now().strftime("%Y-%m-%d %H:%M"), self.device.get().strip(), cfg, result, "ACTIVE"))
-        self.db.commit(); self.refresh_history(); messagebox.showinfo("U ruajt", "Incidenti u ruajt me sukses.")
+        self.db.commit(); self.refresh_history(); messagebox.showinfo("Saved" if self.language.get()=="en" else "U ruajt", "Incident saved successfully." if self.language.get()=="en" else "Incidenti u ruajt me sukses.")
 
     def refresh_history(self):
         if not hasattr(self, "tree"): return
@@ -504,7 +603,7 @@ class NetOpsApp(tk.Tk):
     def selected_id(self):
         selection = self.tree.selection()
         if not selection:
-            messagebox.showwarning("Zgjidh incidentin", "Zgjidh një incident nga lista."); return None
+            messagebox.showwarning("Select incident" if self.language.get()=="en" else "Zgjidh incidentin", "Select an incident from the list." if self.language.get()=="en" else "Zgjidh një incident nga lista."); return None
         return int(self.tree.item(selection[0], "values")[0])
 
     def resolve(self):
@@ -518,7 +617,8 @@ class NetOpsApp(tk.Tk):
         row = self.db.execute("SELECT device,config,result,status FROM incidents WHERE id=?", (incident_id,)).fetchone()
         win = tk.Toplevel(self); win.title(f"Incidenti #{incident_id} – {row[0]}"); win.geometry("850x650"); win.configure(bg="#0b1220")
         text = tk.Text(win, bg="#07101e", fg="#d8e8ff", font=("Consolas", 10), wrap="word")
-        text.pack(fill="both", expand=True, padx=12, pady=12); text.insert("1.0", f"STATUSI: {row[3]}\nPAJISJA: {row[0]}\n\nREZULTATI:\n{row[2]}\n\nKONFIGURIMI:\n{row[1]}"); text.config(state="disabled")
+        labels = ("STATUS", "DEVICE", "RESULT", "CONFIGURATION") if self.language.get()=="en" else ("STATUSI", "PAJISJA", "REZULTATI", "KONFIGURIMI")
+        text.pack(fill="both", expand=True, padx=12, pady=12); text.insert("1.0", f"{labels[0]}: {row[3]}\n{labels[1]}: {row[0]}\n\n{labels[2]}:\n{row[2]}\n\n{labels[3]}:\n{row[1]}"); text.config(state="disabled")
 
     def export_report(self):
         incident_id = self.selected_id()
@@ -526,17 +626,18 @@ class NetOpsApp(tk.Tk):
         row = self.db.execute("SELECT created_at,device,config,result,status FROM incidents WHERE id=?", (incident_id,)).fetchone()
         path = filedialog.asksaveasfilename(defaultextension=".html", initialfile=f"NETOPS-Incident-{incident_id}.html", filetypes=[("HTML report", "*.html")])
         if not path: return
-        report = f"""<!doctype html><html lang='sq'><meta charset='utf-8'><title>NETOPS Incident #{incident_id}</title>
+        en = self.language.get()=="en"; diag = "Diagnosis" if en else "Diagnoza"; config_label = "Configuration / Evidence" if en else "Konfigurimi / Evidenca"; device_label = "Device" if en else "Pajisja"; date_label = "Date" if en else "Data"; status_label = "Status" if en else "Statusi"; footer = "Generated locally by NETOPS AI." if en else "Gjeneruar lokalisht nga NETOPS AI."
+        report = f"""<!doctype html><html lang='{'en' if en else 'sq'}'><meta charset='utf-8'><title>NETOPS Incident #{incident_id}</title>
 <style>body{{font-family:Segoe UI,Arial;margin:40px;color:#13213a}}header{{background:#0b1220;color:white;padding:24px;border-left:8px solid #38bdf8}}h1{{margin:0}}.meta{{background:#eef6ff;padding:14px;margin:18px 0}}pre{{white-space:pre-wrap;background:#f4f7fb;padding:16px;border:1px solid #d8e1ed}}@media print{{button{{display:none}}}}</style>
-<header><h1>NETOPS AI – Raport Incidenti #{incident_id}</h1></header><div class='meta'><b>Pajisja:</b> {html.escape(row[1] or '')}<br><b>Data:</b> {row[0]}<br><b>Statusi:</b> {row[4]}</div>
-<h2>Diagnoza</h2><pre>{html.escape(row[3])}</pre><h2>Konfigurimi / Evidenca</h2><pre>{html.escape(row[2])}</pre><p>Gjeneruar lokalisht nga NETOPS AI.</p></html>"""
+<header><h1>NETOPS AI – {'Incident Report' if en else 'Raport Incidenti'} #{incident_id}</h1></header><div class='meta'><b>{device_label}:</b> {html.escape(row[1] or '')}<br><b>{date_label}:</b> {row[0]}<br><b>{status_label}:</b> {row[4]}</div>
+<h2>{diag}</h2><pre>{html.escape(row[3])}</pre><h2>{config_label}</h2><pre>{html.escape(row[2])}</pre><p>{footer}</p></html>"""
         try:
-            Path(path).write_text(report, encoding="utf-8"); messagebox.showinfo("Raporti u eksportua", "Raporti HTML u ruajt. Hape në browser dhe përdor Print > Save as PDF.")
+            Path(path).write_text(report, encoding="utf-8"); messagebox.showinfo("Report exported" if en else "Raporti u eksportua", "HTML report saved. Open it in a browser and use Print > Save as PDF." if en else "Raporti HTML u ruajt. Hape në browser dhe përdor Print > Save as PDF.")
         except OSError as exc: messagebox.showerror("Gabim", str(exc))
 
     def delete_incident(self):
         incident_id = self.selected_id()
-        if incident_id and messagebox.askyesno("Konfirmo fshirjen", f"Ta fshij incidentin #{incident_id}?"):
+        if incident_id and messagebox.askyesno("Confirm deletion" if self.language.get()=="en" else "Konfirmo fshirjen", f"Delete incident #{incident_id}?" if self.language.get()=="en" else f"Ta fshij incidentin #{incident_id}?"):
             self.db.execute("DELETE FROM incidents WHERE id=?", (incident_id,)); self.db.commit(); self.refresh_history()
 
     def clear(self):
