@@ -1,0 +1,4 @@
+R1#show ip nat statistics
+Total active translations: 0 (0 static, 0 dynamic; 0 extended)
+Outside interfaces: GigabitEthernet0/1
+Inside interfaces: GigabitEthernet0/0

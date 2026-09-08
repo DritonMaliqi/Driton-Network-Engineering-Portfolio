@@ -1,0 +1,4 @@
+SW1#show interfaces gigabitEthernet0/1
+GigabitEthernet0/1 is up, line protocol is up
+  Full-duplex, 1000Mb/s
+  8921 input errors, 8850 CRC, 0 frame, 0 overrun

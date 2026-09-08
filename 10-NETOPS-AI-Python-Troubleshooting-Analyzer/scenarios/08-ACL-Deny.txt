@@ -1,0 +1,3 @@
+R1#show access-lists
+Extended IP access list BLOCK-ALL
+    10 deny ip any any (128 matches)

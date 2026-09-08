@@ -1,0 +1,3 @@
+SW1#show etherchannel summary
+Group  Port-channel  Protocol    Ports
+1      Po1(SD)         LACP      Gi0/1(suspended) Gi0/2(suspended)

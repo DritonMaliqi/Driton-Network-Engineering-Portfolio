@@ -1,0 +1,3 @@
+R1#show ip ospf neighbor
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+2.2.2.2           1   EXSTART/DR      00:00:36    10.0.12.2       Gi0/0

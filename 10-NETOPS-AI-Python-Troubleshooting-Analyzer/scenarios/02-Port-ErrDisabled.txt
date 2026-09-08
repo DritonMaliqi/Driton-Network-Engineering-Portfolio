@@ -1,0 +1,3 @@
+SW1#show interfaces status
+Port      Name        Status       Vlan       Duplex Speed Type
+Gi0/2     USER-PC     err-disabled 10         auto   auto  10/100/1000BaseTX

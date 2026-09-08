@@ -1,0 +1,3 @@
+C:\>nslookup server.company.local
+DNS request timed out.
+timeout was 2 seconds.

@@ -1,0 +1,4 @@
+R1#show ip bgp summary
+Neighbor        V    AS MsgRcvd MsgSent Up/Down  State/PfxRcd
+10.0.23.2       4 65002       0       0 00:08:12 Idle
+BGP neighbor 10.0.23.2 is Idle

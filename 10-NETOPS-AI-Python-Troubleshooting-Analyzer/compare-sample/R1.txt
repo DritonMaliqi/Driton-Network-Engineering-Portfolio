@@ -1,0 +1,7 @@
+hostname R1
+interface GigabitEthernet0/0
+ ip address 10.0.12.1 255.255.255.252
+router ospf 100
+ network 10.0.12.0 0.0.0.3 area 0
+router bgp 65001
+ neighbor 10.0.12.2 remote-as 65002

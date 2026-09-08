@@ -1,0 +1,4 @@
+Ethernet adapter Ethernet:
+   IPv4 Address. . . . . . . . . . : 169.254.44.21
+   Subnet Mask . . . . . . . . . . : 255.255.0.0
+   Default Gateway . . . . . . . . :
