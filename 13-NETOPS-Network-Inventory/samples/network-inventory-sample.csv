@@ -1,0 +1,6 @@
+asset_tag,hostname,device_type,vendor,model,serial_number,management_ip,site,rack,software_version,status,owner,purchase_date,warranty_expiry,notes
+NET-001,R-HQ-01,Router,Cisco,ISR4331,LAB-RTR-001,192.168.99.1,HQ,Rack-A,IOS XE 17.9.4a,Active,Network Team,2025-01-15,2028-01-15,HQ edge router
+NET-002,SW-CORE-01,Switch,Cisco,C9300-48P,LAB-SW-001,192.168.99.10,HQ,Rack-A,IOS XE 17.9.5,Active,Network Team,2025-02-01,2028-02-01,Core switch
+NET-003,SW-ACCESS-01,Switch,Cisco,C9200L-24P-4G,LAB-SW-002,192.168.99.11,HQ,Rack-B,IOS XE 17.9.4,Active,Network Team,2025-02-10,2028-02-10,Finance and HR access
+NET-004,FW-HQ-01,Firewall,Fortinet,FortiGate 60F,LAB-FW-001,192.168.99.254,HQ,Rack-A,FortiOS 7.4.4,Maintenance,Security Team,2024-06-20,2027-06-20,Perimeter firewall
+NET-005,AP-HQ-01,Access Point,Cisco,Catalyst 9115AXI,LAB-AP-001,192.168.99.21,HQ,Floor-1,IOS XE 17.12,Active,Network Team,2025-03-01,2028-03-01,Office wireless
