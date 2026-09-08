@@ -1,0 +1,12 @@
+﻿device,severity,check,status,details,recommendation
+R-BRANCH-01,LOW,SSH Version,PASS,SSH version 2 is configured.,No action required.
+R-BRANCH-01,LOW,VTY Secure Access,PASS,Telnet is not permitted on VTY lines.,No action required.
+R-BRANCH-01,LOW,Password Encryption,PASS,service password-encryption is configured.,No action required.
+R-BRANCH-01,LOW,OSPF Configuration,PASS,OSPF routing process is configured.,Validate neighbor adjacency and area consistency.
+R-HQ-01,LOW,SSH Version,PASS,SSH version 2 is configured.,No action required.
+R-HQ-01,LOW,VTY Secure Access,PASS,Telnet is not permitted on VTY lines.,No action required.
+R-HQ-01,LOW,Password Encryption,PASS,service password-encryption is configured.,No action required.
+R-HQ-01,LOW,OSPF Configuration,PASS,OSPF routing process is configured.,Validate neighbor adjacency and area consistency.
+SW-ACCESS-01,LOW,Finance Port VLAN,PASS,FastEthernet0/2 is assigned to VLAN 10.,No action required.
+SW-ACCESS-01,LOW,Trunk VLAN Compliance,PASS,"Required VLANs 10, 20 and 50 are allowed on the trunk.",No action required.
+SW-ACCESS-01,LOW,Unused Interface Security,PASS,No enabled interface explicitly marked UNUSED was detected.,No action required.

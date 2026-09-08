@@ -1,0 +1,402 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Network Audit - Before vs After</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #0d1117;
+    color: #e6edf3;
+}
+
+.header {
+    padding: 30px 40px;
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 30px;
+}
+
+.header p {
+    margin-top: 8px;
+    color: #8b949e;
+}
+
+.container {
+    max-width: 1500px;
+    margin: auto;
+    padding: 32px 40px;
+}
+
+.compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+
+.panel {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.panel-header {
+    padding: 20px;
+    border-bottom: 1px solid #30363d;
+}
+
+.panel-header h2 {
+    margin: 0;
+}
+
+.before-title {
+    color: #f85149;
+}
+
+.after-title {
+    color: #3fb950;
+}
+
+.metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    padding: 20px;
+}
+
+.metric {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 16px;
+}
+
+.metric-label {
+    color: #8b949e;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.metric-value {
+    font-size: 27px;
+    font-weight: bold;
+    margin-top: 7px;
+}
+
+.pass-text {
+    color: #3fb950;
+}
+
+.warning-text {
+    color: #d29922;
+}
+
+.fail-text {
+    color: #f85149;
+}
+
+.score-text {
+    color: #58a6ff;
+}
+
+.improvement {
+    margin-top: 24px;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 14px;
+    padding: 25px;
+}
+
+.improvement-value {
+    font-size: 42px;
+    font-weight: bold;
+    color: #3fb950;
+}
+
+.progress {
+    margin-top: 15px;
+    background: #21262d;
+    height: 16px;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 100%;
+    background: #3fb950;
+}
+
+.section {
+    margin-top: 25px;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.section-header {
+    padding: 20px;
+    border-bottom: 1px solid #30363d;
+}
+
+.section-header h2 {
+    margin: 0;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: #21262d;
+    color: #8b949e;
+    padding: 14px;
+    text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+td {
+    padding: 14px;
+    border-top: 1px solid #30363d;
+    vertical-align: top;
+}
+
+.badge {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.pass {
+    color: #3fb950;
+    background: rgba(63,185,80,.15);
+    border: 1px solid rgba(63,185,80,.4);
+}
+
+.fail {
+    color: #f85149;
+    background: rgba(248,81,73,.15);
+    border: 1px solid rgba(248,81,73,.4);
+}
+
+.footer {
+    margin-top: 25px;
+    color: #8b949e;
+    font-size: 13px;
+}
+
+@media(max-width: 900px) {
+    .compare-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .metrics {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>Network Configuration Audit – Before vs After</h1>
+    <p>
+        Automated configuration validation, remediation and compliance verification
+    </p>
+</div>
+
+<div class="container">
+
+    <div class="compare-grid">
+
+        <div class="panel">
+
+            <div class="panel-header">
+                <h2 class="before-title">BEFORE REMEDIATION</h2>
+            </div>
+
+            <div class="metrics">
+
+                <div class="metric">
+                    <div class="metric-label">Pass</div>
+                    <div class="metric-value pass-text">7</div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">Warnings</div>
+                    <div class="metric-value warning-text">1</div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">Failures</div>
+                    <div class="metric-value fail-text">5</div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">Compliance</div>
+                    <div class="metric-value score-text">54%</div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="panel">
+
+            <div class="panel-header">
+                <h2 class="after-title">AFTER REMEDIATION</h2>
+            </div>
+
+            <div class="metrics">
+
+                <div class="metric">
+                    <div class="metric-label">Pass</div>
+                    <div class="metric-value pass-text">11</div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">Warnings</div>
+                    <div class="metric-value warning-text">0</div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">Failures</div>
+                    <div class="metric-value fail-text">0</div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">Compliance</div>
+                    <div class="metric-value score-text">100%</div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="improvement">
+
+        <div style="color:#8b949e; text-transform:uppercase; font-size:13px;">
+            Compliance Improvement
+        </div>
+
+        <div class="improvement-value">
+            +46%
+        </div>
+
+        <div>
+            54% → 100%
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar"></div>
+        </div>
+
+    </div>
+
+    <div class="section">
+
+        <div class="section-header">
+            <h2>Remediated Findings</h2>
+        </div>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Device</th>
+                        <th>Check</th>
+                        <th>Before</th>
+                        <th>After</th>
+                        <th>Original Finding</th>
+                        <th>Remediation</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+    <td>R-HQ-01</td>
+    <td>VTY Secure Access</td>
+    <td><span class="badge fail">FAIL</span></td>
+    <td><span class="badge pass">PASS</span></td>
+    <td>Telnet is permitted on VTY lines.</td>
+    <td>Remove Telnet and allow SSH only: transport input ssh</td>
+</tr>
+<tr>
+    <td>SW-ACCESS-01</td>
+    <td>Finance Port VLAN</td>
+    <td><span class="badge fail">FAIL</span></td>
+    <td><span class="badge pass">PASS</span></td>
+    <td>FastEthernet0/2 is assigned to VLAN 1, expected VLAN 10.</td>
+    <td>Configure FastEthernet0/2 with: switchport access vlan 10</td>
+</tr>
+<tr>
+    <td>SW-ACCESS-01</td>
+    <td>Trunk VLAN Compliance</td>
+    <td><span class="badge fail">FAIL</span></td>
+    <td><span class="badge pass">PASS</span></td>
+    <td>Missing required trunk VLAN(s): 10</td>
+    <td>Add the missing VLANs to the trunk allowed VLAN list.</td>
+</tr>
+<tr>
+    <td>R-BRANCH-01</td>
+    <td>OSPF Area Consistency</td>
+    <td><span class="badge fail">FAIL</span></td>
+    <td><span class="badge pass">NOT FOUND</span></td>
+    <td>Network 10.0.12.0 0.0.0.3 is configured in different OSPF areas across devices. R-BRANCH-01 uses area 1.</td>
+    <td>Configure both ends of the OSPF link in the same area.</td>
+</tr>
+<tr>
+    <td>R-HQ-01</td>
+    <td>OSPF Area Consistency</td>
+    <td><span class="badge fail">FAIL</span></td>
+    <td><span class="badge pass">NOT FOUND</span></td>
+    <td>Network 10.0.12.0 0.0.0.3 is configured in different OSPF areas across devices. R-HQ-01 uses area 0.</td>
+    <td>Configure both ends of the OSPF link in the same area.</td>
+</tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <div class="footer">
+        BEFORE source: Network-Audit-BEFORE-20260908-232420.csv<br>
+        AFTER source: Network-Audit-AFTER-20260908-232430.csv<br>
+        Generated: 2026-09-08 23:25:26
+    </div>
+
+</div>
+
+</body>
+</html>

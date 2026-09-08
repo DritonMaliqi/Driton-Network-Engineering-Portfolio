@@ -1,0 +1,405 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Network Configuration Audit</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #0d1117;
+    color: #e6edf3;
+}
+
+.header {
+    padding: 28px 40px;
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+.header p {
+    margin-top: 8px;
+    margin-bottom: 0;
+    color: #8b949e;
+}
+
+.container {
+    padding: 30px 40px;
+    max-width: 1600px;
+    margin: auto;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 18px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.card-title {
+    color: #8b949e;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.card-value {
+    font-size: 32px;
+    font-weight: 700;
+    margin-top: 8px;
+}
+
+.pass-value {
+    color: #3fb950;
+}
+
+.warning-value {
+    color: #d29922;
+}
+
+.fail-value {
+    color: #f85149;
+}
+
+.score-value {
+    color: #58a6ff;
+}
+
+.device-value {
+    color: #c9d1d9;
+}
+
+.section {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.section-header {
+    padding: 20px 22px;
+    border-bottom: 1px solid #30363d;
+}
+
+.section-header h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    text-align: left;
+    background: #21262d;
+    padding: 14px;
+    font-size: 13px;
+    color: #8b949e;
+    text-transform: uppercase;
+}
+
+td {
+    padding: 14px;
+    border-top: 1px solid #30363d;
+    vertical-align: top;
+    line-height: 1.45;
+}
+
+tr:hover {
+    background: #1c2128;
+}
+
+.badge {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.pass {
+    background: rgba(63,185,80,.15);
+    color: #3fb950;
+    border: 1px solid rgba(63,185,80,.4);
+}
+
+.warning {
+    background: rgba(210,153,34,.15);
+    color: #d29922;
+    border: 1px solid rgba(210,153,34,.4);
+}
+
+.fail {
+    background: rgba(248,81,73,.15);
+    color: #f85149;
+    border: 1px solid rgba(248,81,73,.4);
+}
+
+.severity.low {
+    color: #8b949e;
+    background: #21262d;
+}
+
+.severity.medium {
+    color: #d29922;
+    background: rgba(210,153,34,.12);
+}
+
+.severity.high {
+    color: #ff7b72;
+    background: rgba(248,81,73,.12);
+}
+
+.severity.critical {
+    color: #ff7b72;
+    background: rgba(248,81,73,.22);
+}
+
+.footer {
+    padding: 25px 0;
+    color: #8b949e;
+    font-size: 13px;
+}
+
+@media(max-width:1000px) {
+
+    .cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media(max-width:600px) {
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        padding: 20px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+    <h1>Network Configuration Audit & Compliance</h1>
+
+    <p>
+        Automated Cisco configuration validation |
+        Project 15 – Network Engineering Portfolio
+    </p>
+
+</div>
+
+<div class="container">
+
+    <div class="cards">
+
+        <div class="card">
+            <div class="card-title">Devices Audited</div>
+            <div class="card-value device-value">3</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Pass</div>
+            <div class="card-value pass-value">7</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Warnings</div>
+            <div class="card-value warning-value">1</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Failures</div>
+            <div class="card-value fail-value">5</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Compliance Score</div>
+            <div class="card-value score-value">54%</div>
+        </div>
+
+    </div>
+
+    <div class="section">
+
+        <div class="section-header">
+
+            <h2>Audit Findings</h2>
+
+        </div>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Device</th>
+                        <th>Severity</th>
+                        <th>Check</th>
+                        <th>Status</th>
+                        <th>Finding</th>
+                        <th>Recommendation</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+    <td>R-BRANCH-01</td>
+    <td><span class="badge severity low">LOW</span></td>
+    <td>SSH Version</td>
+    <td><span class="badge pass">PASS</span></td>
+    <td>SSH version 2 is configured.</td>
+    <td>No action required.</td>
+</tr>
+<tr>
+    <td>R-BRANCH-01</td>
+    <td><span class="badge severity low">LOW</span></td>
+    <td>VTY Secure Access</td>
+    <td><span class="badge pass">PASS</span></td>
+    <td>Telnet is not permitted on VTY lines.</td>
+    <td>No action required.</td>
+</tr>
+<tr>
+    <td>R-BRANCH-01</td>
+    <td><span class="badge severity low">LOW</span></td>
+    <td>Password Encryption</td>
+    <td><span class="badge pass">PASS</span></td>
+    <td>service password-encryption is configured.</td>
+    <td>No action required.</td>
+</tr>
+<tr>
+    <td>R-BRANCH-01</td>
+    <td><span class="badge severity low">LOW</span></td>
+    <td>OSPF Configuration</td>
+    <td><span class="badge pass">PASS</span></td>
+    <td>OSPF routing process is configured.</td>
+    <td>Validate neighbor adjacency and area consistency.</td>
+</tr>
+<tr>
+    <td>R-HQ-01</td>
+    <td><span class="badge severity low">LOW</span></td>
+    <td>SSH Version</td>
+    <td><span class="badge pass">PASS</span></td>
+    <td>SSH version 2 is configured.</td>
+    <td>No action required.</td>
+</tr>
+<tr>
+    <td>R-HQ-01</td>
+    <td><span class="badge severity high">HIGH</span></td>
+    <td>VTY Secure Access</td>
+    <td><span class="badge fail">FAIL</span></td>
+    <td>Telnet is permitted on VTY lines.</td>
+    <td>Remove Telnet and allow SSH only: transport input ssh</td>
+</tr>
+<tr>
+    <td>R-HQ-01</td>
+    <td><span class="badge severity low">LOW</span></td>
+    <td>Password Encryption</td>
+    <td><span class="badge pass">PASS</span></td>
+    <td>service password-encryption is configured.</td>
+    <td>No action required.</td>
+</tr>
+<tr>
+    <td>R-HQ-01</td>
+    <td><span class="badge severity low">LOW</span></td>
+    <td>OSPF Configuration</td>
+    <td><span class="badge pass">PASS</span></td>
+    <td>OSPF routing process is configured.</td>
+    <td>Validate neighbor adjacency and area consistency.</td>
+</tr>
+<tr>
+    <td>SW-ACCESS-01</td>
+    <td><span class="badge severity high">HIGH</span></td>
+    <td>Finance Port VLAN</td>
+    <td><span class="badge fail">FAIL</span></td>
+    <td>FastEthernet0/2 is assigned to VLAN 1, expected VLAN 10.</td>
+    <td>Configure FastEthernet0/2 with: switchport access vlan 10</td>
+</tr>
+<tr>
+    <td>SW-ACCESS-01</td>
+    <td><span class="badge severity high">HIGH</span></td>
+    <td>Trunk VLAN Compliance</td>
+    <td><span class="badge fail">FAIL</span></td>
+    <td>Missing required trunk VLAN(s): 10</td>
+    <td>Add the missing VLANs to the trunk allowed VLAN list.</td>
+</tr>
+<tr>
+    <td>SW-ACCESS-01</td>
+    <td><span class="badge severity medium">MEDIUM</span></td>
+    <td>Unused Interface Security</td>
+    <td><span class="badge warning">WARNING</span></td>
+    <td>FastEthernet0/24 is marked UNUSED but is administratively enabled.</td>
+    <td>Apply shutdown to unused interfaces.</td>
+</tr>
+<tr>
+    <td>R-BRANCH-01</td>
+    <td><span class="badge severity critical">CRITICAL</span></td>
+    <td>OSPF Area Consistency</td>
+    <td><span class="badge fail">FAIL</span></td>
+    <td>Network 10.0.12.0 0.0.0.3 is configured in different OSPF areas across devices. R-BRANCH-01 uses area 1.</td>
+    <td>Configure both ends of the OSPF link in the same area.</td>
+</tr>
+<tr>
+    <td>R-HQ-01</td>
+    <td><span class="badge severity critical">CRITICAL</span></td>
+    <td>OSPF Area Consistency</td>
+    <td><span class="badge fail">FAIL</span></td>
+    <td>Network 10.0.12.0 0.0.0.3 is configured in different OSPF areas across devices. R-HQ-01 uses area 0.</td>
+    <td>Configure both ends of the OSPF link in the same area.</td>
+</tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <div class="footer">
+
+        Generated: 2026-09-08 23:17:31<br>
+        Source report: Network-Audit-20260908-231731.csv
+
+    </div>
+
+</div>
+
+</body>
+</html>

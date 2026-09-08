@@ -1,0 +1,63 @@
+========================================================================
+PROJECT 15 - NETWORK CONFIGURATION AUDIT REPORT
+========================================================================
+
+DEVICE: R-BRANCH-01
+------------------------------------------------------------------------
+[PASS] [LOW] SSH Version
+Details: SSH version 2 is configured.
+Recommendation: No action required.
+
+[PASS] [LOW] VTY Secure Access
+Details: Telnet is not permitted on VTY lines.
+Recommendation: No action required.
+
+[PASS] [LOW] Password Encryption
+Details: service password-encryption is configured.
+Recommendation: No action required.
+
+[PASS] [LOW] OSPF Configuration
+Details: OSPF routing process is configured.
+Recommendation: Validate neighbor adjacency and area consistency.
+
+
+DEVICE: R-HQ-01
+------------------------------------------------------------------------
+[PASS] [LOW] SSH Version
+Details: SSH version 2 is configured.
+Recommendation: No action required.
+
+[FAIL] [HIGH] VTY Secure Access
+Details: Telnet is permitted on VTY lines.
+Recommendation: Remove Telnet and allow SSH only: transport input ssh
+
+[PASS] [LOW] Password Encryption
+Details: service password-encryption is configured.
+Recommendation: No action required.
+
+[PASS] [LOW] OSPF Configuration
+Details: OSPF routing process is configured.
+Recommendation: Validate neighbor adjacency and area consistency.
+
+
+DEVICE: SW-ACCESS-01
+------------------------------------------------------------------------
+[FAIL] [HIGH] Finance Port VLAN
+Details: FastEthernet0/2 is assigned to VLAN 1, expected VLAN 10.
+Recommendation: Configure FastEthernet0/2 with: switchport access vlan 10
+
+[WARNING] [MEDIUM] Trunk VLAN Compliance
+Details: No explicit trunk allowed VLAN list was detected.
+Recommendation: Verify the trunk configuration manually.
+
+[WARNING] [MEDIUM] Unused Interface Security
+Details: FastEthernet0/24 is marked UNUSED but is administratively enabled.
+Recommendation: Apply shutdown to unused interfaces.
+
+
+========================================================================
+SUMMARY
+========================================================================
+PASS    : 7
+WARNING : 2
+FAIL    : 2

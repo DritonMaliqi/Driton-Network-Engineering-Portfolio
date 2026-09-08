@@ -1,0 +1,63 @@
+========================================================================
+PROJECT 15 - NETWORK CONFIGURATION AUDIT REPORT
+========================================================================
+
+DEVICE: R-BRANCH-01
+------------------------------------------------------------------------
+[PASS] [LOW] SSH Version
+Details: SSH version 2 is configured.
+Recommendation: No action required.
+
+[PASS] [LOW] VTY Secure Access
+Details: Telnet is not permitted on VTY lines.
+Recommendation: No action required.
+
+[PASS] [LOW] Password Encryption
+Details: service password-encryption is configured.
+Recommendation: No action required.
+
+[PASS] [LOW] OSPF Configuration
+Details: OSPF routing process is configured.
+Recommendation: Validate neighbor adjacency and area consistency.
+
+
+DEVICE: R-HQ-01
+------------------------------------------------------------------------
+[PASS] [LOW] SSH Version
+Details: SSH version 2 is configured.
+Recommendation: No action required.
+
+[PASS] [LOW] VTY Secure Access
+Details: Telnet is not permitted on VTY lines.
+Recommendation: No action required.
+
+[PASS] [LOW] Password Encryption
+Details: service password-encryption is configured.
+Recommendation: No action required.
+
+[PASS] [LOW] OSPF Configuration
+Details: OSPF routing process is configured.
+Recommendation: Validate neighbor adjacency and area consistency.
+
+
+DEVICE: SW-ACCESS-01
+------------------------------------------------------------------------
+[PASS] [LOW] Finance Port VLAN
+Details: FastEthernet0/2 is assigned to VLAN 10.
+Recommendation: No action required.
+
+[PASS] [LOW] Trunk VLAN Compliance
+Details: Required VLANs 10, 20 and 50 are allowed on the trunk.
+Recommendation: No action required.
+
+[PASS] [LOW] Unused Interface Security
+Details: No enabled interface explicitly marked UNUSED was detected.
+Recommendation: No action required.
+
+
+========================================================================
+SUMMARY
+========================================================================
+PASS    : 11
+WARNING : 0
+FAIL    : 0
