@@ -32,6 +32,7 @@ My objective is to demonstrate a structured engineering approach:
 | 07 - FortiGate Troubleshooting | Policies, routing, NAT, VPN | Planned |
 | 08 - Network Automation | Python, PowerShell, backups, validation | Planned |
 | [09 - AI-Assisted Network Troubleshooting Platform](./09-AI-Network-Troubleshooting-Platform/) | PowerShell, Cisco IOS, Rule Engine, Ollama AI, Windows GUI | Completed |
+| [10 - NETOPS AI Python Troubleshooting Analyzer](./10-NETOPS-AI-Python-Troubleshooting-Analyzer/) | Python, Tkinter, SQLite, Cisco IOS, CCNA/CCNP Diagnostics | Completed |
 
 ## Technical Skills
 
