@@ -236,3 +236,23 @@ DritonMaliqi/Driton-Network-Engineering-Portfolio
 
 Multi-Vendor Network Automation | Validation | Build Workspace | IPAM | Subnet Planning
 
+
+## NETFORGE Interface
+
+### Dashboard
+![NETFORGE Dashboard](docs/screenshots/01-dashboard.png)
+
+### Universal Generator
+![NETFORGE Universal Generator](docs/screenshots/02-universal-generator.png)
+
+### Subnet Calculator
+![NETFORGE Subnet Calculator](docs/screenshots/03-subnet-calculator.png)
+
+### VLSM Planner
+![NETFORGE VLSM Planner](docs/screenshots/04-vlsm-planner.png)
+
+### IP Address Manager
+![NETFORGE IP Address Manager](docs/screenshots/05-ip-address-manager.png)
+
+### Build Workspace
+![NETFORGE Build Workspace](docs/screenshots/06-build-workspace.png)
