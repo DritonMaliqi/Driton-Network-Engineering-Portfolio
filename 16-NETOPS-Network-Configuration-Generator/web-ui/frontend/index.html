@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>NetForge - Network Automation Platform</title>
+
+    <link
+        rel="icon"
+        type="image/svg+xml"
+        href="assets/icons/netforge-favicon.svg"
+    >
+
+    <meta
+        name="theme-color"
+        content="#0b111b"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/styles.css"
+    >
+</head>
+
+<body>
+
+<div class="app-shell">
+
+    <!-- ================================================== -->
+    <!-- SIDEBAR -->
+    <!-- ================================================== -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon netforge-symbol">N</div>
+
+            <div>
+                <div class="brand-title">NETFORGE</div>
+                <div class="brand-subtitle">Network Automation</div>
+            </div>
+
+        </div>
+
+        <nav class="nav-menu">
+
+            <button
+                class="nav-item active"
+                data-page="dashboard"
+            >
+                <span class="nav-icon">▦</span>
+                Dashboard
+            </button>
+
+            <button
+                class="nav-item"
+                data-page="generator"
+            >
+                <span class="nav-icon">⌘</span>
+                Generator
+            </button>
+
+            <button
+                class="nav-item vendor-nav"
+                data-page="generator"
+                data-vendor="Cisco"
+            >
+                <img
+                    class="sidebar-vendor-logo sidebar-cisco"
+                    src="assets/icons/cisco.png"
+                    alt="Cisco"
+                >
+                Cisco
+            </button>
+
+            <button
+                class="nav-item vendor-nav"
+                data-page="generator"
+                data-vendor="FortiGate"
+            >
+                <img
+                    class="sidebar-vendor-logo sidebar-fortigate"
+                    src="assets/icons/fortigate.svg"
+                    alt="FortiGate"
+                >
+                FortiGate
+            </button>
+
+            <button
+                class="nav-item vendor-nav"
+                data-page="generator"
+                data-vendor="Palo Alto"
+            >
+                <img
+                    class="sidebar-vendor-logo sidebar-paloalto"
+                    src="assets/icons/paloalto.jpg"
+                    alt="Palo Alto"
+                >
+                Palo Alto
+            </button>
+
+            <div class="nav-divider"></div>
+
+            <button
+                class="nav-item"
+                data-page="ipam"
+            >
+                <span class="nav-icon">◫</span>
+                IPAM & Subnet Planner
+            </button>
+
+            <div class="nav-divider"></div>
+
+            <button
+                class="nav-item"
+                data-page="build"
+            >
+                <span class="nav-icon">▤</span>
+
+                Build Workspace
+
+                <span
+                    class="nav-count"
+                    id="build-count"
+                >
+                    0
+                </span>
+            </button>
+
+        </nav>
+
+        <div class="sidebar-footer">
+
+            <div class="api-status-row">
+                <span
+                    class="status-dot"
+                    id="api-status-dot"
+                ></span>
+
+                <div>
+                    <div id="api-status-text">
+                        Checking API...
+                    </div>
+
+                    <small>
+                        FastAPI Backend
+                    </small>
+                </div>
+            </div>
+
+            <div class="footer-meta">
+                <span>NETFORGE WEB</span>
+                <span>Multi-Vendor</span>
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================================================== -->
+    <!-- MAIN -->
+    <!-- ================================================== -->
+
+    <main class="main-area">
+
+        <header class="topbar">
+
+            <div>
+                <h1 id="page-title">
+                    Dashboard
+                </h1>
+
+                <p id="page-subtitle">
+                    Network Configuration Automation
+                </p>
+            </div>
+
+            <div class="topbar-right">
+
+                <div class="engine-badge">
+                    <span class="engine-pulse"></span>
+                    Automation Engine
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <section class="content">
+
+            <!-- ================================================= -->
+            <!-- DASHBOARD -->
+            <!-- ================================================= -->
+
+            <div
+                class="page active"
+                id="page-dashboard"
+            >
+
+                <div class="hero">
+
+                    <div class="hero-content">
+
+                        <div class="eyebrow">
+                            MULTI-VENDOR AUTOMATION PLATFORM
+                        </div>
+
+                        <h2>
+                            Network Configuration Generator
+                        </h2>
+
+                        <p>
+                            Generate validated configurations for
+                            Cisco, FortiGate and Palo Alto using
+                            one unified workspace.
+                        </p>
+
+                        <button
+                            class="btn btn-primary"
+                            id="start-generator"
+                        >
+                            Open Generator
+                        </button>
+
+                    </div>
+
+                    <div class="hero-metric">
+
+                        <div class="metric-number">
+                            27
+                        </div>
+
+                        <div class="metric-label">
+                            Technologies
+                        </div>
+
+                        <div class="metric-small">
+                            Across 3 network vendors
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="section-heading">
+
+                    <div>
+                        <h3>Supported Platforms</h3>
+                        <p>
+                            Select a vendor to open the
+                            configuration workspace.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="vendor-grid">
+
+                    <article
+                        class="vendor-card cisco-card"
+                        data-dashboard-vendor="Cisco"
+                    >
+
+                        <div class="vendor-card-top">
+                            <div class="vendor-logo-image cisco-logo-box">
+                                <img
+                                    src="assets/icons/cisco.png"
+                                    alt="Cisco Systems"
+                                >
+                            </div>
+
+                            <div class="vendor-status">
+                                12 Technologies
+                            </div>
+                        </div>
+
+                        <h3>Cisco</h3>
+
+                        <p>
+                            IOS, IOS-XE, NX-OS and
+                            enterprise routing/switching.
+                        </p>
+
+                        <div class="tag-list">
+                            <span>VLAN</span>
+                            <span>OSPF</span>
+                            <span>BGP</span>
+                            <span>VPN</span>
+                            <span>+8</span>
+                        </div>
+
+                        <button class="vendor-open">
+                            Configure Cisco →
+                        </button>
+
+                    </article>
+
+
+                    <article
+                        class="vendor-card fortigate-card"
+                        data-dashboard-vendor="FortiGate"
+                    >
+
+                        <div class="vendor-card-top">
+
+                            <div class="vendor-logo-image fortigate-logo-box">
+                                <img
+                                    src="assets/icons/fortigate.svg"
+                                    alt="FortiGate"
+                                >
+                            </div>
+
+                            <div class="vendor-status">
+                                8 Technologies
+                            </div>
+
+                        </div>
+
+                        <h3>FortiGate</h3>
+
+                        <p>
+                            FortiOS firewall, routing,
+                            SD-WAN and VPN automation.
+                        </p>
+
+                        <div class="tag-list">
+                            <span>Firewall</span>
+                            <span>NAT</span>
+                            <span>SD-WAN</span>
+                            <span>VPN</span>
+                        </div>
+
+                        <button class="vendor-open">
+                            Configure FortiGate →
+                        </button>
+
+                    </article>
+
+
+                    <article
+                        class="vendor-card paloalto-card"
+                        data-dashboard-vendor="Palo Alto"
+                    >
+
+                        <div class="vendor-card-top">
+
+                            <div class="vendor-logo-image paloalto-logo-box">
+                                <img
+                                    src="assets/icons/paloalto.jpg"
+                                    alt="Palo Alto Networks"
+                                >
+                            </div>
+
+                            <div class="vendor-status">
+                                7 Technologies
+                            </div>
+
+                        </div>
+
+                        <h3>Palo Alto</h3>
+
+                        <p>
+                            PAN-OS routing, zones,
+                            security and NAT policies.
+                        </p>
+
+                        <div class="tag-list">
+                            <span>Security</span>
+                            <span>NAT</span>
+                            <span>BGP</span>
+                            <span>OSPF</span>
+                        </div>
+
+                        <button class="vendor-open">
+                            Configure Palo Alto →
+                        </button>
+
+                    </article>
+
+                </div>
+
+
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+                        <span class="stat-title">
+                            Vendors
+                        </span>
+                        <strong>3</strong>
+                        <small>
+                            Cisco / FortiGate / Palo Alto
+                        </small>
+                    </div>
+
+                    <div class="stat-card">
+                        <span class="stat-title">
+                            Technologies
+                        </span>
+                        <strong>27</strong>
+                        <small>
+                            Backend coverage 27 / 27
+                        </small>
+                    </div>
+
+                    <div class="stat-card">
+                        <span class="stat-title">
+                            Generated
+                        </span>
+                        <strong id="generated-count">
+                            0
+                        </strong>
+                        <small>
+                            Current browser session
+                        </small>
+                    </div>
+
+                    <div class="stat-card">
+                        <span class="stat-title">
+                            Build Sections
+                        </span>
+                        <strong id="dashboard-build-count">
+                            0
+                        </strong>
+                        <small>
+                            Stored locally
+                        </small>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- UNIVERSAL GENERATOR -->
+            <!-- ================================================= -->
+
+            <div
+                class="page"
+                id="page-generator"
+            >
+
+                <div class="workspace-header">
+
+                    <div>
+                        <div class="eyebrow">
+                            UNIVERSAL GENERATOR
+                        </div>
+
+                        <h2>
+                            Configuration Workspace
+                        </h2>
+
+                        <p>
+                            Vendor-aware dynamic configuration engine.
+                        </p>
+                    </div>
+
+                    <div
+                        class="vendor-context"
+                        id="vendor-context"
+                    >
+                        No vendor selected
+                    </div>
+
+                </div>
+
+
+                <div class="selector-panel">
+
+                    <div class="selector-field">
+
+                        <label for="vendor-select">
+                            Vendor
+                        </label>
+
+                        <select id="vendor-select">
+                            <option value="">
+                                Select vendor
+                            </option>
+                        </select>
+
+                    </div>
+
+
+                    <div class="selector-field">
+
+                        <label for="platform-select">
+                            Platform
+                        </label>
+
+                        <select
+                            id="platform-select"
+                            disabled
+                        >
+                            <option value="">
+                                Select platform
+                            </option>
+                        </select>
+
+                    </div>
+
+
+                    <div class="selector-field">
+
+                        <label for="technology-select">
+                            Technology
+                        </label>
+
+                        <select
+                            id="technology-select"
+                            disabled
+                        >
+                            <option value="">
+                                Select technology
+                            </option>
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div class="generator-layout">
+
+                    <!-- PARAMETERS -->
+
+                    <section class="panel parameter-panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <h3>
+                                    Technology Parameters
+                                </h3>
+
+                                <p id="parameter-subtitle">
+                                    Select a vendor and technology.
+                                </p>
+                            </div>
+
+                            <span
+                                class="panel-badge"
+                                id="parameter-count"
+                            >
+                                0 fields
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="parameter-grid"
+                            id="parameter-container"
+                        >
+
+                            <div class="empty-state">
+
+                                <div class="empty-icon">
+                                    ◇
+                                </div>
+
+                                <strong>
+                                    No technology selected
+                                </strong>
+
+                                <p>
+                                    Choose Vendor, Platform and
+                                    Technology above.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="generate-row">
+
+                            <button
+                                class="btn btn-primary btn-large"
+                                id="generate-button"
+                                disabled
+                            >
+                                Generate Configuration
+                            </button>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- PREVIEW -->
+
+                    <section class="panel preview-panel">
+
+                        <div class="panel-header preview-header">
+
+                            <div>
+                                <h3>
+                                    Generated Configuration
+                                </h3>
+
+                                <p id="preview-meta">
+                                    Ready for configuration generation.
+                                </p>
+                            </div>
+
+                            <div class="preview-tools">
+
+                                <button
+                                    class="btn btn-ghost"
+                                    id="copy-button"
+                                >
+                                    Copy
+                                </button>
+
+                                <button
+                                    class="btn btn-ghost"
+                                    id="clear-button"
+                                >
+                                    Clear
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="terminal">
+
+                            <div class="terminal-top">
+
+                                <div class="terminal-dots">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+
+                                <span>
+                                    network-config.cfg
+                                </span>
+
+                            </div>
+
+                            <pre
+                                id="config-output"
+                            ># NETOPS Configuration Preview
+# Select a vendor and technology to begin.</pre>
+
+                        </div>
+
+
+                        <div class="preview-footer">
+
+                            <button
+                                class="btn btn-success"
+                                id="add-build-button"
+                                disabled
+                            >
+                                + Add to Build
+                            </button>
+
+                            <button
+                                class="btn btn-secondary"
+                                id="save-button"
+                                disabled
+                            >
+                                Save .cfg
+                            </button>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- IPAM & SUBNET PLANNER -->
+            <!-- ================================================= -->
+
+            <div
+                class="page"
+                id="page-ipam"
+            >
+
+                <div class="workspace-header">
+
+                    <div>
+                        <div class="eyebrow">
+                            NETWORK ADDRESS MANAGEMENT
+                        </div>
+
+                        <h2>
+                            IPAM & Subnet Planner
+                        </h2>
+
+                        <p>
+                            Calculate IPv4 networks and create VLSM address plans.
+                        </p>
+                    </div>
+
+                    <div class="vendor-context">
+                        NetForge IPAM Engine
+                    </div>
+
+                </div>
+
+                <div class="ipam-tabs">
+
+                    <button
+                        class="ipam-tab active"
+                        data-ipam-tab="calculator"
+                    >
+                        Subnet Calculator
+                    </button>
+
+                    <button
+                        class="ipam-tab"
+                        data-ipam-tab="vlsm"
+                    >
+                        VLSM Planner
+                    </button>
+
+                    <button
+                        class="ipam-tab"
+                        data-ipam-tab="manager"
+                    >
+                        IP Address Manager
+                    </button>
+
+                </div>
+
+
+                <!-- SUBNET CALCULATOR -->
+
+                <section
+                    class="ipam-module active"
+                    id="ipam-module-calculator"
+                >
+
+                    <div class="generator-layout">
+
+                        <section class="panel">
+
+                            <div class="panel-header">
+                                <div>
+                                    <h3>IPv4 Subnet Calculator</h3>
+                                    <p>
+                                        Enter an IPv4 address or network in CIDR format.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="ipam-form">
+
+                                <label class="field-label">
+                                    IPv4 / CIDR
+                                </label>
+
+                                <input
+                                    id="ipam-cidr"
+                                    class="parameter-input"
+                                    type="text"
+                                    value="192.168.10.25/24"
+                                    placeholder="192.168.10.25/24"
+                                >
+
+                                <button
+                                    class="btn btn-primary"
+                                    id="ipam-calculate-button"
+                                >
+                                    Calculate Network
+                                </button>
+
+                            </div>
+
+                        </section>
+
+
+                        <section class="panel">
+
+                            <div class="panel-header">
+                                <div>
+                                    <h3>Network Details</h3>
+                                    <p>
+                                        Calculated address information.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div
+                                class="ipam-result-grid"
+                                id="ipam-calc-results"
+                            >
+                                <div class="empty-state">
+                                    <strong>
+                                        No calculation yet
+                                    </strong>
+
+                                    <p>
+                                        Enter a CIDR and calculate.
+                                    </p>
+                                </div>
+                            </div>
+
+                        </section>
+
+                    </div>
+
+                </section>
+
+
+                <!-- VLSM PLANNER -->
+
+                <section
+                    class="ipam-module"
+                    id="ipam-module-vlsm"
+                >
+
+                    <div class="generator-layout">
+
+                        <section class="panel">
+
+                            <div class="panel-header">
+
+                                <div>
+                                    <h3>VLSM Requirements</h3>
+                                    <p>
+                                        Create a variable-length subnet plan.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <div class="ipam-form">
+
+                                <label class="field-label">
+                                    Parent Network
+                                </label>
+
+                                <input
+                                    id="vlsm-network"
+                                    class="parameter-input"
+                                    type="text"
+                                    value="10.10.0.0/24"
+                                >
+
+                                <label class="field-label">
+                                    Required Networks
+                                </label>
+
+                                <textarea
+                                    id="vlsm-requirements"
+                                    class="ipam-textarea"
+                                    rows="8"
+                                >LAN-A,60
+LAN-B,30
+LAN-C,10</textarea>
+
+                                <small class="ipam-help">
+                                    One requirement per line: Name,Hosts
+                                </small>
+
+                                <button
+                                    class="btn btn-primary"
+                                    id="vlsm-plan-button"
+                                >
+                                    Generate VLSM Plan
+                                </button>
+
+                            </div>
+
+                        </section>
+
+
+                        <section class="panel">
+
+                            <div class="panel-header">
+
+                                <div>
+                                    <h3>VLSM Plan</h3>
+                                    <p>
+                                        Allocation results ordered by host requirement.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <div
+                                class="ipam-table-wrap"
+                                id="vlsm-result"
+                            >
+                                <div class="empty-state">
+                                    <strong>
+                                        No VLSM plan yet
+                                    </strong>
+
+                                    <p>
+                                        Add requirements and generate a plan.
+                                    </p>
+                                </div>
+                            </div>
+
+                        </section>
+
+                    </div>
+
+                </section>
+
+
+                <!-- IP ADDRESS MANAGER -->
+
+                <section
+                    class="ipam-module"
+                    id="ipam-module-manager"
+                >
+
+                    <div class="ipam-manager-layout">
+
+                        <section class="panel">
+
+                            <div class="panel-header">
+
+                                <div>
+                                    <h3>IP Address Inventory</h3>
+
+                                    <p>
+                                        Search and manage assigned addresses.
+                                    </p>
+                                </div>
+
+                                <span
+                                    class="panel-badge"
+                                    id="ipam-record-count"
+                                >
+                                    0 records
+                                </span>
+
+                            </div>
+
+
+                            <div class="ipam-summary-grid">
+
+                                <div class="ipam-summary-card total">
+                                    <span>Total Addresses</span>
+                                    <strong id="ipam-summary-total">0</strong>
+                                    <small>Inventory records</small>
+                                </div>
+
+                                <div class="ipam-summary-card assigned">
+                                    <span>Assigned</span>
+                                    <strong id="ipam-summary-assigned">0</strong>
+                                    <small>Currently in use</small>
+                                </div>
+
+                                <div class="ipam-summary-card reserved">
+                                    <span>Reserved</span>
+                                    <strong id="ipam-summary-reserved">0</strong>
+                                    <small>Held for future use</small>
+                                </div>
+
+                                <div class="ipam-summary-card available">
+                                    <span>Available</span>
+                                    <strong id="ipam-summary-available">0</strong>
+                                    <small>Ready for allocation</small>
+                                </div>
+
+                            </div>
+
+                            <div class="ipam-toolbar">
+
+                                <input
+                                    id="ipam-search"
+                                    class="parameter-input"
+                                    type="text"
+                                    placeholder="Search IP, hostname, VLAN, location..."
+                                >
+
+                                <button
+                                    class="btn btn-secondary"
+                                    id="ipam-search-button"
+                                >
+                                    Search
+                                </button>
+
+                                <button
+                                    class="btn btn-ghost"
+                                    id="ipam-refresh-button"
+                                >
+                                    Refresh
+                                </button>
+
+                                <button
+                                    class="btn btn-secondary"
+                                    id="ipam-import-button"
+                                >
+                                    Import CSV
+                                </button>
+
+                                <button
+                                    class="btn btn-secondary"
+                                    id="ipam-export-button"
+                                >
+                                    Export CSV
+                                </button>
+
+                                <input
+                                    id="ipam-import-file"
+                                    type="file"
+                                    accept=".csv,text/csv"
+                                    hidden
+                                >
+
+                            </div>
+
+
+                            <div class="ipam-table-wrap">
+
+                                <table class="ipam-table">
+
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>IP Address</th>
+                                            <th>Prefix</th>
+                                            <th>Hostname</th>
+                                            <th>Device</th>
+                                            <th>VLAN</th>
+                                            <th>Location</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody id="ipam-records-body">
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </section>
+
+
+                        <section class="panel">
+
+                            <div class="panel-header">
+
+                                <div>
+                                    <h3 id="ipam-form-title">
+                                        Add IP Allocation
+                                    </h3>
+
+                                    <p>
+                                        Create or update an IPAM record.
+                                    </p>
+                                </div>
+
+                                <button
+                                    class="btn btn-ghost"
+                                    id="ipam-new-button"
+                                >
+                                    New
+                                </button>
+
+                            </div>
+
+
+                            <div class="ipam-form">
+
+                                <input
+                                    type="hidden"
+                                    id="ipam-record-id"
+                                >
+
+
+                                <label class="field-label">
+                                    IP Address
+                                </label>
+
+                                <input
+                                    id="ipam-address"
+                                    class="parameter-input"
+                                    type="text"
+                                    placeholder="192.168.10.20"
+                                >
+
+
+                                <label class="field-label">
+                                    Prefix
+                                </label>
+
+                                <input
+                                    id="ipam-prefix"
+                                    class="parameter-input"
+                                    type="number"
+                                    min="0"
+                                    max="32"
+                                    value="24"
+                                >
+
+
+                                <label class="field-label">
+                                    Hostname
+                                </label>
+
+                                <input
+                                    id="ipam-hostname"
+                                    class="parameter-input"
+                                    type="text"
+                                    placeholder="SW-ACCESS-01"
+                                >
+
+
+                                <label class="field-label">
+                                    Device Type
+                                </label>
+
+                                <input
+                                    id="ipam-device-type"
+                                    class="parameter-input"
+                                    type="text"
+                                    placeholder="Switch"
+                                >
+
+
+                                <label class="field-label">
+                                    VLAN
+                                </label>
+
+                                <input
+                                    id="ipam-vlan"
+                                    class="parameter-input"
+                                    type="text"
+                                    placeholder="10"
+                                >
+
+
+                                <label class="field-label">
+                                    Location
+                                </label>
+
+                                <input
+                                    id="ipam-location"
+                                    class="parameter-input"
+                                    type="text"
+                                    placeholder="HQ"
+                                >
+
+
+                                <label class="field-label">
+                                    Status
+                                </label>
+
+                                <select
+                                    id="ipam-status"
+                                    class="parameter-input"
+                                >
+                                    <option value="Assigned">
+                                        Assigned
+                                    </option>
+
+                                    <option value="Reserved">
+                                        Reserved
+                                    </option>
+
+                                    <option value="Available">
+                                        Available
+                                    </option>
+                                </select>
+
+
+                                <label class="field-label">
+                                    Description
+                                </label>
+
+                                <textarea
+                                    id="ipam-description"
+                                    class="ipam-textarea"
+                                    rows="4"
+                                    placeholder="Optional notes"
+                                ></textarea>
+
+
+                                <button
+                                    class="btn btn-primary"
+                                    id="ipam-save-record-button"
+                                >
+                                    Save IP Allocation
+                                </button>
+
+                            </div>
+
+                        </section>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- BUILD WORKSPACE -->
+            <!-- ================================================= -->
+
+            <div
+                class="page"
+                id="page-build"
+            >
+
+                <div class="workspace-header">
+
+                    <div>
+                        <div class="eyebrow">
+                            CONFIGURATION BUILD
+                        </div>
+
+                        <h2>
+                            Build Workspace
+                        </h2>
+
+                        <p>
+                            Combine configuration sections from
+                            multiple vendors.
+                        </p>
+                    </div>
+
+                    <div class="build-top-actions">
+
+                        <button
+                            class="btn btn-danger"
+                            id="clear-build-button"
+                        >
+                            Clear Build
+                        </button>
+
+                        <button
+                            class="btn btn-primary"
+                            id="export-build-button"
+                        >
+                            Export Full Build
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="build-layout">
+
+                    <section class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <h3>
+                                    Build Sections
+                                </h3>
+
+                                <p>
+                                    Generated sections currently
+                                    included.
+                                </p>
+                            </div>
+
+                            <span
+                                class="panel-badge"
+                                id="build-section-total"
+                            >
+                                0
+                            </span>
+
+                        </div>
+
+                        <div
+                            class="build-list"
+                            id="build-list"
+                        >
+                        </div>
+
+                    </section>
+
+
+                    <section class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <h3>
+                                    Full Build Preview
+                                </h3>
+
+                                <p>
+                                    Vendor syntax is preserved exactly.
+                                </p>
+                            </div>
+
+                            <button
+                                class="btn btn-ghost"
+                                id="copy-build-button"
+                            >
+                                Copy Build
+                            </button>
+
+                        </div>
+
+                        <div class="terminal build-terminal">
+
+                            <div class="terminal-top">
+
+                                <div class="terminal-dots">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+
+                                <span>
+                                    NETOPS-Full-Build.cfg
+                                </span>
+
+                            </div>
+
+                            <pre id="build-output">
+# Build is empty.
+                            </pre>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<div
+    id="toast-container"
+    class="toast-container"
+></div>
+
+
+<script src="js/api.js"></script>
+<script src="js/validation.js"></script>
+<script src="js/builder.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
