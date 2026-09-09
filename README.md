@@ -1,4 +1,4 @@
-# Driton Maliqi - Network Engineering Portfolio
+﻿# Driton Maliqi - Network Engineering Portfolio
 
 Welcome to my hands-on Network Engineering portfolio.
 
@@ -37,6 +37,7 @@ My objective is to demonstrate a structured engineering approach:
 | [12 - NETOPS IP Address Manager & Subnet Planner](./12-NETOPS-IPAM/) | Python, Tkinter, SQLite, IPv4, CIDR, VLSM, IPAM | Completed |
 | [13 - NETOPS Network Inventory & Documentation Tool](./13-NETOPS-Network-Inventory/) | Python, Tkinter, SQLite, Asset Inventory, CSV, HTML Reporting | Completed |
 | [14 - NETOPS Network Log & Syslog Analyzer](./14-NETOPS-Syslog-Analyzer/) | Python, Tkinter, Cisco Syslog, Event Parsing, Incident Detection, HTML Reporting | Completed |
+| [15 - Network Configuration Audit & Compliance](./15-Network-Configuration-Audit/) | Python, PowerShell, Cisco IOS, OSPF, VLAN, Compliance Auditing | Completed |
 
 ## Technical Skills
 
@@ -99,3 +100,4 @@ Each completed project can include:
 **Driton Maliqi**  
 Network Engineering - CCNA Track  
 Focused on practical networking, troubleshooting, security, and automation.
+

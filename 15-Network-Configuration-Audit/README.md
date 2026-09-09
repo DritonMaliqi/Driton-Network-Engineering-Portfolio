@@ -181,4 +181,19 @@ Focus: CCNA / CCNP, Network Troubleshooting, Python, PowerShell and Network Auto
 
 The following dashboard demonstrates the compliance improvement from 54% to 100% after remediation.
 
-![Before vs After Network Audit Dashboard](Screenshots/before-after-dashboard.png)
+
+
+
+## Project Screenshots
+
+### Screenshot 1
+
+![Project 15 Screenshot 1](Screenshots/Project15-Screenshot-01.png)
+
+### Screenshot 2
+
+![Project 15 Screenshot 2](Screenshots/Project15-Screenshot-02.png)
+
+### Screenshot 3
+
+![Project 15 Screenshot 3](Screenshots/Project15-Screenshot-03.png)
