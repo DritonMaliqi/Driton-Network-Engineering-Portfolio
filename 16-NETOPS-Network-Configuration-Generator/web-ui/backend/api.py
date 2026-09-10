@@ -1,4 +1,4 @@
-"""
+﻿"""
 PROJECT 16 - NETOPS Web API Adapter
 
 This API does not replace the existing Python engine.
@@ -21,6 +21,7 @@ import sys
 
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -1420,12 +1421,7 @@ def run_validation(validation_type: str, value: Any, field_name: str):
 
 @app.get("/")
 def root():
-    return {
-        "application": "NETOPS Network Configuration Generator",
-        "project": "Project 16",
-        "version": "2.0.0",
-        "status": "online",
-    }
+    return FileResponse(FRONTEND_DIR / "index.html")
 
 
 @app.get("/api/health")
@@ -2387,3 +2383,26 @@ if __name__ == "__main__":
         port=8000,
         reload=False,
     )
+
+# ============================================================
+# NETFORGE WEB FRONTEND
+# ============================================================
+
+FRONTEND_DIR = PROJECT_ROOT / "web-ui" / "frontend"
+
+app.mount("/css", StaticFiles(directory=FRONTEND_DIR / "css"), name="css")
+app.mount("/js", StaticFiles(directory=FRONTEND_DIR / "js"), name="js")
+app.mount("/assets", StaticFiles(directory=FRONTEND_DIR / "assets"), name="assets")
+
+@app.get("/")
+def netforge_web_ui():
+    return FileResponse(FRONTEND_DIR / "index.html")
+
+
+@app.get("/manifest.webmanifest", include_in_schema=False)
+def netforge_manifest():
+    return FileResponse(FRONTEND_DIR / "manifest.webmanifest", media_type="application/manifest+json")
+
+@app.get("/sw.js", include_in_schema=False)
+def netforge_service_worker():
+    return FileResponse(FRONTEND_DIR / "sw.js", media_type="application/javascript")

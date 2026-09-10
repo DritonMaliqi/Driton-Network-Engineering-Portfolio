@@ -2822,3 +2822,27 @@ document.addEventListener(
 
     }
 );
+/* NETFORGE MOBILE NAVIGATION V2 */
+document.addEventListener('DOMContentLoaded', () => {
+    const button = document.getElementById('mobile-menu-button');
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.getElementById('mobile-overlay');
+
+    if (!button || !sidebar || !overlay) return;
+
+    const closeMenu = () => {
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('active');
+    };
+
+    button.addEventListener('click', () => {
+        sidebar.classList.toggle('mobile-open');
+        overlay.classList.toggle('active');
+    });
+
+    overlay.addEventListener('click', closeMenu);
+
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', closeMenu);
+    });
+});

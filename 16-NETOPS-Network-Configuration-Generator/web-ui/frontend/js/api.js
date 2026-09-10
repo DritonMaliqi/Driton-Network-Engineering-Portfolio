@@ -1,6 +1,6 @@
-const API = {
+﻿const API = {
 
-    baseURL: "http://127.0.0.1:8000/api",
+    baseURL: "/api",
 
     async request(endpoint, options = {}) {
 

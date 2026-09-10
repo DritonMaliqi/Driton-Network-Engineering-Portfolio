@@ -1,0 +1,25 @@
+{
+  "name": "NETFORGE - Network Automation Platform",
+  "short_name": "NETFORGE",
+  "description": "Multi-vendor network automation, configuration generation and IPAM platform.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#070b12",
+  "theme_color": "#0b111b",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/assets/icons/netforge-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icons/netforge-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

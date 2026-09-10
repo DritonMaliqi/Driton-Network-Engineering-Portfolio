@@ -2479,3 +2479,182 @@ pre {
         grid-template-columns: 1fr;
     }
 }
+
+/* =========================================================
+   NETFORGE MOBILE RESPONSIVE V1
+   Samsung / Android / iPhone / iOS
+   ========================================================= */
+
+@media (max-width: 768px) {
+    :root { --sidebar-width: 100%; }
+
+    body { overflow-x: hidden; }
+
+    .app-shell { display: block; }
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .brand { min-height: 64px; padding: 12px 16px; }
+    .brand-icon { width: 36px; height: 36px; font-size: 18px; }
+
+    .nav-menu {
+        display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
+        gap: 6px;
+        padding: 10px;
+        scrollbar-width: thin;
+    }
+
+    .nav-item {
+        width: auto;
+        min-width: max-content;
+        margin: 0;
+        padding: 9px 12px;
+    }
+
+    .nav-divider, .sidebar-footer { display: none; }
+
+    .main-area {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .topbar {
+        height: auto;
+        min-height: 64px;
+        padding: 12px 16px;
+        gap: 12px;
+    }
+
+    .topbar h1 { font-size: 17px; }
+    .topbar p { font-size: 11px; }
+    .engine-badge { padding: 6px 9px; font-size: 10px; }
+
+    .content { padding: 16px 14px 28px; }
+
+    .hero {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 20px;
+    }
+
+    .hero h2, .workspace-header h2 { font-size: 23px; }
+    .metric-number { font-size: 44px; }
+
+    .vendor-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+
+    .workspace-grid,
+    .generator-grid,
+    .ipam-grid,
+    .build-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    select, input, textarea, button {
+        max-width: 100%;
+    }
+
+    input, select, textarea {
+        font-size: 16px;
+    }
+
+    .table-wrap,
+    .ipam-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table { min-width: 720px; }
+
+    .terminal,
+    pre {
+        overflow-x: auto;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 430px) {
+    .content { padding: 12px 10px 24px; }
+    .hero { padding: 16px; }
+    .hero h2, .workspace-header h2 { font-size: 21px; }
+    .stats-grid { grid-template-columns: 1fr; }
+    .topbar { align-items: flex-start; }
+    .engine-badge { flex-shrink: 0; }
+}
+
+/* =========================================================
+   NETFORGE MOBILE V2 - HAMBURGER NAVIGATION
+   ========================================================= */
+
+.mobile-header { display: none; }
+.mobile-overlay { display: none; }
+
+@media (max-width: 768px) {
+    .mobile-header {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        height: 62px;
+        padding: 0 14px;
+        background: var(--bg-header);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .mobile-menu-button {
+        width: 42px;
+        height: 42px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--bg-panel);
+        color: var(--text);
+        font-size: 22px;
+        cursor: pointer;
+    }
+
+    .mobile-brand { display: flex; flex-direction: column; }
+    .mobile-brand strong { font-size: 15px; letter-spacing: .08em; }
+    .mobile-brand span { font-size: 9px; color: var(--text-3); text-transform: uppercase; }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -290px;
+        width: 280px;
+        height: 100vh;
+        z-index: 60;
+        transition: left .22s ease;
+    }
+
+    .sidebar.mobile-open { left: 0; }
+
+    .nav-menu {
+        display: block;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .nav-item { width: 100%; }
+
+    .mobile-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        background: rgba(0,0,0,.55);
+    }
+
+    .mobile-overlay.active { display: block; }
+
+    .topbar { top: 62px; }
+}
