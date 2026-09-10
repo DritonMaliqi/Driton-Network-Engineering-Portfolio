@@ -1,4 +1,4 @@
-﻿"""
+"""
 PROJECT 16 - NETOPS Web API Adapter
 
 This API does not replace the existing Python engine.
@@ -32,7 +32,6 @@ from pydantic import BaseModel
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 SRC_DIR = PROJECT_ROOT / "src"
-
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
@@ -1419,11 +1418,6 @@ def run_validation(validation_type: str, value: Any, field_name: str):
 # ROUTES
 # ============================================================
 
-@app.get("/")
-def root():
-    return FileResponse(FRONTEND_DIR / "index.html")
-
-
 @app.get("/api/health")
 def health():
     return {
@@ -2374,16 +2368,6 @@ def ipam_export_csv():
 # LOCAL DEVELOPMENT
 # ============================================================
 
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(
-        "api:app",
-        host="127.0.0.1",
-        port=8000,
-        reload=False,
-    )
-
 # ============================================================
 # NETFORGE WEB FRONTEND
 # ============================================================
@@ -2406,3 +2390,18 @@ def netforge_manifest():
 @app.get("/sw.js", include_in_schema=False)
 def netforge_service_worker():
     return FileResponse(FRONTEND_DIR / "sw.js", media_type="application/javascript")
+
+# ============================================================
+# DIRECT START
+# ============================================================
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(
+        "api:app",
+        host="127.0.0.1",
+        port=8000,
+        reload=False,
+    )
+
